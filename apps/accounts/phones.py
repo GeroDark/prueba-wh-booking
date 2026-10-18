@@ -51,16 +51,47 @@ def region_for_prefix(prefix):
     return "" if region == phonenumbers.UNKNOWN_REGION else region
 
 
+def has_repeated_prefix(raw):
+    """'+51 51 987654321', '+51 +51 987…', '5151987…': a country code typed twice.
+
+    Only asked about numbers that already failed, so a valid number is never flagged.
+    """
+    digits = re.sub(r"\D", "", raw).removeprefix("00")
+    for size in (1, 2, 3):  # country codes have 1 to 3 digits
+        code, rest = digits[:size], digits[size:]
+        if not (code and rest.startswith(code)):
+            continue
+        if phonenumbers.region_code_for_country_code(int(code)) == phonenumbers.UNKNOWN_REGION:
+            continue
+        try:
+            if phonenumbers.is_valid_number(phonenumbers.parse(f"+{rest}")):
+                return True
+        except phonenumbers.NumberParseException:
+            continue
+    return False
+
+
 def parse_phone(raw, region):
-    """Validate a number typed for `region` (or with its own +prefix) and split it."""
+    """Validate a number typed for `region` (or with its own +prefix) and split it.
+
+    The prefix is stored apart from the number, so it can never end up twice: "987654321",
+    "+51 987654321", "51987654321" and "0051 987654321" are all saved as "+51" + "987654321".
+    """
     raw = raw.strip()
     if not TYPED_PHONE.fullmatch(raw):
         raise InvalidPhone(_("Use only digits, spaces or dashes."))
     try:
         number = phonenumbers.parse(raw, region or None)
+        valid = phonenumbers.is_valid_number(number)
     except phonenumbers.NumberParseException:
-        raise InvalidPhone(_("Enter a valid phone number.")) from None
-    if not phonenumbers.is_valid_number(number):
+        number, valid = None, False
+    if not valid and has_repeated_prefix(raw):
+        raise InvalidPhone(
+            _("The country code is repeated. Enter it only once, or only the number.")
+        )
+    if number is None:
+        raise InvalidPhone(_("Enter a valid phone number."))
+    if not valid:
         raise InvalidPhone(_("Enter a valid phone number for the selected country."))
     return Phone(
         prefix=f"+{number.country_code}",

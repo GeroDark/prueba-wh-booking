@@ -38,7 +38,7 @@ class UserAdmin(DjangoUserAdmin):
                     ("phone_prefix", "phone_number"),
                     "birth_date",
                     "preferred_language",
-                    "marketing_opt_in",
+                    ("marketing_opt_in", "marketing_consent_at"),
                 )
             },
         ),

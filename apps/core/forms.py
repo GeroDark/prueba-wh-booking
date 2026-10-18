@@ -4,6 +4,11 @@ from django.utils.translation import gettext_lazy as _
 # Django's own Spanish messages use "usted" ("Introduzca una fecha válida") and some echo the
 # value back. The site speaks "tú" and says what to fix (see D35).
 FRIENDLY_MESSAGES = {
+    # Only reachable by skipping the browser's maxlength, but answered in the site's tone too.
+    forms.CharField: {
+        "max_length": _("Use at most %(limit_value)d characters (it has %(show_value)d)."),
+    },
+    forms.UUIDField: {"invalid": _("The form expired. Reload the page and try again.")},
     forms.EmailField: {"invalid": _("Enter a valid email address, for example name@example.com.")},
     forms.DateField: {"invalid": _("Enter a valid date.")},
     forms.IntegerField: {

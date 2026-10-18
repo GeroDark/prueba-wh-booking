@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 14:49-0500\n"
+"POT-Creation-Date: 2026-10-18 16:25-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -40,11 +40,11 @@ msgstr "Crea una contraseña."
 msgid "Enter a new password"
 msgstr "Ingresa una nueva contraseña"
 
-#: apps/accounts/forms.py:49 apps/accounts/forms.py:227
+#: apps/accounts/forms.py:49 apps/accounts/forms.py:233
 msgid "Enter your email address."
 msgstr "Ingresa tu correo electrónico."
 
-#: apps/accounts/forms.py:50 apps/accounts/forms.py:121
+#: apps/accounts/forms.py:50 apps/accounts/forms.py:122
 #: apps/accounts/validators.py:41
 msgid "Enter your first and last name."
 msgstr "Ingresa tu nombre y apellido."
@@ -69,64 +69,66 @@ msgstr "Ya existe una cuenta con este correo. Inicia sesión."
 msgid "Enter your phone number"
 msgstr "Ingresa tu número de teléfono"
 
-#: apps/accounts/forms.py:113 apps/accounts/phones.py:58
+#: apps/accounts/forms.py:114 apps/accounts/phones.py:82
 msgid "Use only digits, spaces or dashes."
 msgstr "Usa solo números, espacios o guiones."
 
-#: apps/accounts/forms.py:122
+#: apps/accounts/forms.py:123
 msgid "Select your nationality."
 msgstr "Selecciona tu nacionalidad."
 
-#: apps/accounts/forms.py:123
+#: apps/accounts/forms.py:124
 msgid "Enter your phone number."
 msgstr "Ingresa tu número de teléfono."
 
-#: apps/accounts/forms.py:124
+#: apps/accounts/forms.py:125
 msgid "Enter your birth date."
 msgstr "Ingresa tu fecha de nacimiento."
 
-#: apps/accounts/forms.py:126 apps/core/forms.py:14
+#: apps/accounts/forms.py:127 apps/core/forms.py:19
 msgid "Select one of the available options."
 msgstr "Elige una de las opciones disponibles."
 
-#: apps/accounts/forms.py:147
+#: apps/accounts/forms.py:148
 msgid "Select your country"
 msgstr "Selecciona tu país"
 
-#: apps/accounts/forms.py:151 apps/accounts/forms.py:152
+#: apps/accounts/forms.py:152 apps/accounts/forms.py:153
 msgid "Code"
 msgstr "Indicativo"
 
-#: apps/accounts/forms.py:153
+#: apps/accounts/forms.py:154
 msgid "Select the code."
 msgstr "Selecciona el indicativo."
 
-#: apps/accounts/forms.py:156
-msgid "I do not want to subscribe to the Wynwood House newsletter"
-msgstr "No deseo suscribirme al boletín de Wynwood House"
+#: apps/accounts/forms.py:159
+msgid ""
+"I want to receive exclusive member offers, inspiring content and news from "
+"Wynwood House by email."
+msgstr "Quiero recibir por correo ofertas exclusivas para miembros, contenido inspirador y novedades de Wynwood House."
 
-#: apps/accounts/forms.py:172 apps/accounts/validators.py:70
+#: apps/accounts/forms.py:178 apps/accounts/validators.py:70
 msgid "Check the year of your birth date."
 msgstr "Revisa el año de tu fecha de nacimiento."
 
-#: apps/accounts/forms.py:173 apps/accounts/validators.py:73
+#: apps/accounts/forms.py:179 apps/accounts/validators.py:73
 #, python-format
 msgid "You must be at least %(age)s years old to book."
 msgstr "Debes tener al menos %(age)s años para reservar."
 
-#: apps/accounts/forms.py:226 apps/core/models.py:229
+#: apps/accounts/forms.py:232 apps/core/models.py:229
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: apps/accounts/forms.py:231
+#: apps/accounts/forms.py:237
 msgid "Password"
 msgstr "Contraseña"
 
-#: apps/accounts/forms.py:233
+#: apps/accounts/forms.py:239
 msgid "Enter your password."
 msgstr "Ingresa tu contraseña."
 
-#: apps/accounts/forms.py:239
+#: apps/accounts/forms.py:245
 msgid "The email or password is incorrect."
 msgstr "El correo o la contraseña no son correctos."
 
@@ -142,63 +144,75 @@ msgstr "El superusuario debe tener is_staff=True."
 msgid "Superuser must have is_superuser=True."
 msgstr "El superusuario debe tener is_superuser=True."
 
-#: apps/accounts/models.py:19
+#: apps/accounts/models.py:20
 msgid "email address"
 msgstr "correo electrónico"
 
-#: apps/accounts/models.py:21
+#: apps/accounts/models.py:22
 msgid "full name"
 msgstr "nombre completo"
 
-#: apps/accounts/models.py:24
+#: apps/accounts/models.py:25
 msgid "nationality"
 msgstr "nacionalidad"
 
-#: apps/accounts/models.py:26
+#: apps/accounts/models.py:27
 msgid "phone prefix"
 msgstr "indicativo"
 
-#: apps/accounts/models.py:26
+#: apps/accounts/models.py:27
 msgid "Country calling code, e.g. +51."
 msgstr "Indicativo internacional del país, por ejemplo +51."
 
-#: apps/accounts/models.py:29
+#: apps/accounts/models.py:30
 msgid "phone number"
 msgstr "teléfono"
 
-#: apps/accounts/models.py:32
+#: apps/accounts/models.py:33
 msgid "National number without the prefix, digits only."
 msgstr "Número nacional sin el indicativo, solo dígitos."
 
-#: apps/accounts/models.py:34
+#: apps/accounts/models.py:35
 msgid "birth date"
 msgstr "fecha de nacimiento"
 
-#: apps/accounts/models.py:36
+#: apps/accounts/models.py:37
 msgid "preferred language"
 msgstr "idioma preferido"
 
-#: apps/accounts/models.py:41
+#: apps/accounts/models.py:42
 msgid "subscribed to the newsletter"
 msgstr "suscrito al boletín"
 
-#: apps/accounts/models.py:49
+#: apps/accounts/models.py:44
+msgid "newsletter consent given at"
+msgstr "consentimiento del boletín otorgado el"
+
+#: apps/accounts/models.py:47
+msgid "When the guest ticked the newsletter box (proof of consent)."
+msgstr "Cuándo el huésped marcó la casilla del boletín (prueba del consentimiento)."
+
+#: apps/accounts/models.py:56
 msgid "user"
 msgstr "usuario"
 
-#: apps/accounts/models.py:50
+#: apps/accounts/models.py:57
 msgid "users"
 msgstr "usuarios"
 
-#: apps/accounts/models.py:55
+#: apps/accounts/models.py:62
 msgid "An account with this email already exists."
 msgstr "Ya existe una cuenta con este correo electrónico."
 
-#: apps/accounts/phones.py:62
+#: apps/accounts/phones.py:90
+msgid "The country code is repeated. Enter it only once, or only the number."
+msgstr "El indicativo está repetido. Escríbelo una sola vez o ingresa solo el número."
+
+#: apps/accounts/phones.py:93
 msgid "Enter a valid phone number."
 msgstr "Ingresa un número de teléfono válido."
 
-#: apps/accounts/phones.py:64
+#: apps/accounts/phones.py:95
 msgid "Enter a valid phone number for the selected country."
 msgstr "Ingresa un número de teléfono válido para el país seleccionado."
 
@@ -238,7 +252,7 @@ msgstr "La contraseña no puede contener tu nombre ni tu correo electrónico."
 msgid "Does not contain your name or e-mail address."
 msgstr "No contiene tu nombre ni tu correo electrónico."
 
-#: apps/accounts/views.py:44 templates/pages/checkout.html:87
+#: apps/accounts/views.py:44 templates/pages/checkout.html:90
 #, python-format
 msgid "Welcome to Wynwood House, %(name)s!"
 msgstr "¡Te damos la bienvenida a Wynwood House, %(name)s!"
@@ -550,24 +564,33 @@ msgstr "Perú"
 msgid "United States"
 msgstr "Estados Unidos"
 
-#: apps/core/forms.py:7
+#: apps/core/forms.py:9
+#, python-format
+msgid "Use at most %(limit_value)d characters (it has %(show_value)d)."
+msgstr "Usa como máximo %(limit_value)d caracteres (tiene %(show_value)d)."
+
+#: apps/core/forms.py:11
+msgid "The form expired. Reload the page and try again."
+msgstr "El formulario caducó. Recarga la página e inténtalo de nuevo."
+
+#: apps/core/forms.py:12
 msgid "Enter a valid email address, for example name@example.com."
 msgstr "Ingresa un correo electrónico válido, por ejemplo nombre@ejemplo.com."
 
-#: apps/core/forms.py:8
+#: apps/core/forms.py:13
 msgid "Enter a valid date."
 msgstr "Ingresa una fecha válida."
 
-#: apps/core/forms.py:10
+#: apps/core/forms.py:15
 msgid "Enter a whole number."
 msgstr "Ingresa un número entero."
 
-#: apps/core/forms.py:11
+#: apps/core/forms.py:16
 #, python-format
 msgid "Enter a number greater than or equal to %(limit_value)s."
 msgstr "Ingresa un número mayor o igual a %(limit_value)s."
 
-#: apps/core/forms.py:12
+#: apps/core/forms.py:17
 #, python-format
 msgid "Enter a number less than or equal to %(limit_value)s."
 msgstr "Ingresa un número menor o igual a %(limit_value)s."
@@ -1242,7 +1265,7 @@ msgstr "Cerrar sesión"
 #: templates/components/account_links.html:16
 #: templates/pages/accounts/login.html:4 templates/pages/accounts/login.html:13
 #: templates/pages/accounts/login.html:24
-#: templates/pages/accounts/signup.html:30 templates/pages/checkout.html:44
+#: templates/pages/accounts/signup.html:30 templates/pages/checkout.html:46
 msgid "Sign in"
 msgstr "Iniciar sesión"
 
@@ -1340,7 +1363,7 @@ msgid "Dates"
 msgstr "Fechas"
 
 #: templates/components/booking_summary.html:27
-#: templates/pages/checkout.html:152
+#: templates/pages/checkout.html:155
 msgid "Change dates"
 msgstr "Cambiar fechas"
 
@@ -1505,7 +1528,7 @@ msgstr "Crea una cuenta"
 msgid "Create your account"
 msgstr "Crea tu cuenta"
 
-#: templates/pages/accounts/signup.html:13 templates/pages/checkout.html:38
+#: templates/pages/accounts/signup.html:13 templates/pages/checkout.html:40
 msgid "Sign up"
 msgstr "Registro"
 
@@ -1519,7 +1542,7 @@ msgstr ""
 msgid "Create account"
 msgstr "Crear cuenta"
 
-#: templates/pages/accounts/signup.html:29 templates/pages/checkout.html:43
+#: templates/pages/accounts/signup.html:29 templates/pages/checkout.html:45
 msgid "Already have an account?"
 msgstr "¿Ya tienes una cuenta?"
 
@@ -1618,47 +1641,40 @@ msgstr "Completar reserva"
 msgid "Checkout"
 msgstr "Página de pago"
 
-#: templates/pages/checkout.html:23
+#: templates/pages/checkout.html:25
 msgid "Your dates are held for"
 msgstr "Tus fechas están reservadas por"
 
-#: templates/pages/checkout.html:26
+#: templates/pages/checkout.html:28
 msgid "After that they are released for other guests."
 msgstr "Después se liberan para otros huéspedes."
 
-#: templates/pages/checkout.html:39
+#: templates/pages/checkout.html:41
 msgid "We will send the booking confirmation to your email."
 msgstr "Te enviaremos la confirmación de tu reserva por correo electrónico."
 
-#: templates/pages/checkout.html:52 templates/pages/checkout.html:59
+#: templates/pages/checkout.html:54 templates/pages/checkout.html:61
 msgid "Personal information"
 msgstr "Información personal"
 
-#: templates/pages/checkout.html:54
+#: templates/pages/checkout.html:56
 #, python-format
 msgid "Hi %(name)s, complete your details to continue with the booking."
 msgstr "Hola, %(name)s. Completa tus datos para continuar con la reserva."
 
-#: templates/pages/checkout.html:76
-msgid ""
-"Wynwood House will send you exclusive member offers, inspiring content, "
-"marketing emails and push notifications. You can opt out at any time from "
-"your account settings or directly from any notification you receive."
-msgstr ""
-"Wynwood House te enviará ofertas exclusivas para miembros, contenido "
-"inspirador, correos electrónicos comerciales y notificaciones push. Puedes "
-"dejar de recibirlos en cualquier momento desde la configuración de tu cuenta "
-"o directamente desde cualquiera de las notificaciones que te lleguen."
+#: templates/pages/checkout.html:80
+msgid "Optional. You can unsubscribe at any time from any email you receive."
+msgstr "Es opcional. Puedes darte de baja cuando quieras desde cualquier correo que recibas."
 
-#: templates/pages/checkout.html:91
+#: templates/pages/checkout.html:94
 msgid "Review your booking and complete the payment to confirm it."
 msgstr "Revisa tu reserva y completa el pago para confirmarla."
 
-#: templates/pages/checkout.html:95
+#: templates/pages/checkout.html:98
 msgid "Payment information"
 msgstr "Información de pago"
 
-#: templates/pages/checkout.html:98
+#: templates/pages/checkout.html:101
 msgid ""
 "Simulated payment: no real charge is made and card details are not stored."
 msgstr ""
@@ -1666,34 +1682,38 @@ msgstr ""
 "se guardan."
 
 #: templates/pages/checkout.html:119
+msgid "This is a demo: use one of the test cards. Real cards are not accepted."
+msgstr "Esto es una demo: usa una de las tarjetas de prueba. No se aceptan tarjetas reales."
+
+#: templates/pages/checkout.html:122
 msgid "Test cards"
 msgstr "Tarjetas de prueba"
 
-#: templates/pages/checkout.html:126
+#: templates/pages/checkout.html:129
 msgid "Approved"
 msgstr "Aprobada"
 
-#: templates/pages/checkout.html:127
+#: templates/pages/checkout.html:130
 msgid "Insufficient funds"
 msgstr "Fondos insuficientes"
 
-#: templates/pages/checkout.html:128
+#: templates/pages/checkout.html:131
 msgid "Declined"
 msgstr "Rechazada"
 
-#: templates/pages/checkout.html:133
+#: templates/pages/checkout.html:136
 msgid ""
 "Any future expiry date. Security code: any 3 digits (4 for American Express)."
 msgstr ""
 "Cualquier fecha de vencimiento futura. Código de seguridad: 3 dígitos "
 "cualesquiera (4 en American Express)."
 
-#: templates/pages/checkout.html:145
+#: templates/pages/checkout.html:148
 #, python-format
 msgid "Hi, I need help completing my booking %(reference)s."
 msgstr "Hola, necesito ayuda para completar mi reserva %(reference)s."
 
-#: templates/pages/checkout.html:147
+#: templates/pages/checkout.html:150
 msgid "Need help completing your booking?"
 msgstr "¿Necesitas ayuda para completar tu reserva?"
 
@@ -1790,6 +1810,20 @@ msgstr "Mostrar mapa"
 #: templates/pages/search_results.html:69
 msgid "Show list"
 msgstr "Mostrar lista"
+
+#~ msgid "I do not want to subscribe to the Wynwood House newsletter"
+#~ msgstr "No deseo suscribirme al boletín de Wynwood House"
+
+#~ msgid ""
+#~ "Wynwood House will send you exclusive member offers, inspiring content, "
+#~ "marketing emails and push notifications. You can opt out at any time from "
+#~ "your account settings or directly from any notification you receive."
+#~ msgstr ""
+#~ "Wynwood House te enviará ofertas exclusivas para miembros, contenido "
+#~ "inspirador, correos electrónicos comerciales y notificaciones push. "
+#~ "Puedes dejar de recibirlos en cualquier momento desde la configuración de "
+#~ "tu cuenta o directamente desde cualquiera de las notificaciones que te "
+#~ "lleguen."
 
 #~ msgid "ISO 3166-1 alpha-2 country code."
 #~ msgstr "Código de país ISO 3166-1 alfa-2."

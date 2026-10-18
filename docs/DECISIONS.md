@@ -180,7 +180,15 @@ Otras medidas:
   nuevo. La misma clave enviada otra vez devuelve el mismo resultado, sin cobrar.
 - La página de pago no se guarda en caché (`never_cache`) y los campos de tarjeta y contraseña se ocultan en los
   reportes de error de Django (`sensitive_post_parameters`). El código de seguridad nunca se vuelve a escribir en la página.
-- Nunca se guardan ni se registran en logs los datos de tarjeta; solo la marca y los últimos 4 dígitos.
+- Nunca se guardan ni se registran en logs los datos de tarjeta; solo la marca y los últimos 4 dígitos (PCI DSS
+  permite conservar como máximo los primeros 6 y los últimos 4, y prohíbe guardar el código de seguridad).
+- **Tarjetas reales en la demo.** Un número no se puede clasificar como "real" o "de prueba" por su forma: cualquier
+  número que pase Luhn podría existir. Por eso se usa una lista blanca: las tarjetas de prueba públicas (las de
+  Stripe, que no pertenecen a nadie). Con JavaScript, cualquier otro número se detiene en el navegador y no se
+  envía; sin JavaScript, el servidor lo rechaza, lo descarta y no lo guarda.
+- **En producción** el número no debería pasar por nuestro servidor: la pasarela (Stripe Elements, dLocal Smart Fields)
+  lo captura en un iframe propio y devuelve un *token*. Así el sitio queda fuera de casi todo el alcance de PCI DSS
+  (SAQ A). Es el siguiente paso al integrar una pasarela real.
 - El monto sale de la reserva.
 - Se registra cada intento, también los fallidos.
 - Solo el dueño puede pagar o ver su reserva.
@@ -559,9 +567,12 @@ aceptado y mensajes de Django en "usted" ("Introduzca una fecha válida").
   quien reserva y paga firma el alquiler. La edad se calcula con la fecha local del sitio.
 - **Términos:** como en el Figma, se aceptan al pulsar el botón ("Al seleccionar Continuar, aceptas…"). Los enlaces
   vienen de `SiteSettings` (admin); sin URL se muestran como texto.
-- **Boletín:** como en el Figma, la casilla es "No deseo suscribirme" (suscripción por defecto). En la UE (GDPR) el
-  consentimiento debe ser explícito, así que para las propiedades de España convendría invertir la casilla; queda
-  anotado para consultarlo con Wynwood House.
+- **Boletín con consentimiento explícito.** El Figma usa "No deseo suscribirme" (suscripción por defecto), pero el
+  GDPR (España) y la Ley 29733 (Perú) piden consentimiento libre e inequívoco. La casilla es "Quiero recibir…",
+  **desmarcada**, está **antes** del botón y se guarda la fecha del consentimiento (`marketing_consent_at`) como
+  prueba; retirarlo la borra. Se aplica a todos los países: una sola regla, la más estricta.
+- **El indicativo nunca se duplica.** Se guarda aparte del número; `987654321`, `+51 987654321`, `51987654321` y
+  `0051 987654321` quedan como `+51` + `987654321`. Si se escribe dos veces (`+51 51 987…`), el mensaje lo dice.
 
 **Fuera de alcance (documentado).** Servicios adicionales, datos de facturación, cuotas, Wynwood Points y
 Apple Pay/Google Pay (requieren una pasarela real).

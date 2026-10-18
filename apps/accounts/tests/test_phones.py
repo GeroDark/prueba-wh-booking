@@ -1,6 +1,7 @@
 from datetime import date
 
 import pytest
+from django.utils import translation
 
 from apps.accounts.phones import InvalidPhone, Phone, parse_phone, region_for_prefix
 from apps.accounts.validators import age_on, years_ago
@@ -38,3 +39,19 @@ def test_years_ago_and_age_handle_29_february():
     assert years_ago(date(2028, 2, 29), 18) == date(2010, 2, 28)
     assert age_on(date(2008, 2, 29), date(2026, 2, 28)) == 17
     assert age_on(date(2008, 2, 29), date(2026, 3, 1)) == 18
+
+
+@pytest.mark.parametrize(
+    "raw", ["+51 51 987654321", "+51 +51 987654321", "0051 51 987654321", "+34 34 612 345 678"]
+)
+def test_a_country_code_typed_twice_gets_its_own_message(raw):
+    with translation.override("en"), pytest.raises(InvalidPhone) as error:
+        parse_phone(raw, "PE")
+
+    with translation.override("en"):
+        assert "repeated" in str(error.value.message)
+
+
+@pytest.mark.parametrize("raw", ["+7 701 234 5678", "+1 212 555 0123", "+44 20 7946 0958"])
+def test_valid_numbers_starting_like_their_code_are_not_flagged(raw):
+    parse_phone(raw, "PE")

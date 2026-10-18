@@ -110,7 +110,7 @@ def test_card_form_accepts(data, card_number, exp):
         ({"cvc": "12"}, "cvc", "3 digits"),
         ({"cvc": "12a"}, "cvc", "3 digits"),
         ({"card_number": "378282246310005", "cvc": "123"}, "cvc", "4 digits"),  # Amex
-        ({"idempotency_key": "not-a-uuid"}, "idempotency_key", "UUID"),
+        ({"idempotency_key": "not-a-uuid"}, "idempotency_key", "form expired"),
     ],
 )
 def test_card_form_rejects(data, field, message):

@@ -76,10 +76,15 @@
 }
 
 .checkout__newsletter {
-  margin-top: 2.5rem;
-  padding-top: 2rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
   border-top: 1px solid var(--wh-gray-light);
   font-size: 0.875rem;
+}
+
+.checkout__newsletter-hint {
+  margin: 0.5rem 0 0 1.875rem;
+  color: var(--wh-gray);
 }
 
 .checkout__secure {

@@ -4,6 +4,8 @@
  * - The phone code follows the nationality until the guest picks a code themselves.
  * - Card number in groups of four with the brand shown while typing; expiry as MM/YY.
  * - The test cards of the simulated gateway fill the form with one click.
+ * - Demo only: a number that is not a test card is stopped here, so a real card number never
+ *   leaves the browser. Without JavaScript the server refuses it and stores nothing (D11).
  */
 (function () {
   "use strict";
@@ -51,6 +53,23 @@
 
   var BRAND_NAMES = { visa: "Visa", mastercard: "Mastercard", amex: "Amex" };
 
+  var testCards = Array.prototype.map.call(form.querySelectorAll("[data-test-card]"), function (button) {
+    return button.dataset.testCard.replace(/\D/g, "");
+  });
+  var demoNotice = form.querySelector("[data-demo-message]");
+
+  // Read by form-feedback.js: an invalid field blocks the submit and shows this message.
+  function guardDemo(digits) {
+    if (!demoNotice) return;
+    // While typing, the start of a test card ("4242 4242") is not flagged yet.
+    var realCard =
+      digits.length >= 12 &&
+      !testCards.some(function (card) {
+        return card.indexOf(digits) === 0;
+      });
+    number.setCustomValidity(realCard ? demoNotice.dataset.demoMessage : "");
+  }
+
   function groups(digits, brand) {
     // American Express prints 4-6-5; the others, groups of four.
     var sizes = brand === "amex" ? [4, 6, 5] : [4, 4, 4, 4, 3];
@@ -67,6 +86,7 @@
     var digits = number.value.replace(/\D/g, "").slice(0, 19);
     var brand = brandOf(digits);
     brandLabel.textContent = BRAND_NAMES[brand] || "";
+    guardDemo(digits);
     // Only reformat while typing at the end, so editing in the middle keeps the caret in place.
     if (number.selectionStart === number.value.length) number.value = groups(digits, brand);
   }

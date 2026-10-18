@@ -153,8 +153,13 @@ class GuestDetailsMixin:
             choices=[("", _("Code")), *region_choices()],
             error_messages={"required": _("Select the code."), "invalid_choice": INVALID_CHOICE},
         )
-        self.fields["no_newsletter"] = forms.BooleanField(
-            label=_("I do not want to subscribe to the Wynwood House newsletter"), required=False
+        # Explicit opt-in, unchecked by default (GDPR in Spain, Law 29733 in Peru; D36).
+        self.fields["newsletter"] = forms.BooleanField(
+            label=_(
+                "I want to receive exclusive member offers, inspiring content and news from "
+                "Wynwood House by email."
+            ),
+            required=False,
         )
 
         user = self.instance
@@ -162,7 +167,7 @@ class GuestDetailsMixin:
             "phone_region", region_for_prefix(user.phone_prefix) or user.nationality.code or ""
         )
         if user.pk:
-            self.initial.setdefault("no_newsletter", not user.marketing_opt_in)
+            self.initial.setdefault("newsletter", user.marketing_opt_in)
 
         today = timezone.localdate()
         # The browser's date picker opens on dates that can pass validation.
@@ -192,8 +197,8 @@ class GuestDetailsMixin:
             else:
                 cleaned["phone_number"] = phone.number
                 self.instance.phone_prefix = phone.prefix
-        if "no_newsletter" in cleaned:
-            self.instance.marketing_opt_in = not cleaned["no_newsletter"]
+        if "newsletter" in cleaned:
+            self.instance.set_marketing_consent(cleaned["newsletter"])
         return cleaned
 
 

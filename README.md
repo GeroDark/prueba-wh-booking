@@ -89,7 +89,7 @@ El origen y la licencia de cada imagen están en [seed/images/CREDITS.md](seed/i
 3. "Reservar ahora" retiene las fechas durante `BOOKING_HOLD_MINUTES` minutos (15) y abre el checkout con una
    cuenta regresiva. Mientras tanto, nadie más puede reservarlas. "Cambiar fechas" las libera al instante.
 4. **Paso 1, registro:** correo, contraseña, nombre y apellido, nacionalidad, teléfono (validado para el país) y fecha
-   de nacimiento (mayor de 18). Con sesión iniciada y el perfil completo, este paso se salta; "Iniciar sesión" vuelve
+   de nacimiento (mayor de 18). El boletín es opcional y se activa solo si se marca la casilla. Con sesión iniciada y el perfil completo, este paso se salta; "Iniciar sesión" vuelve
    al mismo checkout.
 5. **Paso 2, pago simulado.** No se cobra nada ni se guardan datos de tarjeta (solo marca y últimos 4 dígitos).
    Las tarjetas de prueba aparecen en la página y se completan con un clic:
@@ -99,7 +99,7 @@ El origen y la licencia de cada imagen están en [seed/images/CREDITS.md](seed/i
    | `4242 4242 4242 4242` (Visa), `5555 5555 5555 4444` (Mastercard), `3782 822463 10005` (Amex) | Aprobada |
    | `4000 0000 0000 0002` | Rechazada |
    | `4000 0000 0000 9995` | Fondos insuficientes |
-   | Cualquier otra tarjeta válida | Rechazada con aviso de demo |
+   | Cualquier otra tarjeta | No se envía: el navegador la detiene con un aviso de demo (sin JavaScript, la rechaza el servidor) |
 
    Vencimiento: cualquier fecha futura. Código de seguridad: 3 dígitos (4 en American Express).
 6. **Confirmación** (`/es/bookings/<referencia>/`): solo la ve quien reservó. Muestra la dirección exacta, el mapa con

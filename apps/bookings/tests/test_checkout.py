@@ -89,7 +89,7 @@ def test_a_new_visitor_sees_the_sign_up_with_personal_details(client, prop):
 
     for name in ("email", "password", "full_name", "nationality", "phone_region", "phone_number"):
         assert f'name="{name}"' in html
-    assert "No deseo suscribirme al boletín" in html
+    assert "Quiero recibir por correo ofertas exclusivas" in html
     assert "Al seleccionar Continuar, aceptas" in html
 
 
@@ -104,16 +104,29 @@ def test_signing_up_creates_the_account_logs_in_and_claims_the_hold(client, prop
     assert booking.guest == user
     assert (user.phone_prefix, user.phone_number) == ("+51", "987654321")
     assert user.nationality.code == "PE"
-    assert user.marketing_opt_in  # the design's checkbox is "I do NOT want" the newsletter
+    assert not user.marketing_opt_in  # explicit consent only (D36)
+    assert user.marketing_consent_at is None
     assert "Información de pago" in client.get(checkout_url(booking)).text
 
 
-def test_the_newsletter_opt_out_is_respected(client, prop):
+def test_the_newsletter_needs_an_explicit_tick_and_keeps_its_date(client, prop):
     booking = hold(client, prop)
+    html = client.get(checkout_url(booking)).text
+    assert 'name="newsletter"' in html and 'name="newsletter" checked' not in html
 
-    client.post(checkout_url(booking), guest_data(no_newsletter="on"))
+    client.post(checkout_url(booking), guest_data(newsletter="on"))
 
-    assert not User.objects.get().marketing_opt_in
+    user = User.objects.get()
+    assert user.marketing_opt_in
+    assert user.marketing_consent_at is not None
+
+
+def test_withdrawing_the_consent_clears_its_date():
+    user = User(marketing_opt_in=True, marketing_consent_at=timezone.now())
+
+    user.set_marketing_consent(False)
+
+    assert (user.marketing_opt_in, user.marketing_consent_at) == (False, None)
 
 
 def test_a_number_typed_with_its_own_prefix_keeps_it(client, prop):
@@ -338,3 +351,46 @@ def test_an_idempotency_key_of_another_booking_is_refused(client, prop):
 
     assert response.status_code == 400
     assert not second.payments.exists()
+
+
+@pytest.mark.parametrize(
+    "typed",
+    ["+51 987654321", "51987654321", "0051 987 654 321", "(+51) 987-654-321"],
+)
+def test_the_country_code_is_never_stored_twice(client, prop, typed):
+    booking = hold(client, prop)
+
+    client.post(checkout_url(booking), guest_data(phone_number=typed))
+
+    user = User.objects.get()
+    assert (user.phone_prefix, user.phone_number) == ("+51", "987654321")
+    assert user.phone == "+51 987654321"
+
+
+@pytest.mark.parametrize("typed", ["+51 51 987654321", "+51 +51 987654321", "5151987654321"])
+def test_a_repeated_country_code_is_explained(client, prop, typed):
+    booking = hold(client, prop)
+
+    response = client.post(checkout_url(booking), guest_data(phone_number=typed))
+
+    assert "indicativo está repetido" in " ".join(response.context["form"].errors["phone_number"])
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("email", f"{'a' * 300}@mail.com"),
+        ("full_name", "Ana " + "b" * 200),
+        ("phone_number", "9" * 30),
+        ("card_number", "4" * 40),
+    ],
+)
+def test_oversized_values_sent_around_the_browser_are_refused(client, prop, field, value):
+    if field == "card_number":
+        client.force_login(complete_guest())
+        response = pay(client, hold(client, prop), number=value)
+    else:
+        response = client.post(checkout_url(hold(client, prop)), guest_data(**{field: value}))
+
+    assert "Usa como máximo" in " ".join(response.context["form"].errors[field])
+    assert "Asegúrese" not in response.text

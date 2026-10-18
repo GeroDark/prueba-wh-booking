@@ -71,16 +71,17 @@
             </div>
           </section>
 
+          {# Explicit, unticked consent, seen before the button (D36). #}
+          <div class="checkout__newsletter">
+            <div class="form-check-wh">
+              {{ form.newsletter }}
+              <label for="{{ form.newsletter.id_for_label }}">{{ form.newsletter.label }}</label>
+            </div>
+            <p class="checkout__newsletter-hint">{% translate "Optional. You can unsubscribe at any time from any email you receive." %}</p>
+          </div>
+
           {% include "components/terms_notice.html" with button=continue_label %}
           <button type="submit" class="btn btn-wh checkout__submit" data-submit-once>{{ continue_label }}</button>
-
-          <div class="checkout__newsletter">
-            <p>{% translate "Wynwood House will send you exclusive member offers, inspiring content, marketing emails and push notifications. You can opt out at any time from your account settings or directly from any notification you receive." %}</p>
-            <div class="form-check-wh">
-              {{ form.no_newsletter }}
-              <label for="{{ form.no_newsletter.id_for_label }}">{{ form.no_newsletter.label }}</label>
-            </div>
-          </div>
 
         {% else %}
           {# Step 2 (Figma "Página de pago"). #}
@@ -115,7 +116,7 @@
             </div>
 
             {% if test_cards %}
-              <div class="test-cards">
+              <div class="test-cards" data-demo-message="{% translate 'This is a demo: use one of the test cards. Real cards are not accepted.' %}">
                 <p class="test-cards__title">
                   <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/credit-card.svg' %}" alt="" width="16" height="16">
                   {% translate "Test cards" %}
