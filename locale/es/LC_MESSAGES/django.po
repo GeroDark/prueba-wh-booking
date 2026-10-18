@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 00:42-0500\n"
+"POT-Creation-Date: 2026-10-18 01:50-0500\n"
+"PO-Revision-Date: 2026-10-18 02:00-0500\n"
+"Last-Translator: WH Booking\n"
+"Language-Team: Spanish\n"
 "Language: es\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: apps/accounts/admin.py:33
@@ -82,15 +88,564 @@ msgstr "usuarios"
 msgid "An account with this email already exists."
 msgstr "Ya existe una cuenta con este correo electrónico."
 
+#: apps/core/admin.py:26
+msgid "Wynwood House administration"
+msgstr "Administración de Wynwood House"
+
+#: apps/core/admin.py:28
+msgid "Content and bookings"
+msgstr "Contenido y reservas"
+
+#: apps/core/admin.py:62
+msgid "Contact"
+msgstr "Contacto"
+
+#: apps/core/admin.py:63
+msgid "Mobile app"
+msgstr "App móvil"
+
+#: apps/core/admin.py:71
+msgid "Hero"
+msgstr "Portada"
+
+#: apps/core/admin.py:72
+msgid "Destinations"
+msgstr "Destinos"
+
+#: apps/core/admin.py:73
+msgid "Featured properties"
+msgstr "Propiedades destacadas"
+
+#: apps/core/admin.py:76 apps/core/admin.py:103 apps/properties/admin.py:69
+msgid "preview"
+msgstr "vista previa"
+
+#: apps/core/admin.py:88
+msgid "Button"
+msgstr "Botón"
+
+#: apps/core/admin.py:89 apps/properties/admin.py:99
+msgid "Visibility"
+msgstr "Visibilidad"
+
+#: apps/core/admin.py:92 apps/core/models.py:109 apps/core/models.py:157
+#: apps/properties/admin.py:24 apps/properties/models.py:27
+#: apps/properties/models.py:202
+msgid "image"
+msgstr "imagen"
+
+#: apps/core/admin.py:113
+msgid "items"
+msgstr "ítems"
+
 #: apps/core/apps.py:7
 msgid "Site content"
 msgstr "Contenido del sitio"
 
-#: config/settings.py:113
+#: apps/core/constants.py:13
+msgid "Colombia"
+msgstr "Colombia"
+
+#: apps/core/constants.py:14
+msgid "Spain"
+msgstr "España"
+
+#: apps/core/constants.py:15
+msgid "Italy"
+msgstr "Italia"
+
+#: apps/core/constants.py:16
+msgid "Mexico"
+msgstr "México"
+
+#: apps/core/constants.py:17
+msgid "Panama"
+msgstr "Panamá"
+
+#: apps/core/constants.py:18
+msgid "Peru"
+msgstr "Perú"
+
+#: apps/core/constants.py:19
+msgid "United States"
+msgstr "Estados Unidos"
+
+#: apps/core/models.py:12
+msgid "created at"
+msgstr "creado"
+
+#: apps/core/models.py:13
+msgid "updated at"
+msgstr "actualizado"
+
+#: apps/core/models.py:44
+msgid "contact email"
+msgstr "correo de contacto"
+
+#: apps/core/models.py:46
+msgid "WhatsApp number"
+msgstr "número de WhatsApp"
+
+#: apps/core/models.py:50
+msgid ""
+"International format, e.g. +51 947 022 549. Used by the 'Contact us' buttons."
+msgstr ""
+"Formato internacional, por ejemplo +51 947 022 549. Lo usan los botones "
+"«Contáctanos»."
+
+#: apps/core/models.py:54
+msgid "WhatsApp message"
+msgstr "mensaje de WhatsApp"
+
+#: apps/core/models.py:57
+msgid "Text pre-filled in the chat opened by the 'Contact us' buttons."
+msgstr "Texto precargado en el chat que abren los botones «Contáctanos»."
+
+#: apps/core/models.py:59
+msgid "App Store URL"
+msgstr "URL de App Store"
+
+#: apps/core/models.py:60
+msgid "Google Play URL"
+msgstr "URL de Google Play"
+
+#: apps/core/models.py:63 apps/core/models.py:64
+msgid "site settings"
+msgstr "configuración del sitio"
+
+#: apps/core/models.py:67
+msgid "Site settings"
+msgstr "Configuración del sitio"
+
+#: apps/core/models.py:79
+msgid "hero title"
+msgstr "título de portada"
+
+#: apps/core/models.py:80
+msgid "hero subtitle"
+msgstr "subtítulo de portada"
+
+#: apps/core/models.py:81
+msgid "hero image"
+msgstr "imagen de portada"
+
+#: apps/core/models.py:82
+msgid "destinations title"
+msgstr "título de destinos"
+
+#: apps/core/models.py:83
+msgid "featured properties title"
+msgstr "título de propiedades destacadas"
+
+#: apps/core/models.py:84
+msgid "featured properties text"
+msgstr "texto de propiedades destacadas"
+
+#: apps/core/models.py:87 apps/core/models.py:88
+msgid "home page"
+msgstr "página de inicio"
+
+#: apps/core/models.py:91
+msgid "Home page"
+msgstr "Página de inicio"
+
+#: apps/core/models.py:96
+msgid "Image on the left"
+msgstr "Imagen a la izquierda"
+
+#: apps/core/models.py:97
+msgid "Image on the right"
+msgstr "Imagen a la derecha"
+
+#: apps/core/models.py:98
+msgid "Full-width background image"
+msgstr "Imagen de fondo a todo el ancho"
+
+#: apps/core/models.py:101
+msgid "Link"
+msgstr "Enlace"
+
+#: apps/core/models.py:102
+msgid "WhatsApp chat (site settings)"
+msgstr "Chat de WhatsApp (configuración del sitio)"
+
+#: apps/core/models.py:105 apps/core/models.py:138
+msgid "key"
+msgstr "clave"
+
+#: apps/core/models.py:105
+msgid "Identifier used by the templates, e.g. long-stay."
+msgstr "Identificador que usan las plantillas, por ejemplo long-stay."
+
+#: apps/core/models.py:107 apps/core/models.py:139 apps/core/models.py:155
+#: apps/core/models.py:177 apps/properties/models.py:126
+msgid "title"
+msgstr "título"
+
+#: apps/core/models.py:108 apps/core/models.py:140
+msgid "text"
+msgstr "texto"
+
+#: apps/core/models.py:110
+msgid "layout"
+msgstr "diseño"
+
+#: apps/core/models.py:111
+msgid "button label"
+msgstr "texto del botón"
+
+#: apps/core/models.py:113
+msgid "button action"
+msgstr "acción del botón"
+
+#: apps/core/models.py:116
+msgid "button URL"
+msgstr "URL del botón"
+
+#: apps/core/models.py:116
+msgid "Only for the 'Link' action."
+msgstr "Solo para la acción «Enlace»."
+
+#: apps/core/models.py:118 apps/core/models.py:158 apps/core/models.py:178
+#: apps/core/models.py:197 apps/core/models.py:220 apps/core/models.py:255
+#: apps/properties/models.py:28 apps/properties/models.py:110
+#: apps/properties/models.py:208 apps/properties/models.py:232
+msgid "order"
+msgstr "orden"
+
+#: apps/core/models.py:119 apps/core/models.py:141 apps/core/models.py:179
+#: apps/core/models.py:221 apps/core/models.py:256 apps/properties/models.py:29
+#: apps/properties/models.py:56 apps/properties/models.py:162
+#: apps/properties/models.py:233
+msgid "active"
+msgstr "activo"
+
+#: apps/core/models.py:122
+msgid "banner"
+msgstr "banner"
+
+#: apps/core/models.py:123
+msgid "banners"
+msgstr "banners"
+
+#: apps/core/models.py:144
+msgid "feature section"
+msgstr "sección destacada"
+
+#: apps/core/models.py:145
+msgid "feature sections"
+msgstr "secciones destacadas"
+
+#: apps/core/models.py:153
+msgid "section"
+msgstr "sección"
+
+#: apps/core/models.py:156 apps/properties/models.py:128
+msgid "description"
+msgstr "descripción"
+
+#: apps/core/models.py:161
+msgid "feature item"
+msgstr "ítem de sección"
+
+#: apps/core/models.py:162
+msgid "feature items"
+msgstr "ítems de sección"
+
+#: apps/core/models.py:173
+msgid "Header"
+msgstr "Encabezado"
+
+#: apps/core/models.py:174
+msgid "Footer"
+msgstr "Pie de página"
+
+#: apps/core/models.py:176
+msgid "placement"
+msgstr "ubicación"
+
+#: apps/core/models.py:182 apps/core/models.py:192
+msgid "menu"
+msgstr "menú"
+
+#: apps/core/models.py:183
+msgid "menus"
+msgstr "menús"
+
+#: apps/core/models.py:194 apps/core/models.py:215
+msgid "label"
+msgstr "etiqueta"
+
+#: apps/core/models.py:195 apps/core/models.py:254
+msgid "URL"
+msgstr "URL"
+
+#: apps/core/models.py:196
+msgid "open in a new tab"
+msgstr "abrir en una pestaña nueva"
+
+#: apps/core/models.py:200
+msgid "link"
+msgstr "enlace"
+
+#: apps/core/models.py:201
+msgid "links"
+msgstr "enlaces"
+
+#: apps/core/models.py:211
+msgid "Phone"
+msgstr "Teléfono"
+
+#: apps/core/models.py:212
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: apps/core/models.py:214
+msgid "type"
+msgstr "tipo"
+
+#: apps/core/models.py:216
+msgid "value"
+msgstr "valor"
+
+#: apps/core/models.py:218
+msgid "country flag"
+msgstr "bandera"
+
+#: apps/core/models.py:224
+msgid "contact channel"
+msgstr "canal de contacto"
+
+#: apps/core/models.py:225
+msgid "contact channels"
+msgstr "canales de contacto"
+
+#: apps/core/models.py:253
+msgid "network"
+msgstr "red"
+
+#: apps/core/models.py:259
+msgid "social network"
+msgstr "red social"
+
+#: apps/core/models.py:260
+msgid "social networks"
+msgstr "redes sociales"
+
+#: apps/properties/admin.py:95
+msgid "Location"
+msgstr "Ubicación"
+
+#: apps/properties/admin.py:96
+msgid "Capacity"
+msgstr "Capacidad"
+
+#: apps/properties/admin.py:97
+msgid "Pricing"
+msgstr "Precios"
+
+#: apps/properties/admin.py:98
+msgid "Amenities"
+msgstr "Comodidades"
+
+#: apps/properties/admin.py:105
+msgid "photos"
+msgstr "fotos"
+
+#: apps/properties/apps.py:7
+msgid "Properties"
+msgstr "Propiedades"
+
+#: apps/properties/models.py:20
+#, python-format
+msgid "“%(value)s” is not a valid time zone."
+msgstr "«%(value)s» no es una zona horaria válida."
+
+#: apps/properties/models.py:24
+msgid "ISO code"
+msgstr "código ISO"
+
+#: apps/properties/models.py:25 apps/properties/models.py:48
+#: apps/properties/models.py:75 apps/properties/models.py:108
+#: apps/properties/models.py:225
+msgid "name"
+msgstr "nombre"
+
+#: apps/properties/models.py:26 apps/properties/models.py:49
+#: apps/properties/models.py:76 apps/properties/models.py:127
+msgid "slug"
+msgstr "slug"
+
+#: apps/properties/models.py:32 apps/properties/models.py:46
+#: apps/properties/models.py:223
+msgid "country"
+msgstr "país"
+
+#: apps/properties/models.py:33
+msgid "countries"
+msgstr "países"
+
+#: apps/properties/models.py:51
+msgid "time zone"
+msgstr "zona horaria"
+
+#: apps/properties/models.py:54
+msgid "IANA name, e.g. America/Bogota. Decides which dates are in the past."
+msgstr "Nombre IANA, por ejemplo America/Bogota. Define qué fechas ya pasaron."
+
+#: apps/properties/models.py:59 apps/properties/models.py:73
+msgid "city"
+msgstr "ciudad"
+
+#: apps/properties/models.py:60
+msgid "cities"
+msgstr "ciudades"
+
+#: apps/properties/models.py:79 apps/properties/models.py:130
+msgid "district"
+msgstr "distrito"
+
+#: apps/properties/models.py:80
+msgid "districts"
+msgstr "distritos"
+
+#: apps/properties/models.py:96
+msgid "Air conditioning"
+msgstr "Aire acondicionado"
+
+#: apps/properties/models.py:97
+msgid "Kitchen"
+msgstr "Cocina"
+
+#: apps/properties/models.py:98
+msgid "Workspace"
+msgstr "Zona de trabajo"
+
+#: apps/properties/models.py:99
+msgid "Parking"
+msgstr "Estacionamiento"
+
+#: apps/properties/models.py:100
+msgid "Elevator"
+msgstr "Ascensor"
+
+#: apps/properties/models.py:101
+msgid "Security"
+msgstr "Seguridad"
+
+#: apps/properties/models.py:102
+msgid "Terrace"
+msgstr "Terraza"
+
+#: apps/properties/models.py:103
+msgid "Pool"
+msgstr "Piscina"
+
+#: apps/properties/models.py:104
+msgid "Grill"
+msgstr "Parrilla"
+
+#: apps/properties/models.py:105
+msgid "Gym"
+msgstr "Gimnasio"
+
+#: apps/properties/models.py:106
+msgid "Self check-in"
+msgstr "Check-in autónomo"
+
+#: apps/properties/models.py:109
+msgid "icon"
+msgstr "ícono"
+
+#: apps/properties/models.py:113
+msgid "amenity"
+msgstr "comodidad"
+
+#: apps/properties/models.py:114 apps/properties/models.py:159
+msgid "amenities"
+msgstr "comodidades"
+
+#: apps/properties/models.py:132
+msgid "address"
+msgstr "dirección"
+
+#: apps/properties/models.py:134
+msgid "latitude"
+msgstr "latitud"
+
+#: apps/properties/models.py:137
+msgid "longitude"
+msgstr "longitud"
+
+#: apps/properties/models.py:140
+msgid "maximum guests"
+msgstr "huéspedes máximos"
+
+#: apps/properties/models.py:142
+msgid "bedrooms"
+msgstr "habitaciones"
+
+#: apps/properties/models.py:143
+msgid "beds"
+msgstr "camas"
+
+#: apps/properties/models.py:144
+msgid "bathrooms"
+msgstr "baños"
+
+#: apps/properties/models.py:146
+msgid "price per night"
+msgstr "precio por noche"
+
+#: apps/properties/models.py:152
+msgid "cleaning fee"
+msgstr "tarifa de limpieza"
+
+#: apps/properties/models.py:161
+msgid "featured"
+msgstr "destacada"
+
+#: apps/properties/models.py:167 apps/properties/models.py:200
+msgid "property"
+msgstr "propiedad"
+
+#: apps/properties/models.py:168
+msgid "properties"
+msgstr "propiedades"
+
+#: apps/properties/models.py:204
+msgid "alternative text"
+msgstr "texto alternativo"
+
+#: apps/properties/models.py:206
+msgid "Describes the photo for screen readers and when it cannot load."
+msgstr "Describe la foto para lectores de pantalla y para cuando no carga."
+
+#: apps/properties/models.py:211
+msgid "property image"
+msgstr "foto de propiedad"
+
+#: apps/properties/models.py:212
+msgid "property images"
+msgstr "fotos de propiedad"
+
+#: apps/properties/models.py:227
+msgid "rate (%)"
+msgstr "tasa (%)"
+
+#: apps/properties/models.py:236
+msgid "tax"
+msgstr "impuesto"
+
+#: apps/properties/models.py:237
+msgid "taxes"
+msgstr "impuestos"
+
+#: config/settings.py:116
 msgid "English"
 msgstr "Inglés"
 
-#: config/settings.py:114
+#: config/settings.py:117
 msgid "Spanish"
 msgstr "Español"
 
@@ -110,7 +665,7 @@ msgstr "Saltar al contenido"
 msgid "All rights reserved."
 msgstr "Todos los derechos reservados."
 
-#: templates/components/language_switcher.html:7
+#: templates/components/language_switcher.html:3
 msgid "Language"
 msgstr "Idioma"
 
