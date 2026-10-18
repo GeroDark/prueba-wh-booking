@@ -2,7 +2,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  margin: 0;
+}
+
+.lang-switch__form {
+  display: contents;
 }
 
 .lang-switch__option {

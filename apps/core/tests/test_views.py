@@ -35,6 +35,32 @@ def test_language_switch_redirects_to_the_same_page_in_the_new_language(client):
     assert response.cookies[settings.LANGUAGE_COOKIE_NAME].value == "en"
 
 
+@pytest.mark.parametrize(
+    ("page", "browser_language", "target", "expected"),
+    [
+        ("/en/", "es", "es", "/es/"),
+        ("/es/", "en", "en", "/en/"),
+        ("/en/?city=bogota", "es", "es", "/es/?city=bogota"),
+    ],
+)
+def test_switching_language_works_when_browser_language_differs_from_the_page(
+    client, page, browser_language, target, expected
+):
+    """Regression: with no language cookie, set_language could not translate `next`
+    when the browser's Accept-Language differed from the page prefix."""
+    html = client.get(page, HTTP_ACCEPT_LANGUAGE=browser_language).text
+    forms = re.findall(r'name="next" value="([^"]+)">\s*<button[^>]*value="(\w+)"', html)
+    next_url = dict((language, url) for url, language in forms)[target]
+
+    response = client.post(
+        "/i18n/setlang/",
+        {"language": target, "next": next_url},
+        HTTP_ACCEPT_LANGUAGE=browser_language,
+    )
+
+    assert response["Location"] == expected
+
+
 def test_language_switcher_marks_the_active_language(client):
     html = client.get("/en/").text
 
