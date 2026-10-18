@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 02:54-0500\n"
+"POT-Creation-Date: 2026-10-18 10:54-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -88,7 +88,7 @@ msgstr "usuarios"
 msgid "An account with this email already exists."
 msgstr "Ya existe una cuenta con este correo electrónico."
 
-#: apps/bookings/admin.py:18
+#: apps/bookings/admin.py:42
 msgid "nights"
 msgstr "noches"
 
@@ -96,89 +96,221 @@ msgstr "noches"
 msgid "Bookings"
 msgstr "Reservas"
 
-#: apps/bookings/models.py:26
+#: apps/bookings/forms.py:12 apps/properties/forms.py:55
+msgid "Check-in"
+msgstr "Llegada"
+
+#: apps/bookings/forms.py:14 apps/properties/forms.py:58
+msgid "Check-out"
+msgstr "Salida"
+
+#: apps/bookings/forms.py:16 apps/properties/forms.py:61
+#: templates/components/booking_card.html:53
+#: templates/components/booking_summary.html:19
+#: templates/components/property_card.html:22
+#: templates/components/property_card.html:24
+#: templates/components/property_card.html:34
+msgid "Guests"
+msgstr "Huéspedes"
+
+#: apps/bookings/models.py:28
 msgid "Pending payment"
 msgstr "Pendiente de pago"
 
-#: apps/bookings/models.py:27
+#: apps/bookings/models.py:29
 msgid "Confirmed"
 msgstr "Confirmada"
 
-#: apps/bookings/models.py:28
+#: apps/bookings/models.py:30
 msgid "Expired"
 msgstr "Vencida"
 
-#: apps/bookings/models.py:29
+#: apps/bookings/models.py:31
 msgid "Cancelled"
 msgstr "Cancelada"
 
-#: apps/bookings/models.py:32
+#: apps/bookings/models.py:34
 msgid "reference"
 msgstr "referencia"
 
-#: apps/bookings/models.py:38 apps/properties/models.py:167
+#: apps/bookings/models.py:40 apps/properties/models.py:167
 #: apps/properties/models.py:210
 msgid "property"
 msgstr "propiedad"
 
-#: apps/bookings/models.py:46
+#: apps/bookings/models.py:48
 msgid "guest"
 msgstr "huésped"
 
-#: apps/bookings/models.py:47
+#: apps/bookings/models.py:49
 msgid "Empty while an anonymous visitor holds the dates during checkout."
 msgstr ""
 "Vacío mientras un visitante sin cuenta retiene las fechas durante el "
 "checkout."
 
-#: apps/bookings/models.py:50
+#: apps/bookings/models.py:52
 msgid "status"
 msgstr "estado"
 
-#: apps/bookings/models.py:52
+#: apps/bookings/models.py:54
 msgid "check-in"
 msgstr "llegada"
 
-#: apps/bookings/models.py:53
+#: apps/bookings/models.py:55
 msgid "check-out"
 msgstr "salida"
 
-#: apps/bookings/models.py:54
+#: apps/bookings/models.py:56
 msgid "guests"
 msgstr "huéspedes"
 
-#: apps/bookings/models.py:56
+#: apps/bookings/models.py:58
 msgid "hold expires at"
 msgstr "la retención vence"
 
-#: apps/bookings/models.py:59
+#: apps/bookings/models.py:61
 msgid "Pending bookings stop blocking their dates after this moment."
 msgstr ""
 "Las reservas pendientes dejan de bloquear sus fechas después de este momento."
 
-#: apps/bookings/models.py:61
+#: apps/bookings/models.py:63
 msgid "currency"
 msgstr "moneda"
 
-#: apps/bookings/models.py:63
+#: apps/bookings/models.py:65
+msgid "total"
+msgstr "total"
+
+#: apps/bookings/models.py:69
+msgid "Snapshot at booking time: later price changes do not affect it."
+msgstr ""
+"Valor fijado al reservar: los cambios de precio posteriores no lo afectan."
+
+#: apps/bookings/models.py:72
 msgid "language"
 msgstr "idioma"
 
-#: apps/bookings/models.py:65
+#: apps/bookings/models.py:74
 msgid "confirmed at"
 msgstr "confirmada el"
 
-#: apps/bookings/models.py:70
+#: apps/bookings/models.py:79 apps/bookings/models.py:121
 msgid "booking"
 msgstr "reserva"
 
-#: apps/bookings/models.py:71
+#: apps/bookings/models.py:80
 msgid "bookings"
 msgstr "reservas"
 
-#: apps/bookings/models.py:78
+#: apps/bookings/models.py:87
 msgid "Check-out must be after check-in."
 msgstr "La salida debe ser posterior a la llegada."
+
+#: apps/bookings/models.py:116
+msgid "Nights"
+msgstr "Noches"
+
+#: apps/bookings/models.py:117
+msgid "Cleaning"
+msgstr "Limpieza"
+
+#: apps/bookings/models.py:118
+msgid "Tax"
+msgstr "Impuesto"
+
+#: apps/bookings/models.py:123 apps/core/models.py:227
+msgid "type"
+msgstr "tipo"
+
+#: apps/bookings/models.py:124 apps/core/models.py:207 apps/core/models.py:228
+msgid "label"
+msgstr "etiqueta"
+
+#: apps/bookings/models.py:125
+msgid "amount"
+msgstr "monto"
+
+#: apps/bookings/models.py:126 apps/core/models.py:131 apps/core/models.py:171
+#: apps/core/models.py:191 apps/core/models.py:210 apps/core/models.py:233
+#: apps/core/models.py:268 apps/properties/models.py:28
+#: apps/properties/models.py:110 apps/properties/models.py:218
+#: apps/properties/models.py:242
+msgid "order"
+msgstr "orden"
+
+#: apps/bookings/models.py:129
+msgid "price line"
+msgstr "línea de precio"
+
+#: apps/bookings/models.py:130
+msgid "price lines"
+msgstr "líneas de precio"
+
+#: apps/bookings/pricing.py:65
+#, python-format
+msgid "%(price)s × %(count)d night"
+msgid_plural "%(price)s × %(count)d nights"
+msgstr[0] "%(price)s × %(count)d noche"
+msgstr[1] "%(price)s × %(count)d noches"
+
+#: apps/bookings/pricing.py:76
+msgid "Cleaning fee"
+msgstr "Tarifa de limpieza"
+
+#: apps/bookings/services.py:27
+msgid "These dates are no longer available. Please choose other dates."
+msgstr "Estas fechas ya no están disponibles. Por favor elige otras fechas."
+
+#: apps/bookings/services.py:37 apps/properties/forms.py:107
+msgid "Arrival cannot be in the past."
+msgstr "La llegada no puede ser una fecha pasada."
+
+#: apps/bookings/services.py:40
+#, python-format
+msgid "Bookings open up to %(days)d days in advance."
+msgstr "Las reservas se abren con hasta %(days)d días de anticipación."
+
+#: apps/bookings/services.py:47 apps/properties/forms.py:109
+msgid "Departure must be after arrival."
+msgstr "La salida debe ser posterior a la llegada."
+
+#: apps/bookings/services.py:51
+#, python-format
+msgid ""
+"Online bookings are limited to %(count)d night. For longer stays, contact us "
+"for a monthly rate."
+msgid_plural ""
+"Online bookings are limited to %(count)d nights. For longer stays, contact "
+"us for a monthly rate."
+msgstr[0] ""
+"Las reservas en línea tienen un máximo de %(count)d noche. Para estadías más "
+"largas, escríbenos y te ofrecemos una tarifa mensual."
+msgstr[1] ""
+"Las reservas en línea tienen un máximo de %(count)d noches. Para estadías "
+"más largas, escríbenos y te ofrecemos una tarifa mensual."
+
+#: apps/bookings/services.py:62
+msgid "At least one guest is required."
+msgstr "Debe haber al menos un huésped."
+
+#: apps/bookings/services.py:66
+#, python-format
+msgid "This property hosts up to %(count)d guest."
+msgid_plural "This property hosts up to %(count)d guests."
+msgstr[0] "Esta propiedad admite hasta %(count)d huésped."
+msgstr[1] "Esta propiedad admite hasta %(count)d huéspedes."
+
+#: apps/bookings/views.py:82
+msgid "This booking is already confirmed."
+msgstr "Esta reserva ya está confirmada."
+
+#: apps/bookings/views.py:87
+msgid ""
+"Your time to complete the booking ran out and the dates were released. Check "
+"if they are still available and try again."
+msgstr ""
+"Se acabó el tiempo para completar la reserva y las fechas se liberaron. "
+"Revisa si siguen disponibles e inténtalo de nuevo."
 
 #: apps/core/admin.py:25
 msgid "Wynwood House administration"
@@ -410,13 +542,6 @@ msgstr ""
 "Solo para la acción WhatsApp: texto precargado en el chat. Si queda vacío, "
 "se usa el mensaje general de la configuración del sitio."
 
-#: apps/core/models.py:131 apps/core/models.py:171 apps/core/models.py:191
-#: apps/core/models.py:210 apps/core/models.py:233 apps/core/models.py:268
-#: apps/properties/models.py:28 apps/properties/models.py:110
-#: apps/properties/models.py:218 apps/properties/models.py:242
-msgid "order"
-msgstr "orden"
-
 #: apps/core/models.py:132 apps/core/models.py:154 apps/core/models.py:192
 #: apps/core/models.py:234 apps/core/models.py:269 apps/properties/models.py:29
 #: apps/properties/models.py:56 apps/properties/models.py:162
@@ -476,10 +601,6 @@ msgstr "menú"
 msgid "menus"
 msgstr "menús"
 
-#: apps/core/models.py:207 apps/core/models.py:228
-msgid "label"
-msgstr "etiqueta"
-
 #: apps/core/models.py:208 apps/core/models.py:267
 msgid "URL"
 msgstr "URL"
@@ -503,10 +624,6 @@ msgstr "Teléfono"
 #: apps/core/models.py:225
 msgid "Email"
 msgstr "Correo electrónico"
-
-#: apps/core/models.py:227
-msgid "type"
-msgstr "tipo"
 
 #: apps/core/models.py:229
 msgid "value"
@@ -536,7 +653,7 @@ msgstr "red social"
 msgid "social networks"
 msgstr "redes sociales"
 
-#: apps/properties/admin.py:95
+#: apps/properties/admin.py:95 templates/pages/property_detail.html:75
 msgid "Location"
 msgstr "Ubicación"
 
@@ -548,7 +665,7 @@ msgstr "Capacidad"
 msgid "Pricing"
 msgstr "Precios"
 
-#: apps/properties/admin.py:98
+#: apps/properties/admin.py:98 templates/pages/property_detail.html:60
 msgid "Amenities"
 msgstr "Comodidades"
 
@@ -572,20 +689,6 @@ msgstr "Distrito"
 msgid "All districts"
 msgstr "Todos los distritos"
 
-#: apps/properties/forms.py:55
-msgid "Check-in"
-msgstr "Llegada"
-
-#: apps/properties/forms.py:58
-msgid "Check-out"
-msgstr "Salida"
-
-#: apps/properties/forms.py:61 templates/components/property_card.html:22
-#: templates/components/property_card.html:24
-#: templates/components/property_card.html:34
-msgid "Guests"
-msgstr "Huéspedes"
-
 #: apps/properties/forms.py:65
 msgid "Number of guests"
 msgstr "Número de huéspedes"
@@ -597,14 +700,6 @@ msgstr "Este distrito no pertenece a la ciudad elegida."
 #: apps/properties/forms.py:103
 msgid "Choose both arrival and departure."
 msgstr "Elige la fecha de llegada y la de salida."
-
-#: apps/properties/forms.py:107
-msgid "Arrival cannot be in the past."
-msgstr "La llegada no puede ser una fecha pasada."
-
-#: apps/properties/forms.py:109
-msgid "Departure must be after arrival."
-msgstr "La salida debe ser posterior a la llegada."
 
 #: apps/properties/models.py:20
 #, python-format
@@ -787,7 +882,7 @@ msgstr "impuesto"
 msgid "taxes"
 msgstr "impuestos"
 
-#: apps/properties/views.py:65
+#: apps/properties/views.py:76
 #, python-format
 msgid "%(count)d guest"
 msgid_plural "%(count)d guests"
@@ -814,6 +909,106 @@ msgstr ""
 msgid "Skip to content"
 msgstr "Saltar al contenido"
 
+#: templates/components/booking_card.html:11
+msgid "Daily"
+msgstr "Diario"
+
+#: templates/components/booking_card.html:15
+msgid "Monthly"
+msgstr "Mensual"
+
+#: templates/components/booking_card.html:22
+#: templates/pages/property_detail.html:96
+msgid "per night"
+msgstr "por noche"
+
+#: templates/components/booking_card.html:36
+#: templates/components/search_bar.html:33
+msgid "Add dates"
+msgstr "Agregar fechas"
+
+#: templates/components/booking_card.html:39
+msgid "Those dates include nights that are already booked."
+msgstr "Esas fechas incluyen noches que ya están reservadas."
+
+#: templates/components/booking_card.html:40
+#: templates/components/search_bar.html:36
+msgid "Check-in - Check-out"
+msgstr "Llegada - Salida"
+
+#: templates/components/booking_card.html:56
+#, python-format
+msgid "Up to %(counter)s guest"
+msgid_plural "Up to %(counter)s guests"
+msgstr[0] "Hasta %(counter)s huésped"
+msgstr[1] "Hasta %(counter)s huéspedes"
+
+#: templates/components/booking_card.html:61
+#: templates/components/booking_card.html:67
+#: templates/components/booking_summary.html:26
+msgid "Total"
+msgstr "Total"
+
+#: templates/components/booking_card.html:72
+msgid "Book now"
+msgstr "Reservar ahora"
+
+#: templates/components/booking_card.html:74
+#, python-format
+msgid ""
+"You won't be charged yet. We hold your dates for %(minutes)s minute while "
+"you complete the booking."
+msgid_plural ""
+"You won't be charged yet. We hold your dates for %(minutes)s minutes while "
+"you complete the booking."
+msgstr[0] ""
+"Todavía no se te cobrará. Reservamos tus fechas durante %(minutes)s minuto "
+"mientras completas la reserva."
+msgstr[1] ""
+"Todavía no se te cobrará. Reservamos tus fechas durante %(minutes)s minutos "
+"mientras completas la reserva."
+
+#: templates/components/booking_card.html:81
+#, python-format
+msgid ""
+"Staying longer than %(nights)s night? We offer special monthly rates. Write "
+"to us and we will prepare a proposal for you."
+msgid_plural ""
+"Staying longer than %(nights)s nights? We offer special monthly rates. Write "
+"to us and we will prepare a proposal for you."
+msgstr[0] ""
+"¿Te quedas más de %(nights)s noche? Tenemos tarifas mensuales especiales. "
+"Escríbenos y te preparamos una propuesta."
+msgstr[1] ""
+"¿Te quedas más de %(nights)s noches? Tenemos tarifas mensuales especiales. "
+"Escríbenos y te preparamos una propuesta."
+
+#: templates/components/booking_card.html:83
+#, python-format
+msgid "Hi, I'm interested in a monthly stay at %(title)s."
+msgstr "Hola, me interesa una estadía mensual en %(title)s."
+
+#: templates/components/booking_card.html:86
+#: templates/components/footer.html:36 templates/pages/search_results.html:55
+msgid "Contact us"
+msgstr "Contáctanos"
+
+#: templates/components/booking_summary.html:8
+msgid "Booking summary"
+msgstr "Resumen de la reserva"
+
+#: templates/components/booking_summary.html:18
+msgid "Dates"
+msgstr "Fechas"
+
+#: templates/components/booking_summary.html:19
+#: templates/pages/property_detail.html:45
+#, python-format
+msgid "%(counter)s guest"
+msgid_plural "%(counter)s guests"
+msgstr[0] "%(counter)s huésped"
+msgstr[1] "%(counter)s huéspedes"
+
 #: templates/components/carousel_controls.html:4
 #: templates/components/pagination.html:9
 msgid "Previous"
@@ -823,10 +1018,6 @@ msgstr "Anterior"
 #: templates/components/pagination.html:25
 msgid "Next"
 msgstr "Siguiente"
-
-#: templates/components/footer.html:36 templates/pages/search_results.html:55
-msgid "Contact us"
-msgstr "Contáctanos"
 
 #: templates/components/footer.html:77
 msgid "Follow us"
@@ -866,7 +1057,6 @@ msgstr "Páginas"
 
 #: templates/components/property_card.html:20
 #: templates/components/property_card.html:38
-#: templates/pages/property_detail.html:21
 msgid "night"
 msgstr "noche"
 
@@ -883,17 +1073,36 @@ msgstr "Buscar propiedades"
 msgid "Destination"
 msgstr "Destino"
 
-#: templates/components/search_bar.html:33
-msgid "Add dates"
-msgstr "Agregar fechas"
-
-#: templates/components/search_bar.html:36
-msgid "Check-in - Check-out"
-msgstr "Llegada - Salida"
-
 #: templates/components/search_bar.html:55
 msgid "Search"
 msgstr "Buscar"
+
+#: templates/pages/checkout.html:4 templates/pages/checkout.html:14
+msgid "Complete your booking"
+msgstr "Completa tu reserva"
+
+#: templates/pages/checkout.html:18
+msgid "Your dates are held for"
+msgstr "Tus fechas están reservadas por"
+
+#: templates/pages/checkout.html:21
+msgid "After that they are released for other guests."
+msgstr "Después se liberan para otros huéspedes."
+
+#: templates/pages/checkout.html:26
+msgid "Next steps"
+msgstr "Próximos pasos"
+
+#: templates/pages/checkout.html:27
+msgid ""
+"Create your account or sign in, then pay securely to confirm the booking."
+msgstr ""
+"Crea tu cuenta o inicia sesión y luego paga de forma segura para confirmar "
+"la reserva."
+
+#: templates/pages/checkout.html:32
+msgid "Change dates"
+msgstr "Cambiar fechas"
 
 #: templates/pages/home.html:4 templates/pages/home.html:21
 msgid "Home experience, hotel quality"
@@ -902,6 +1111,52 @@ msgstr "Experiencia de hogar, calidad de hotel"
 #: templates/pages/home.html:31
 msgid "Discover our destinations"
 msgstr "Descubre nuestros destinos"
+
+#: templates/pages/property_detail.html:18
+msgid "Breadcrumb"
+msgstr "Ruta de navegación"
+
+#: templates/pages/property_detail.html:46
+#, python-format
+msgid "%(counter)s bedroom"
+msgid_plural "%(counter)s bedrooms"
+msgstr[0] "%(counter)s habitación"
+msgstr[1] "%(counter)s habitaciones"
+
+#: templates/pages/property_detail.html:47
+#, python-format
+msgid "%(counter)s bed"
+msgid_plural "%(counter)s beds"
+msgstr[0] "%(counter)s cama"
+msgstr[1] "%(counter)s camas"
+
+#: templates/pages/property_detail.html:48
+#, python-format
+msgid "%(counter)s bathroom"
+msgid_plural "%(counter)s bathrooms"
+msgstr[0] "%(counter)s baño"
+msgstr[1] "%(counter)s baños"
+
+#: templates/pages/property_detail.html:53
+msgid "Description"
+msgstr "Descripción"
+
+#: templates/pages/property_detail.html:78
+msgid "The exact address is shared after booking."
+msgstr "La dirección exacta se comparte después de reservar."
+
+#: templates/pages/property_detail.html:82
+#, python-format
+msgid "Map of the area around %(place)s"
+msgstr "Mapa de la zona de %(place)s"
+
+#: templates/pages/property_detail.html:87
+msgid "Book this property"
+msgstr "Reserva esta propiedad"
+
+#: templates/pages/property_detail.html:97
+msgid "Book"
+msgstr "Reservar"
 
 #: templates/pages/search_results.html:4
 msgid "Search results"
