@@ -1,0 +1,15 @@
+{% load form_tags %}
+{% comment %}
+  One form field with its label, help text and errors, linked for screen readers
+  (aria-describedby / aria-invalid). Used by every form of the site.
+{% endcomment %}
+<div class="form-field{% if field.errors %} has-error{% endif %}">
+  <label class="form-field__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+  {{ field|accessible }}
+  {% if field.help_text %}<p class="form-field__help" id="{{ field.auto_id }}-help">{{ field.help_text }}</p>{% endif %}
+  {% if field.errors %}
+    <div class="form-field__errors" id="{{ field.auto_id }}-error">
+      {% for error in field.errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+  {% endif %}
+</div>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% translate "Sign in" %} | Wynwood House{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/components/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="auth container-wh" aria-labelledby="auth-title">
+    <h1 class="auth__title" id="auth-title">{% translate "Sign in" %}</h1>
+    <p class="auth__lead">{% translate "Welcome back. Sign in to continue with your booking." %}</p>
+
+    <form method="post" class="auth__form" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% if form.non_field_errors %}
+        <div class="form-alert" role="alert">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+      {% endif %}
+      {% include "components/form_field.html" with field=form.username %}
+      {% include "components/form_field.html" with field=form.password %}
+      <button type="submit" class="btn btn-wh auth__submit" data-submit-once>{% translate "Sign in" %}</button>
+    </form>
+
+    <p class="auth__switch">
+      {% translate "New to Wynwood House?" %}
+      <a href="{% url 'accounts:signup' %}{% if next %}?next={{ next|urlencode }}{% endif %}">{% translate "Create an account" %}</a>
+    </p>
+  </section>
+{% endblock %}

@@ -25,6 +25,9 @@
   {% include "components/header.html" %}
 
   <main id="main" tabindex="-1">
+    {% block messages %}
+      {% if messages %}<div class="container-wh messages-container">{% include "components/messages.html" %}</div>{% endif %}
+    {% endblock %}
     {% block content %}{% endblock %}
   </main>
 
