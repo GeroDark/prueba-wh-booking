@@ -3,16 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>document.documentElement.classList.add("js");</script>
   <title>{% block title %}Wynwood House{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{% translate 'Furnished apartments for short and long stays: the comfort of a home with the quality of a hotel.' %}{% endblock %}">
   <link rel="icon" href="{% static 'img/brand/favicon.svg' %}" type="image/svg+xml">
   <link rel="preload" href="{% static 'fonts/AcuminPro-ExtraCondensedBold.otf' %}" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="{% static 'fonts/HelveticaNeueLTStd-Roman.otf' %}" as="font" type="font/otf" crossorigin>
   <link rel="stylesheet" href="{% static 'vendor/bootstrap-5.3.8/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/flatpickr-4.6.13/flatpickr.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/header.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/language-switcher.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/search-bar.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/footer.css' %}">
   {% block extra_css %}{% endblock %}
 </head>
@@ -27,7 +30,14 @@
 
   {% include "components/footer.html" %}
 
+  {{ footer_search_form.districts_by_city|json_script:"districts-by-city" }}
   <script src="{% static 'vendor/bootstrap-5.3.8/js/bootstrap.bundle.min.js' %}" defer></script>
+  <script src="{% static 'vendor/flatpickr-4.6.13/flatpickr.min.js' %}" defer></script>
+  <script src="{% static 'vendor/flatpickr-4.6.13/l10n/es.js' %}" defer></script>
+  <script src="{% static 'js/date-range.js' %}" defer></script>
+  <script src="{% static 'js/district-select.js' %}" defer></script>
+  <script src="{% static 'js/carousel.js' %}" defer></script>
+  <script src="{% static 'js/reveal.js' %}" defer></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

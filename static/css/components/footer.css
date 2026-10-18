@@ -1,15 +1,14 @@
 .site-footer {
   flex-shrink: 0;
-  background: var(--wh-blue);
+  padding-block: 3rem 2rem;
+  background: var(--wh-footer);
 }
 
-.site-footer__inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-block: 3rem;
+.site-footer__search {
+  display: grid;
+  gap: 2rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(35, 35, 36, 0.15);
 }
 
 .site-footer__brand img {
@@ -17,7 +16,94 @@
   height: 2.25rem;
 }
 
+.site-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: 2.5rem 1.5rem;
+  padding-block: 3rem;
+}
+
+.site-footer__title {
+  margin-bottom: 1.25rem;
+  font-family: var(--wh-font-body);
+  font-size: 1.125rem;
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.site-footer__list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+  list-style: none;
+}
+
+.site-footer__list a,
+.site-footer__stores a {
+  text-decoration: none;
+}
+
+.site-footer__list a:hover,
+.site-footer__stores a:hover {
+  text-decoration: underline;
+}
+
+.site-footer__contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.site-footer__contact img {
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.site-footer__social {
+  display: flex;
+  gap: 1rem;
+  margin: 0 0 1.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__social a {
+  display: inline-flex;
+  transition: transform var(--wh-transition);
+}
+
+.site-footer__social a:hover {
+  transform: translateY(-2px);
+}
+
+.site-footer__app {
+  margin-bottom: 0.5rem;
+  text-decoration: underline;
+}
+
+.site-footer__stores {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+  list-style: none;
+}
+
 .site-footer__copy {
   margin: 0;
-  font-size: 0.875rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(35, 35, 36, 0.15);
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 992px) {
+  .site-footer__search {
+    grid-template-columns: auto 1fr;
+    align-items: end;
+    gap: 4rem;
+  }
 }
