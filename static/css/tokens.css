@@ -1,0 +1,66 @@
+/*
+ * Design tokens extracted from the WH Figma file (named styles + most used values).
+ * Bootstrap reads its own --bs-* variables, so overriding them here themes the framework.
+ */
+
+@font-face {
+  font-family: "Acumin Pro ExtraCondensed";
+  src: url("../fonts/AcuminPro-ExtraCondensedBold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Custom family name so the bundled file is always used instead of a local "Helvetica Neue". */
+@font-face {
+  font-family: "WH Helvetica Neue";
+  src: url("../fonts/HelveticaNeueLTStd-Roman.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Colors (Figma named styles: Negro, Gris, Gris claro, Azul) */
+  --wh-black: #232324;
+  --wh-gray: #979797;
+  --wh-gray-light: #d9d9d9;
+  --wh-blue: #c9e5ea;
+  --wh-yellow: #feac00;
+  --wh-white: #ffffff;
+  --wh-danger: #e00000;
+
+  /* Typography */
+  --wh-font-display: "Acumin Pro ExtraCondensed", "Arial Narrow", sans-serif;
+  --wh-font-body: "WH Helvetica Neue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --wh-letter-wide: 0.24em;
+
+  /* Fluid sizes: minimum at 375px wide, Figma value at 1440px (112px / 55px / 45px). */
+  --wh-fs-hero: clamp(3rem, 1.591rem + 6.01vw, 7rem);
+  --wh-fs-h1: clamp(2.25rem, 1.832rem + 1.784vw, 3.4375rem);
+  --wh-fs-h2: clamp(2rem, 1.714rem + 1.221vw, 2.8125rem);
+
+  /* Shape and depth */
+  --wh-radius-pill: 50rem;
+  --wh-radius-card: 1.5rem;
+  --wh-shadow: 0 0 17px rgba(0, 0, 0, 0.07);
+
+  /* Layout: Figma frames are 1440px wide with ~50px side margins. */
+  --wh-container-max: 1440px;
+  --wh-gutter: clamp(1rem, 3.47vw, 3.125rem);
+  --wh-header-height: 4.5rem;
+
+  --wh-transition: 200ms ease;
+
+  /* Bootstrap theme */
+  --bs-body-font-family: var(--wh-font-body);
+  --bs-body-font-size: 1rem;
+  --bs-body-color: var(--wh-black);
+  --bs-body-bg: var(--wh-white);
+  --bs-link-color: var(--wh-black);
+  --bs-link-color-rgb: 35, 35, 36;
+  --bs-link-hover-color: var(--wh-black);
+  --bs-link-hover-color-rgb: 35, 35, 36;
+  --bs-border-color: var(--wh-gray-light);
+  --bs-danger: var(--wh-danger);
+}

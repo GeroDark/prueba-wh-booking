@@ -1,0 +1,25 @@
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.lang-switch__option {
+  padding: 0.25rem 0.1rem;
+  border: 0;
+  background: none;
+  color: var(--wh-black);
+  font: inherit;
+  cursor: pointer;
+  text-underline-offset: 0.25em;
+}
+
+.lang-switch__option:hover,
+.lang-switch__option.is-active {
+  text-decoration: underline;
+}
+
+.lang-switch__separator {
+  color: var(--wh-black);
+}

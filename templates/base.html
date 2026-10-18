@@ -1,0 +1,33 @@
+{% load static i18n %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Wynwood House{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{% translate 'Furnished apartments for short and long stays: the comfort of a home with the quality of a hotel.' %}{% endblock %}">
+  <link rel="icon" href="{% static 'img/brand/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preload" href="{% static 'fonts/AcuminPro-ExtraCondensedBold.otf' %}" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="{% static 'fonts/HelveticaNeueLTStd-Roman.otf' %}" as="font" type="font/otf" crossorigin>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-5.3.8/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/header.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/language-switcher.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/footer.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#main">{% translate "Skip to content" %}</a>
+
+  {% include "components/header.html" %}
+
+  <main id="main" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "components/footer.html" %}
+
+  <script src="{% static 'vendor/bootstrap-5.3.8/js/bootstrap.bundle.min.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

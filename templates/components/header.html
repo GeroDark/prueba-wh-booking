@@ -1,0 +1,11 @@
+{% load static i18n %}
+<header class="site-header">
+  <div class="container-wh site-header__inner">
+    <a class="site-header__brand" href="{% url 'core:home' %}">
+      <img src="{% static 'img/brand/logo.svg' %}" alt="Wynwood House" width="161" height="43">
+    </a>
+    <div class="site-header__actions">
+      {% include "components/language_switcher.html" %}
+    </div>
+  </div>
+</header>
