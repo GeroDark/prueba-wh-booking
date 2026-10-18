@@ -246,11 +246,15 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - [x] Tests: optimizador, seed repetible, restricciones de modelos y email único.
 
 ### Fase 2 — Home
-- Header (logo, navegación, ES/EN, acceso), hero con buscador, destacadas, "Por qué viajar a España" (`feature_grid`),
-  banner de larga estancia (CTA a WhatsApp), footer completo; diseño adaptable y animaciones (hover, scroll suave).
-- [ ] Coincide con el Figma a 1440 px y se ve bien en 375, 768, 1366 y 1920.
-- [ ] Un cambio de texto en el admin se refleja en el home, en ambos idiomas.
-- [ ] Tests: consulta de destacadas, contenido desde modelos, número de consultas acotado.
+- Header (logo, navegación, ES/EN; el acceso llega en la Fase 6), hero con buscador, destacadas, "Por qué viajar a España"
+  (`feature_grid`), banner de larga estancia (CTA a WhatsApp), footer completo; diseño adaptable y animaciones
+  (hover, aparición al hacer scroll, scroll suave).
+- Se suman, porque los datos ya existían: carrusel de destinos, servicios y los banners de eventos y real estate.
+- `SearchForm` compartido (hero, footer y resultados) y rutas provisionales de resultados y detalle,
+  que se completan en las fases 4 y 5.
+- [x] Coincide con el Figma a 1440 px y se ve bien en 375, 768, 1366 y 1920.
+- [x] Un cambio de texto en el admin se refleja en el home, en ambos idiomas.
+- [x] Tests: consulta de destacadas, contenido desde modelos, número de consultas acotado.
 
 ### Fase 3 — Primer despliegue
 - Render (Docker) + Neon (PostgreSQL) + Cloudinary (media) + Brevo (email); el script de arranque migra, ejecuta el seed si la base está vacía y crea el superusuario.

@@ -367,3 +367,34 @@ en el detalle ("Ubicación").
 **Alternativas descartadas.** La API de Google Maps exige una cuenta de facturación con tarjeta, incluso para el
 plan gratuito, y una clave expuesta en el navegador que hay que restringir. Para la demo es costo y riesgo sin beneficio;
 cambiar de proveedor de mapas solo toca un componente de plantilla y su JS.
+
+---
+
+## D28 · Componentes de plantilla y mejora progresiva
+
+**Decisión.** Cada pieza visual que se repite es un componente en `templates/components/` con su propio CSS:
+`search_bar` (variantes `hero` y `footer`), `property_card` (`overlay` y, en la Fase 4, `stacked`),
+`feature_grid` (`tiles` y `cards`), `banner` (tres diseños) y `carousel_controls`.
+"Servicios" y "Por qué viajar a España" son el mismo componente con otra variante.
+
+**Mejora progresiva.** Todo funciona sin JavaScript, y el JS solo mejora:
+| Sin JS | Con JS |
+|---|---|
+| Dos campos de fecha nativos | Un selector de rango (flatpickr) que escribe en esos mismos campos |
+| Distritos agrupados por ciudad (`<optgroup>`) | Solo los distritos de la ciudad elegida |
+| Carruseles con scroll nativo (táctil, trackpad, teclado) | Flechas anterior y siguiente |
+| Contenido visible | Aparición al hacer scroll (desactivada con "reducir movimiento") |
+
+El servidor siempre recibe los mismos campos y valida igual (por ejemplo, que el distrito pertenezca a la ciudad).
+
+---
+
+## D29 · Header y footer con un context processor perezoso
+
+**Decisión.** `apps.core.context_processors.site` expone menús, contactos, redes, destinos y el buscador del footer
+a todas las páginas, envueltos en `SimpleLazyObject`. Solo se consultan si la plantilla los usa: el admin, que no
+pinta el footer del sitio, no hace esas consultas.
+
+**Garantía.** Un test comprueba que el número de consultas del home no crece con la cantidad de propiedades
+(sin N+1). Otro recopila los estáticos con el almacenamiento de producción y renderiza las páginas, para detectar
+rutas de `{% static %}` que solo fallarían en el servidor.

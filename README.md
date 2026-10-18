@@ -7,6 +7,18 @@ confirmación y correo, en español e inglés.
 > 🚧 En construcción por fases. El plan y el estado de cada fase están en [docs/PLAN_MAESTRO.md](docs/PLAN_MAESTRO.md),
 > y las decisiones técnicas, con sus ejemplos, en [docs/DECISIONS.md](docs/DECISIONS.md).
 
+## Estado
+
+| Fase | Contenido | Estado |
+|---|---|---|
+| 0 | Docker, PostgreSQL, configuración, usuario con email, ES/EN, CI | ✅ |
+| 1 | Modelos de contenido y catálogo, admin bilingüe, imágenes WebP, `seed_data` | ✅ |
+| 2 | Home: buscador, destinos, destacadas, servicios, "¿Por qué viajar a España?", banners, header y footer | ✅ |
+| 3 | Despliegue | ⏳ |
+| 4 | Resultados de búsqueda con filtros y mapa | ⏳ |
+| 5 | Detalle de la propiedad y motor de reservas | ⏳ |
+| 6–8 | Cuentas, checkout con pago simulado, confirmación y correo | ⏳ |
+
 ## Stack
 
 Python 3.13 · Django 5.2 LTS · PostgreSQL 17 · Bootstrap 5.3 · JavaScript vanilla · Docker · pytest · GitHub Actions
@@ -112,8 +124,11 @@ config/          settings, urls, wsgi
 apps/core/       contenido del sitio (home, banners, menús, contacto), optimizador de imágenes, seed_data
 apps/accounts/   usuario con email como identificador
 apps/properties/ países, ciudades, distritos, comodidades, propiedades, fotos e impuestos
-templates/       base.html, components/ (reutilizables), pages/
-static/          css/ (tokens + un archivo por componente), fonts/, img/, vendor/
+templates/       base.html, pages/ y components/ reutilizables: header, footer, search_bar,
+                 property_card, feature_grid, banner, carousel_controls, language_switcher
+static/          css/ (tokens + un archivo por componente y por página), js/ (mejoras progresivas:
+                 rango de fechas, distritos por ciudad, carruseles, aparición al hacer scroll),
+                 fonts/, img/, vendor/ (Bootstrap, Bootstrap Icons, flag-icons, flatpickr)
 seed/images/     fotos de origen para los datos de prueba
 docs/            plan maestro y decisiones técnicas
 ```
@@ -123,4 +138,4 @@ docs/            plan maestro y decisiones técnicas
 El código está bajo licencia MIT (ver [LICENSE](LICENSE)). Las fuentes de `static/fonts/` (Acumin Pro y Helvetica Neue)
 y las imágenes del diseño son propiedad de sus autores. Wynwood House las proporcionó solo para evaluar esta prueba,
 y no están cubiertas por la licencia del repositorio. Bootstrap, Bootstrap Icons y flag-icons (MIT) conservan sus
-licencias en `static/vendor/`.
+licencias en `static/vendor/`, igual que flatpickr (MIT).
