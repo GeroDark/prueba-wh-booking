@@ -5,6 +5,7 @@ from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
 
 from .managers import UserManager
+from .validators import validate_full_name
 
 
 class User(AbstractUser):
@@ -15,7 +16,9 @@ class User(AbstractUser):
     last_name = None
 
     email = models.EmailField(_("email address"), unique=True)
-    full_name = models.CharField(_("full name"), max_length=150, blank=True)
+    full_name = models.CharField(
+        _("full name"), max_length=150, blank=True, validators=[validate_full_name]
+    )
     nationality = models.CharField(
         _("nationality"),
         max_length=2,

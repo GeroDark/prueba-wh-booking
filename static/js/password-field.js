@@ -28,11 +28,19 @@
       });
     }
 
+    // Lowercase, uppercase, digits, other symbols: "contraseña123" only uses two kinds.
+    function characterKinds(password) {
+      return [/\p{Ll}/u, /\p{Lu}/u, /\d/, /[^\p{L}\d]/u].filter(function (kind) {
+        return kind.test(password);
+      }).length;
+    }
+
     function evaluate() {
       var value = input.value;
       var results = {
         length: value.length >= 8,
-        "number-or-symbol": /[\d\W_]/.test(value),
+        // Anything that is not a letter, as in the server's [\d\W_]: ñ and é are letters there.
+        "number-or-symbol": /[^\p{L}\p{M}]/u.test(value),
         personal: value.length > 0 && !containsPersonalData(value),
       };
       var passed = 0;
@@ -41,10 +49,13 @@
         item.classList.toggle("is-valid", results[rule]);
         if (results[rule]) passed += 1;
       });
-      var level = passed === 3 && value.length >= 12 ? "strong" : passed === 3 ? "medium" : "weak";
+      var allRules = passed === Object.keys(results).length;
+      var level = !allRules ? "weak" : value.length >= 12 && characterKinds(value) >= 3 ? "strong" : "medium";
       strength.textContent = strength.dataset["label" + level.charAt(0).toUpperCase() + level.slice(1)];
       strength.dataset.level = level;
       wrapper.classList.toggle("is-touched", value.length > 0);
+      // Read by form-feedback.js: the form is not sent while a rule of the checklist fails.
+      input.setCustomValidity(value && !allRules ? wrapper.dataset.rulesMessage : "");
     }
 
     ["input", "change"].forEach(function (name) {

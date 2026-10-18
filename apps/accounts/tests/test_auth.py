@@ -64,6 +64,84 @@ def test_signup_requires_a_secure_password(client, password, message):
     assert not User.objects.exists()
 
 
+def test_signup_with_the_data_of_the_bug_report_explains_every_problem(client):
+    """ "prueba@gma" / a name with digits / a password made of the e-mail's name part."""
+    response = signup(
+        client, email="prueba@gma", full_name="asdfsd dasf ds 65186", password="prueba48621"
+    )
+
+    form = response.context["form"]
+    assert "nombre@ejemplo.com" in form.errors["email"][0]
+    assert form.errors["full_name"] == ["Usa solo letras, espacios, guiones o apóstrofos."]
+    # Checked against the typed e-mail although the e-mail itself is invalid, with one
+    # message per problem (personal data, common word).
+    assert form.errors["password"] == [
+        "La contraseña no puede contener tu nombre ni tu correo electrónico.",
+        "Esta contraseña es una palabra común con números o símbolos. "
+        "Elige una más difícil de adivinar.",
+    ]
+    assert "Introduzca" not in response.text  # Django's "usted" messages are replaced
+    assert not User.objects.exists()
+
+
+def test_signup_says_what_is_missing_in_each_empty_field(client):
+    form = signup(client, email="", full_name="   ", password="").context["form"]
+
+    assert form.errors["email"] == ["Ingresa tu correo electrónico."]
+    assert form.errors["full_name"] == ["Ingresa tu nombre y apellido."]
+    assert form.errors["password"] == ["Crea una contraseña."]
+
+
+@pytest.mark.parametrize(
+    "email",
+    [
+        "prueba@gma",
+        "prueba@",
+        "@gmail.com",
+        "pru eba@gmail.com",
+        "prueba@@gmail.com",
+        "prueba@gmail..com",
+        f"{'a' * 250}@mail.com",  # longer than the 254 characters an address can have
+    ],
+)
+def test_signup_rejects_invalid_emails(client, email):
+    response = signup(client, email=email)
+
+    assert "email" in response.context["form"].errors
+    assert not User.objects.exists()
+
+
+@pytest.mark.parametrize("name", ["Ana", "Ana 2", "Ana <script>", "Ana_Torres"])
+def test_signup_rejects_names_that_are_not_a_first_and_last_name(client, name):
+    response = signup(client, full_name=name)
+
+    assert "full_name" in response.context["form"].errors
+    assert not User.objects.exists()
+
+
+def test_signup_saves_the_name_tidied_up(client):
+    # "Jose" + combining accent: some keyboards send é as two characters.
+    signup(client, full_name="  María   Jose\u0301  O'Connor ", password=GOOD_PASSWORD)
+
+    assert User.objects.get().full_name == "María José O'Connor"
+
+
+@pytest.mark.parametrize("password", ["contraseña123", "Password2026!"])
+def test_signup_rejects_common_words_with_numbers(client, password):
+    response = signup(client, password=password)
+
+    assert "palabra común" in " ".join(response.context["form"].errors["password"])
+
+
+def test_signup_fields_carry_the_messages_for_the_live_hints(client):
+    html = client.get(SIGNUP).text
+
+    assert 'data-error-required="Ingresa tu correo electrónico."' in html
+    assert 'data-error-invalid="Ingresa un correo electrónico válido' in html
+    assert 'data-error-invalid="Ingresa tu nombre y apellido usando solo letras."' in html
+    assert "data-validate" in html
+
+
 def test_signup_marks_invalid_fields_for_screen_readers(client):
     html = signup(client, email="not-an-email").text
 
@@ -90,7 +168,7 @@ def test_signup_ignores_an_external_next_url(client):
         SIGNUP,
         {
             "email": "ana@mail.com",
-            "full_name": "Ana",
+            "full_name": "Ana Torres",
             "password": GOOD_PASSWORD,
             "next": "https://evil.example/",
         },

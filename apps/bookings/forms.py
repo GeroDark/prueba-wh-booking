@@ -2,11 +2,13 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from apps.core.forms import FriendlyErrorsMixin
+
 from .pricing import quote_stay
 from .services import is_available, unavailable_error, validate_stay
 
 
-class BookingRequestForm(forms.Form):
+class BookingRequestForm(FriendlyErrorsMixin, forms.Form):
     """Dates and guests on the property page. Used for the live quote and for "Book now"."""
 
     check_in = forms.DateField(label=_("Check-in"), widget=forms.DateInput(attrs={"type": "date"}))

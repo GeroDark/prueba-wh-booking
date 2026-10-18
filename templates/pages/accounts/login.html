@@ -13,7 +13,7 @@
     <h1 class="auth__title" id="auth-title">{% translate "Sign in" %}</h1>
     <p class="auth__lead">{% translate "Welcome back. Sign in to continue with your booking." %}</p>
 
-    <form method="post" class="auth__form" novalidate>
+    <form method="post" class="auth__form" novalidate data-validate>
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ next }}">
       {% if form.non_field_errors %}

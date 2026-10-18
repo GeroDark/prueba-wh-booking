@@ -57,9 +57,14 @@ después es muy costoso.
 ## D05 · Contraseñas seguras con los validadores de Django y una lista de requisitos en vivo
 
 **Decisión.**
-- El servidor aplica los validadores de Django (longitud mínima de 8, contraseña común, solo números, parecido con los
-  datos del usuario) y dos propios en `apps/accounts/validators.py`: **al menos un número o símbolo** y **no contener
-  el nombre ni la parte local del correo** (por ejemplo, rechaza `torres-2026!` para Ana Torres).
+- El servidor aplica los validadores de Django (longitud mínima de 8, contraseña común, solo números) y tres propios
+  en `apps/accounts/validators.py`: **al menos un número o símbolo**, **no contener el nombre ni el correo** (por
+  ejemplo, rechaza `torres-2026!` para Ana Torres) y **no ser una palabra común con números o símbolos**
+  (`contraseña123`, `Password2026!`; la lista de Django es en inglés y solo busca coincidencias exactas).
+- `PersonalInfoValidator` **reemplaza** al `UserAttributeSimilarityValidator` de Django: detecta si la contraseña
+  *contiene* el dato (no solo si se parece entera) y así el usuario ve un único mensaje por problema.
+- La contraseña se valida contra lo escrito en el formulario aunque el correo o el nombre tengan errores.
+- Medidor: "fuerte" exige 12+ caracteres y 3 tipos de carácter (minúsculas, mayúsculas, números, símbolos).
 - Como en el Figma, hay **un solo campo** de contraseña, con botón para mostrar u ocultar (en lugar de un segundo campo
   de confirmación) y una lista de requisitos que se marca mientras se escribe.
 - La lista del navegador es solo una guía: el servidor siempre valida, y además rechaza las contraseñas comunes, que
@@ -503,3 +508,23 @@ resolverlo requiere un componente de calendario propio.
 
 **Fuera de alcance (documentado).** Recuperación de contraseña y límite de intentos de login (por ejemplo con
 `django-axes`); se listan como mejoras.
+
+---
+
+## D35 · Validación de formularios en dos capas y mensajes propios
+
+**Contexto.** Una prueba manual mostró errores que quedaban visibles tras corregir el campo, un nombre con números
+aceptado y mensajes de Django en "usted" ("Introduzca una fecha válida").
+
+**Decisión.**
+- **Servidor = autoridad.** Todo se valida en Django. Nombre completo (`validate_full_name`, en el modelo): letras de
+  cualquier idioma, espacios, `-`, `'`, `’` y `.`, con nombre y al menos un apellido (debe coincidir con el documento en
+  el check-in). Se normaliza a NFC y sin espacios repetidos.
+- **Navegador = ayuda** (`form-feedback.js`, formularios con `data-validate`): el error se borra al editar, cada campo
+  se revisa al salir y todos al enviar; si algo falla no se envía (no se pierde la contraseña) y el foco va al primer
+  error. Los mensajes llegan desde el formulario (`data-error-required`, `data-error-invalid`) con el filtro
+  `accessible`: una sola fuente de textos, traducidos.
+- **Mensajes propios en todos los formularios** (`FriendlyErrorsMixin`): tono "tú", dicen qué corregir y no repiten el
+  valor enviado. En la búsqueda, cada error indica su campo ("Llegada: Ingresa una fecha válida.").
+
+**Límite.** No se puede distinguir un nombre real de letras al azar sin verificar un documento.

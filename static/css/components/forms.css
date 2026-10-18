@@ -122,6 +122,10 @@
   color: var(--wh-field-error);
 }
 
+.password-field.is-touched .password-rules li[data-rule]:not(.is-valid)::before {
+  content: "✗";
+}
+
 .password-field .password-rules li[data-rule].is-valid {
   color: var(--wh-field-ok);
 }

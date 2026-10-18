@@ -4,6 +4,8 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from apps.core.forms import FriendlyErrorsMixin
+
 from .models import City, Country, District
 
 MAX_SEARCH_GUESTS = 16
@@ -28,10 +30,11 @@ class GroupedModelChoiceField(forms.ModelChoiceField):
         super().__init__(*args, **kwargs)
 
 
-class SearchForm(forms.Form):
+class SearchForm(FriendlyErrorsMixin, forms.Form):
     """Search bar used on the home page, the footer and the results page (GET)."""
 
     country = forms.ModelChoiceField(
+        label=_("Country"),
         queryset=Country.objects.none(),
         required=False,
         to_field_name="slug",

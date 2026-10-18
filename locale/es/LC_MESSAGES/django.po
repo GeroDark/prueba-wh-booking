@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 11:34-0500\n"
+"POT-Creation-Date: 2026-10-18 11:57-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -28,31 +28,51 @@ msgstr "Fechas importantes"
 msgid "Accounts"
 msgstr "Cuentas"
 
-#: apps/accounts/forms.py:18
+#: apps/accounts/forms.py:30
 msgid "Create a password"
 msgstr "Crear contraseña"
 
-#: apps/accounts/forms.py:23
+#: apps/accounts/forms.py:32
+msgid "Create a password."
+msgstr "Crea una contraseña."
+
+#: apps/accounts/forms.py:36
 msgid "Enter a new password"
 msgstr "Ingresa una nueva contraseña"
 
-#: apps/accounts/forms.py:37
+#: apps/accounts/forms.py:46 apps/accounts/forms.py:109
+msgid "Enter your email address."
+msgstr "Ingresa tu correo electrónico."
+
+#: apps/accounts/forms.py:47 apps/accounts/validators.py:39
+msgid "Enter your first and last name."
+msgstr "Ingresa tu nombre y apellido."
+
+#: apps/accounts/forms.py:54
 msgid "Enter your full name"
 msgstr "Ingresa tu nombre completo"
 
-#: apps/accounts/forms.py:49
+#: apps/accounts/forms.py:57
+msgid "Enter your first and last name using letters only."
+msgstr "Ingresa tu nombre y apellido usando solo letras."
+
+#: apps/accounts/forms.py:71
 msgid "An account with this email already exists. Sign in instead."
 msgstr "Ya existe una cuenta con este correo. Inicia sesión."
 
-#: apps/accounts/forms.py:78 apps/core/models.py:225
+#: apps/accounts/forms.py:108 apps/core/models.py:225
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: apps/accounts/forms.py:82
+#: apps/accounts/forms.py:113
 msgid "Password"
 msgstr "Contraseña"
 
-#: apps/accounts/forms.py:89
+#: apps/accounts/forms.py:115
+msgid "Enter your password."
+msgstr "Ingresa tu contraseña."
+
+#: apps/accounts/forms.py:121
 msgid "The email or password is incorrect."
 msgstr "El correo o la contraseña no son correctos."
 
@@ -68,71 +88,85 @@ msgstr "El superusuario debe tener is_staff=True."
 msgid "Superuser must have is_superuser=True."
 msgstr "El superusuario debe tener is_superuser=True."
 
-#: apps/accounts/models.py:17
+#: apps/accounts/models.py:18
 msgid "email address"
 msgstr "correo electrónico"
 
-#: apps/accounts/models.py:18
+#: apps/accounts/models.py:20
 msgid "full name"
 msgstr "nombre completo"
 
-#: apps/accounts/models.py:20
+#: apps/accounts/models.py:23
 msgid "nationality"
 msgstr "nacionalidad"
 
-#: apps/accounts/models.py:23
+#: apps/accounts/models.py:26
 msgid "ISO 3166-1 alpha-2 country code."
 msgstr "Código de país ISO 3166-1 alfa-2."
 
-#: apps/accounts/models.py:25
+#: apps/accounts/models.py:28
 msgid "phone prefix"
 msgstr "indicativo"
 
-#: apps/accounts/models.py:26
+#: apps/accounts/models.py:29
 msgid "phone number"
 msgstr "teléfono"
 
-#: apps/accounts/models.py:27
+#: apps/accounts/models.py:30
 msgid "birth date"
 msgstr "fecha de nacimiento"
 
-#: apps/accounts/models.py:29
+#: apps/accounts/models.py:32
 msgid "preferred language"
 msgstr "idioma preferido"
 
-#: apps/accounts/models.py:34
+#: apps/accounts/models.py:37
 msgid "subscribed to the newsletter"
 msgstr "suscrito al boletín"
 
-#: apps/accounts/models.py:42
+#: apps/accounts/models.py:45
 msgid "user"
 msgstr "usuario"
 
-#: apps/accounts/models.py:43
+#: apps/accounts/models.py:46
 msgid "users"
 msgstr "usuarios"
 
-#: apps/accounts/models.py:48
+#: apps/accounts/models.py:51
 msgid "An account with this email already exists."
 msgstr "Ya existe una cuenta con este correo electrónico."
 
-#: apps/accounts/validators.py:19
+#: apps/accounts/validators.py:36
+msgid "Use only letters, spaces, hyphens or apostrophes."
+msgstr "Usa solo letras, espacios, guiones o apóstrofos."
+
+#: apps/accounts/validators.py:73
+msgid ""
+"This password is a common word with numbers or symbols. Choose one that is "
+"harder to guess."
+msgstr "Esta contraseña es una palabra común con números o símbolos. Elige una más difícil de adivinar."
+
+#: apps/accounts/validators.py:80
+msgid "Is not a common word with numbers or symbols."
+msgstr "No es una palabra común con números o símbolos."
+
+#: apps/accounts/validators.py:89
 msgid "The password must contain at least one number or symbol."
 msgstr "La contraseña debe tener al menos un número o un símbolo."
 
-#: apps/accounts/validators.py:24
+#: apps/accounts/validators.py:94
 msgid "Contains a number or symbol."
 msgstr "Contiene un número o un símbolo."
 
-#: apps/accounts/validators.py:46
+#: apps/accounts/validators.py:116
 msgid "The password cannot contain your name or e-mail address."
 msgstr "La contraseña no puede contener tu nombre ni tu correo electrónico."
 
-#: apps/accounts/validators.py:51
+#: apps/accounts/validators.py:121
 msgid "Does not contain your name or e-mail address."
 msgstr "No contiene tu nombre ni tu correo electrónico."
 
-#: apps/accounts/views.py:43
+#: apps/accounts/views.py:44
 #, python-format
 msgid "Welcome to Wynwood House, %(name)s!"
 msgstr "¡Te damos la bienvenida a Wynwood House, %(name)s!"
@@ -145,15 +179,15 @@ msgstr "noches"
 msgid "Bookings"
 msgstr "Reservas"
 
-#: apps/bookings/forms.py:12 apps/properties/forms.py:55
+#: apps/bookings/forms.py:14 apps/properties/forms.py:58
 msgid "Check-in"
 msgstr "Llegada"
 
-#: apps/bookings/forms.py:14 apps/properties/forms.py:58
+#: apps/bookings/forms.py:16 apps/properties/forms.py:61
 msgid "Check-out"
 msgstr "Salida"
 
-#: apps/bookings/forms.py:16 apps/properties/forms.py:61
+#: apps/bookings/forms.py:18 apps/properties/forms.py:64
 #: templates/components/booking_card.html:53
 #: templates/components/booking_summary.html:19
 #: templates/components/property_card.html:22
@@ -310,7 +344,7 @@ msgstr "Tarifa de limpieza"
 msgid "These dates are no longer available. Please choose other dates."
 msgstr "Estas fechas ya no están disponibles. Por favor elige otras fechas."
 
-#: apps/bookings/services.py:37 apps/properties/forms.py:107
+#: apps/bookings/services.py:37 apps/properties/forms.py:110
 msgid "Arrival cannot be in the past."
 msgstr "La llegada no puede ser una fecha pasada."
 
@@ -319,7 +353,7 @@ msgstr "La llegada no puede ser una fecha pasada."
 msgid "Bookings open up to %(days)d days in advance."
 msgstr "Las reservas se abren con hasta %(days)d días de anticipación."
 
-#: apps/bookings/services.py:47 apps/properties/forms.py:109
+#: apps/bookings/services.py:47 apps/properties/forms.py:112
 msgid "Departure must be after arrival."
 msgstr "La salida debe ser posterior a la llegada."
 
@@ -442,6 +476,32 @@ msgstr "Perú"
 #: apps/core/constants.py:19
 msgid "United States"
 msgstr "Estados Unidos"
+
+#: apps/core/forms.py:7
+msgid "Enter a valid email address, for example name@example.com."
+msgstr "Ingresa un correo electrónico válido, por ejemplo nombre@ejemplo.com."
+
+#: apps/core/forms.py:8
+msgid "Enter a valid date."
+msgstr "Ingresa una fecha válida."
+
+#: apps/core/forms.py:10
+msgid "Enter a whole number."
+msgstr "Ingresa un número entero."
+
+#: apps/core/forms.py:11
+#, python-format
+msgid "Enter a number greater than or equal to %(limit_value)s."
+msgstr "Ingresa un número mayor o igual a %(limit_value)s."
+
+#: apps/core/forms.py:12
+#, python-format
+msgid "Enter a number less than or equal to %(limit_value)s."
+msgstr "Ingresa un número menor o igual a %(limit_value)s."
+
+#: apps/core/forms.py:14
+msgid "Select one of the available options."
+msgstr "Elige una de las opciones disponibles."
 
 #: apps/core/models.py:12
 msgid "created at"
@@ -722,27 +782,31 @@ msgstr "fotos"
 msgid "Properties"
 msgstr "Propiedades"
 
-#: apps/properties/forms.py:41 apps/properties/forms.py:45
+#: apps/properties/forms.py:37
+msgid "Country"
+msgstr "País"
+
+#: apps/properties/forms.py:44 apps/properties/forms.py:48
 msgid "City or destination"
 msgstr "Ciudad o destino"
 
-#: apps/properties/forms.py:48
+#: apps/properties/forms.py:51
 msgid "District"
 msgstr "Distrito"
 
-#: apps/properties/forms.py:52
+#: apps/properties/forms.py:55
 msgid "All districts"
 msgstr "Todos los distritos"
 
-#: apps/properties/forms.py:65
+#: apps/properties/forms.py:68
 msgid "Number of guests"
 msgstr "Número de huéspedes"
 
-#: apps/properties/forms.py:97
+#: apps/properties/forms.py:100
 msgid "This district is not in the selected city."
 msgstr "Este distrito no pertenece a la ciudad elegida."
 
-#: apps/properties/forms.py:103
+#: apps/properties/forms.py:106
 msgid "Choose both arrival and departure."
 msgstr "Elige la fecha de llegada y la de salida."
 
@@ -934,11 +998,11 @@ msgid_plural "%(count)d guests"
 msgstr[0] "%(count)d huésped"
 msgstr[1] "%(count)d huéspedes"
 
-#: config/settings.py:124
+#: config/settings.py:125
 msgid "English"
 msgstr "Inglés"
 
-#: config/settings.py:125
+#: config/settings.py:126
 msgid "Spanish"
 msgstr "Español"
 
@@ -1116,37 +1180,41 @@ msgstr "Idioma"
 msgid "Pages"
 msgstr "Páginas"
 
-#: templates/components/password_field.html:15
-#: templates/components/password_field.html:18
+#: templates/components/password_field.html:10
+msgid "The password does not meet the requirements below."
+msgstr "La contraseña no cumple los requisitos de abajo."
+
+#: templates/components/password_field.html:16
+#: templates/components/password_field.html:19
 msgid "Show password"
 msgstr "Mostrar contraseña"
 
-#: templates/components/password_field.html:15
+#: templates/components/password_field.html:16
 msgid "Hide password"
 msgstr "Ocultar contraseña"
 
-#: templates/components/password_field.html:24
-#: templates/components/password_field.html:26
+#: templates/components/password_field.html:25
+#: templates/components/password_field.html:27
 msgid "Password strength: weak"
 msgstr "Seguridad de la contraseña: débil"
 
-#: templates/components/password_field.html:25
+#: templates/components/password_field.html:26
 msgid "Password strength: medium"
 msgstr "Seguridad de la contraseña: media"
 
-#: templates/components/password_field.html:26
+#: templates/components/password_field.html:27
 msgid "Password strength: strong"
 msgstr "Seguridad de la contraseña: fuerte"
 
-#: templates/components/password_field.html:27
+#: templates/components/password_field.html:28
 msgid "Does not contain your name or email address"
 msgstr "No contiene tu nombre ni tu correo electrónico"
 
-#: templates/components/password_field.html:28
+#: templates/components/password_field.html:29
 msgid "At least 8 characters"
 msgstr "Al menos 8 caracteres"
 
-#: templates/components/password_field.html:29
+#: templates/components/password_field.html:30
 msgid "Contains a number or symbol"
 msgstr "Contiene un número o un símbolo"
 
@@ -1194,7 +1262,9 @@ msgstr "Registro"
 
 #: templates/pages/accounts/signup.html:14
 msgid "Create your account to book faster and keep your stays in one place."
-msgstr "Crea tu cuenta para reservar más rápido y tener tus estadías en un solo lugar."
+msgstr ""
+"Crea tu cuenta para reservar más rápido y tener tus estadías en un solo "
+"lugar."
 
 #: templates/pages/accounts/signup.html:25
 msgid "Create account"
