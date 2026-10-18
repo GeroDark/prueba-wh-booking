@@ -1,0 +1,29 @@
+/* Sign in / sign up pages: one centred column, Figma "Registro" typography. */
+
+.auth {
+  max-width: 34rem;
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+}
+
+.auth__title {
+  margin-bottom: 0.75rem;
+  font-family: var(--wh-font-body);
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.auth__lead {
+  margin-bottom: 2rem;
+}
+
+.auth__submit {
+  width: 100%;
+  margin-top: 0.5rem;
+  --bs-btn-padding-y: 0.75rem;
+}
+
+.auth__switch {
+  margin-top: 1.5rem;
+}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% translate "Create your account" %} | Wynwood House{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/components/forms.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="auth container-wh" aria-labelledby="auth-title">
+    <h1 class="auth__title" id="auth-title">{% translate "Sign up" %}</h1>
+    <p class="auth__lead">{% translate "Create your account to book faster and keep your stays in one place." %}</p>
+
+    <form method="post" class="auth__form" novalidate data-validate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% if form.non_field_errors %}
+        <div class="form-alert" role="alert">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+      {% endif %}
+      {% include "components/form_field.html" with field=form.email %}
+      {% include "components/form_field.html" with field=form.full_name %}
+      {% include "components/password_field.html" with field=form.password %}
+      <button type="submit" class="btn btn-wh auth__submit" data-submit-once>{% translate "Create account" %}</button>
+    </form>
+
+    <p class="auth__switch">
+      {% translate "Already have an account?" %}
+      <a href="{% url 'accounts:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">{% translate "Sign in" %}</a>
+    </p>
+  </section>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/password-field.js' %}" defer></script>
+{% endblock %}

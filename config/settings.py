@@ -96,18 +96,23 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.User"
 
+# PersonalInfoValidator replaces Django's UserAttributeSimilarityValidator: it is stricter for the
+# e-mail and the name, and the guest gets one clear message instead of two (see D05).
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-        "OPTIONS": {"user_attributes": ("email", "full_name")},
-    },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
         "OPTIONS": {"min_length": 8},
     },
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    {"NAME": "apps.accounts.validators.NumberOrSymbolValidator"},
+    {"NAME": "apps.accounts.validators.PersonalInfoValidator"},
+    {"NAME": "apps.accounts.validators.CommonWordValidator"},
 ]
+
+LOGIN_URL = "accounts:login"
+LOGIN_REDIRECT_URL = "core:home"
+LOGOUT_REDIRECT_URL = "core:home"
 
 
 # Internationalization

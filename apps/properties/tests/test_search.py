@@ -210,3 +210,12 @@ def test_summary_lists_only_the_active_filters(client, catalog):
     assert only_guests == ["2 huéspedes"]
     assert full[0] == "Lima"
     assert full[2] == "1 guest"
+
+
+def test_invalid_filters_say_which_field_is_wrong_in_the_site_tone(client):
+    html = client.get("/es/search/?check_in=abc&guests=99&city=nope").text
+
+    assert "Llegada: Ingresa una fecha válida." in html
+    assert "Huéspedes: Ingresa un número menor o igual a 16." in html
+    assert "Elige una de las opciones disponibles." in html
+    assert "Introduzca" not in html and "Asegúrese" not in html and "Escoja" not in html

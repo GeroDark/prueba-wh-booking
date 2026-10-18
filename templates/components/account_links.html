@@ -1,0 +1,18 @@
+{% load i18n %}
+{% comment %}
+  "Sign in" for visitors, greeting and "Sign out" for signed-in guests.
+  After signing in the visitor comes back to the page they were on (?next=).
+  Sign out is a POST form: a link or an image could not log anyone out (CSRF).
+{% endcomment %}
+<div class="account-links account-links--{{ variant|default:'header' }}">
+  {% if user.is_authenticated %}
+    <span class="account-links__greeting">{% blocktranslate with name=user.get_short_name %}Hi, {{ name }}{% endblocktranslate %}</span>
+    <form method="post" action="{% url 'accounts:logout' %}" class="account-links__logout">
+      {% csrf_token %}
+      <button type="submit" class="account-links__link">{% translate "Sign out" %}</button>
+    </form>
+  {% else %}
+    {% url 'accounts:login' as login_url %}
+    <a class="account-links__link" href="{{ login_url }}{% if request.path != login_url %}?next={{ request.get_full_path|urlencode }}{% endif %}">{% translate "Sign in" %}</a>
+  {% endif %}
+</div>

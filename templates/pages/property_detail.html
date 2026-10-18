@@ -4,6 +4,7 @@
 {% block title %}{{ property.title }} | Wynwood House{% endblock %}
 {% block meta_description %}{{ property.description|truncatechars:155 }}{% endblock %}
 {% block body_class %}page-detail{% endblock %}
+{% block messages %}{% endblock %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'vendor/leaflet-1.9.4/leaflet.css' %}">

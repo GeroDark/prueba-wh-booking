@@ -56,10 +56,20 @@ después es muy costoso.
 
 ## D05 · Contraseñas seguras con los validadores de Django y una lista de requisitos en vivo
 
-**Decisión.** El servidor aplica los validadores de Django: longitud mínima de 8 caracteres, contraseña común,
-solo números y parecido con los datos del usuario. Se suma un validador propio que exige al menos un número o símbolo.
-El navegador muestra la lista de requisitos del Figma mientras el usuario escribe. Esa lista es solo una ayuda:
-la regla real la aplica el servidor.
+**Decisión.**
+- El servidor aplica los validadores de Django (longitud mínima de 8, contraseña común, solo números) y tres propios
+  en `apps/accounts/validators.py`: **al menos un número o símbolo**, **no contener el nombre ni el correo** (por
+  ejemplo, rechaza `torres-2026!` para Ana Torres) y **no ser una palabra común con números o símbolos**
+  (`contraseña123`, `Password2026!`; la lista de Django es en inglés y solo busca coincidencias exactas).
+- `PersonalInfoValidator` **reemplaza** al `UserAttributeSimilarityValidator` de Django: detecta si la contraseña
+  *contiene* el dato (no solo si se parece entera) y así el usuario ve un único mensaje por problema.
+- La contraseña se valida contra lo escrito en el formulario aunque el correo o el nombre tengan errores.
+- Medidor: "fuerte" exige 12+ caracteres y 3 tipos de carácter (minúsculas, mayúsculas, números, símbolos).
+- Como en el Figma, hay **un solo campo** de contraseña, con botón para mostrar u ocultar (en lugar de un segundo campo
+  de confirmación) y una lista de requisitos que se marca mientras se escribe.
+- La lista del navegador es solo una guía: el servidor siempre valida, y además rechaza las contraseñas comunes, que
+  el JS no puede conocer.
+- Tras un error, la contraseña no se vuelve a escribir en la página (Django no re-renderiza `PasswordInput`).
 
 ---
 
@@ -479,3 +489,42 @@ tarifa negociada), como sugiere el diseño, y evita retener un calendario durant
 **Limitación conocida.** Como el calendario deshabilita las noches ocupadas, no permite elegir como salida el día
 en que empieza otra reserva, aunque el servidor lo acepta (intervalo semiabierto). Para la demo es aceptable;
 resolverlo requiere un componente de calendario propio.
+
+---
+
+## D34 · Autenticación sin filtrar información
+
+**Decisión.**
+- **Sin enumeración de cuentas:** el login responde "El correo o la contraseña no son correctos" tanto si el correo
+  no existe como si la contraseña es incorrecta. Así no se puede averiguar quién tiene cuenta.
+  (El registro sí avisa "ya existe una cuenta con este correo", porque es necesario para el usuario; es el equilibrio
+  habitual entre usabilidad y privacidad.)
+- **Cerrar sesión solo por POST** (Django 5): un enlace o una imagen en otra web no pueden cerrar la sesión de nadie (CSRF).
+- **`next` validado** con `url_has_allowed_host_and_scheme`: después de iniciar sesión solo se vuelve a páginas de
+  este sitio (evita *open redirects*).
+- **La sesión sobrevive al login:** Django cambia la clave de la sesión al iniciar sesión (contra la fijación de
+  sesión) pero conserva sus datos. Una retención hecha antes de registrarse sigue perteneciendo al visitante (test incluido).
+- Login con email sin distinguir mayúsculas y quien ya tiene sesión no ve los formularios de acceso.
+
+**Fuera de alcance (documentado).** Recuperación de contraseña y límite de intentos de login (por ejemplo con
+`django-axes`); se listan como mejoras.
+
+---
+
+## D35 · Validación de formularios en dos capas y mensajes propios
+
+**Contexto.** Una prueba manual mostró errores que quedaban visibles tras corregir el campo, un nombre con números
+aceptado y mensajes de Django en "usted" ("Introduzca una fecha válida").
+
+**Decisión.**
+- **Servidor = autoridad.** Todo se valida en Django. Nombre completo (`validate_full_name`, en el modelo): letras de
+  cualquier idioma, espacios, `-`, `'`, `’` y `.`, con nombre y al menos un apellido (debe coincidir con el documento en
+  el check-in). Se normaliza a NFC y sin espacios repetidos.
+- **Navegador = ayuda** (`form-feedback.js`, formularios con `data-validate`): el error se borra al editar, cada campo
+  se revisa al salir y todos al enviar; si algo falla no se envía (no se pierde la contraseña) y el foco va al primer
+  error. Los mensajes llegan desde el formulario (`data-error-required`, `data-error-invalid`) con el filtro
+  `accessible`: una sola fuente de textos, traducidos.
+- **Mensajes propios en todos los formularios** (`FriendlyErrorsMixin`): tono "tú", dicen qué corregir y no repiten el
+  valor enviado. En la búsqueda, cada error indica su campo ("Llegada: Ingresa una fecha válida.").
+
+**Límite.** No se puede distinguir un nombre real de letras al azar sin verificar un documento.

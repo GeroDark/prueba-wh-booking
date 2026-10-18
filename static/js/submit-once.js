@@ -7,7 +7,7 @@
 
   document.addEventListener("submit", function (event) {
     var button = event.target.querySelector("[data-submit-once]");
-    if (!button) return;
+    if (!button || (event.defaultPrevented && !button.dataset.submitting)) return; // not sent
     if (button.dataset.submitting) {
       event.preventDefault();
       return;

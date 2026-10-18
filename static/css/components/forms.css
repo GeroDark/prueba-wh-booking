@@ -1,0 +1,147 @@
+/* Form fields (Figma "Registro"): 50px inputs, grey border, 7px radius, coral errors. */
+
+:root {
+  --wh-field-border: #999999;
+  --wh-field-error: #d93b2e; /* Figma #F97066 darkened to reach WCAG AA contrast on white */
+  --wh-field-ok: #1e7d4f;
+}
+
+.form-field {
+  margin-bottom: 1.25rem;
+}
+
+.form-field__label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-field input:not([type="checkbox"]):not([type="radio"]),
+.form-field select {
+  width: 100%;
+  height: 3.125rem;
+  padding: 0 1rem;
+  border: 1px solid var(--wh-field-border);
+  border-radius: 7px;
+  background: var(--wh-white);
+  color: var(--wh-black);
+  font-size: 1rem;
+  transition: border-color var(--wh-transition), box-shadow var(--wh-transition);
+}
+
+.form-field input::placeholder {
+  color: var(--wh-field-border);
+}
+
+.form-field input:focus-visible,
+.form-field select:focus-visible {
+  border-color: var(--wh-black);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(35, 35, 36, 0.15);
+}
+
+/* Same :not() chain as the base rule: :not() adds the specificity of its argument. */
+.form-field.has-error input:not([type="checkbox"]):not([type="radio"]),
+.form-field.has-error select {
+  border: 2px solid var(--wh-field-error);
+}
+
+.form-field__help {
+  margin: 0.4rem 0 0;
+  color: var(--wh-gray);
+  font-size: 0.8125rem;
+}
+
+.form-field__errors p,
+.form-alert p {
+  margin: 0.4rem 0 0;
+  color: var(--wh-field-error);
+  font-size: 0.875rem;
+}
+
+.form-alert {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 7px;
+  background: #fdecec;
+}
+
+.form-alert p {
+  margin: 0;
+}
+
+/* Password field: show/hide button and live checklist */
+
+.password-field__control {
+  position: relative;
+}
+
+.password-field__control input {
+  padding-right: 3rem !important;
+}
+
+.password-field__toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  transform: translateY(-50%);
+}
+
+.password-field__toggle:hover {
+  background: var(--wh-cream);
+}
+
+.password-rules {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  font-size: 0.75rem;
+  list-style: none;
+}
+
+.password-rules li {
+  position: relative;
+  padding-left: 1.4rem;
+  color: var(--wh-gray);
+}
+
+.password-rules li::before {
+  position: absolute;
+  left: 0;
+  content: "✓";
+}
+
+.password-field.is-touched .password-rules li[data-rule] {
+  color: var(--wh-field-error);
+}
+
+.password-field.is-touched .password-rules li[data-rule]:not(.is-valid)::before {
+  content: "✗";
+}
+
+.password-field .password-rules li[data-rule].is-valid {
+  color: var(--wh-field-ok);
+}
+
+.password-rules__strength[data-level="weak"] {
+  color: var(--wh-field-error) !important;
+}
+
+.password-rules__strength[data-level="medium"] {
+  color: #9a6700 !important;
+}
+
+.password-rules__strength[data-level="strong"] {
+  color: var(--wh-field-ok) !important;
+}
+
+.password-rules__strength::before {
+  content: "●" !important;
+}
