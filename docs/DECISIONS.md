@@ -373,6 +373,10 @@ en el detalle ("Ubicación").
 - **Agrupamiento:** con resultados en varios países, los marcadores de una misma ciudad se superponían. Se agrupan
   (Leaflet.markercluster, MIT) en un círculo con la cantidad; un clic acerca el mapa y, a nivel de calle, cada
   propiedad muestra su precio.
+- **Gestos:** el mapa de resultados ocupa media pantalla y es la herramienta principal, así que la rueda hace zoom
+  directamente (como Airbnb). El mapa del detalle está dentro de la página: con `leaflet-gesture-handling` (MIT)
+  la rueda sola sigue bajando la página, **Ctrl/⌘ + rueda** hace zoom, se arrastra con el mouse y en pantallas
+  táctiles se mueve con dos dedos, con un aviso traducido por Django (como los mapas de Google embebidos).
 - **Seguridad:** el texto de los marcadores y de la mini tarjeta se inserta con `textContent`, nunca como HTML,
   porque los títulos vienen del admin (evita XSS).
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 10:54-0500\n"
+"POT-Creation-Date: 2026-10-18 11:24-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -653,7 +653,7 @@ msgstr "red social"
 msgid "social networks"
 msgstr "redes sociales"
 
-#: apps/properties/admin.py:95 templates/pages/property_detail.html:75
+#: apps/properties/admin.py:95 templates/pages/property_detail.html:76
 msgid "Location"
 msgstr "Ubicación"
 
@@ -665,7 +665,7 @@ msgstr "Capacidad"
 msgid "Pricing"
 msgstr "Precios"
 
-#: apps/properties/admin.py:98 templates/pages/property_detail.html:60
+#: apps/properties/admin.py:98 templates/pages/property_detail.html:61
 msgid "Amenities"
 msgstr "Comodidades"
 
@@ -918,7 +918,7 @@ msgid "Monthly"
 msgstr "Mensual"
 
 #: templates/components/booking_card.html:22
-#: templates/pages/property_detail.html:96
+#: templates/pages/property_detail.html:100
 msgid "per night"
 msgstr "por noche"
 
@@ -1002,7 +1002,7 @@ msgid "Dates"
 msgstr "Fechas"
 
 #: templates/components/booking_summary.html:19
-#: templates/pages/property_detail.html:45
+#: templates/pages/property_detail.html:46
 #, python-format
 msgid "%(counter)s guest"
 msgid_plural "%(counter)s guests"
@@ -1112,49 +1112,61 @@ msgstr "Experiencia de hogar, calidad de hotel"
 msgid "Discover our destinations"
 msgstr "Descubre nuestros destinos"
 
-#: templates/pages/property_detail.html:18
+#: templates/pages/property_detail.html:19
 msgid "Breadcrumb"
 msgstr "Ruta de navegación"
 
-#: templates/pages/property_detail.html:46
+#: templates/pages/property_detail.html:47
 #, python-format
 msgid "%(counter)s bedroom"
 msgid_plural "%(counter)s bedrooms"
 msgstr[0] "%(counter)s habitación"
 msgstr[1] "%(counter)s habitaciones"
 
-#: templates/pages/property_detail.html:47
+#: templates/pages/property_detail.html:48
 #, python-format
 msgid "%(counter)s bed"
 msgid_plural "%(counter)s beds"
 msgstr[0] "%(counter)s cama"
 msgstr[1] "%(counter)s camas"
 
-#: templates/pages/property_detail.html:48
+#: templates/pages/property_detail.html:49
 #, python-format
 msgid "%(counter)s bathroom"
 msgid_plural "%(counter)s bathrooms"
 msgstr[0] "%(counter)s baño"
 msgstr[1] "%(counter)s baños"
 
-#: templates/pages/property_detail.html:53
+#: templates/pages/property_detail.html:54
 msgid "Description"
 msgstr "Descripción"
 
-#: templates/pages/property_detail.html:78
+#: templates/pages/property_detail.html:79
 msgid "The exact address is shared after booking."
 msgstr "La dirección exacta se comparte después de reservar."
 
-#: templates/pages/property_detail.html:82
+#: templates/pages/property_detail.html:83
+msgid "Use Ctrl + scroll to zoom the map"
+msgstr "Usa Ctrl + rueda del mouse para acercar o alejar el mapa"
+
+#: templates/pages/property_detail.html:84
+msgid "Use ⌘ + scroll to zoom the map"
+msgstr "Usa ⌘ + rueda del mouse para acercar o alejar el mapa"
+
+#: templates/pages/property_detail.html:85
+msgid "Use two fingers to move the map"
+msgstr "Usa dos dedos para mover el mapa"
+
+#: templates/pages/property_detail.html:86
 #, python-format
 msgid "Map of the area around %(place)s"
 msgstr "Mapa de la zona de %(place)s"
 
-#: templates/pages/property_detail.html:87
+#: templates/pages/property_detail.html:91
 msgid "Book this property"
 msgstr "Reserva esta propiedad"
 
-#: templates/pages/property_detail.html:97
+#: templates/pages/property_detail.html:101
 msgid "Book"
 msgstr "Reservar"
 

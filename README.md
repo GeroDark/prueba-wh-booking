@@ -146,7 +146,8 @@ templates/       base.html, pages/ y components/ reutilizables: header, footer, 
 static/          css/ (tokens + un archivo por componente y por página), js/ (mejoras progresivas:
                  rango de fechas, distritos por ciudad, carruseles, aparición al hacer scroll),
                  fonts/, img/, vendor/ (Bootstrap, Bootstrap Icons, flag-icons, flatpickr, Leaflet,
-                 Leaflet.markercluster)
+                 Leaflet.markercluster,
+                 leaflet-gesture-handling)
 seed/images/     fotos de origen para los datos de prueba
 docs/            plan maestro y decisiones técnicas
 ```
@@ -156,5 +157,5 @@ docs/            plan maestro y decisiones técnicas
 El código está bajo licencia MIT (ver [LICENSE](LICENSE)). Las fuentes de `static/fonts/` (Acumin Pro y Helvetica Neue)
 y las imágenes del diseño son propiedad de sus autores. Wynwood House las proporcionó solo para evaluar esta prueba,
 y no están cubiertas por la licencia del repositorio. Bootstrap, Bootstrap Icons y flag-icons (MIT) conservan sus
-licencias en `static/vendor/`, igual que flatpickr y Leaflet.markercluster (MIT) y Leaflet (BSD-2).
+licencias en `static/vendor/`, igual que flatpickr, Leaflet.markercluster y leaflet-gesture-handling (MIT) y Leaflet (BSD-2).
 Los mapas usan teselas de [OpenStreetMap](https://www.openstreetmap.org/copyright) © sus colaboradores.

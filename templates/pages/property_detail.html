@@ -7,6 +7,7 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'vendor/leaflet-1.9.4/leaflet.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/leaflet-gesture-handling-1.2.2/leaflet-gesture-handling.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/map.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/booking-card.css' %}">
   <link rel="stylesheet" href="{% static 'css/pages/detail.css' %}">
@@ -79,6 +80,9 @@
             </p>
             {# unlocalize: in Spanish Django would print "-12,125", which JavaScript cannot parse. #}
             <div class="detail-map" id="property-map" data-lat="{{ location.0|unlocalize }}" data-lng="{{ location.1|unlocalize }}"
+                 data-hint-scroll="{% translate 'Use Ctrl + scroll to zoom the map' %}"
+                 data-hint-scroll-mac="{% translate 'Use ⌘ + scroll to zoom the map' %}"
+                 data-hint-touch="{% translate 'Use two fingers to move the map' %}"
                  role="img" aria-label="{% blocktranslate with place=property.district.name %}Map of the area around {{ place }}{% endblocktranslate %}"></div>
           </section>
         {% endif %}
@@ -102,6 +106,7 @@
 
 {% block extra_js %}
   <script src="{% static 'vendor/leaflet-1.9.4/leaflet.js' %}" defer></script>
+  <script src="{% static 'vendor/leaflet-gesture-handling-1.2.2/leaflet-gesture-handling.min.js' %}" defer></script>
   <script src="{% static 'js/detail-map.js' %}" defer></script>
   <script src="{% static 'js/booking-card.js' %}" defer></script>
 {% endblock %}
