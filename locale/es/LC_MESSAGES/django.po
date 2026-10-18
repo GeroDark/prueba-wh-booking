@@ -114,11 +114,10 @@ msgstr "Todos los derechos reservados."
 msgid "Language"
 msgstr "Idioma"
 
-# The design keeps the brand tagline in English on the Spanish site.
 #: templates/pages/home.html:4 templates/pages/home.html:10
 msgid "Home experience, hotel quality"
-msgstr "Home experience, hotel quality"
+msgstr "Experiencia de hogar, calidad de hotel"
 
 #: templates/pages/home.html:11
 msgid "Best of both worlds"
-msgstr "Best of both worlds"
+msgstr "Lo mejor de ambos mundos"
