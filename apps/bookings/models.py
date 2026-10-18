@@ -72,6 +72,12 @@ class Booking(TimeStampedModel):
         _("language"), max_length=7, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE
     )
     confirmed_at = models.DateTimeField(_("confirmed at"), null=True, blank=True)
+    confirmation_sent_at = models.DateTimeField(
+        _("confirmation e-mail sent at"),
+        null=True,
+        blank=True,
+        help_text=_("Empty if the e-mail has not been sent yet (it is retried with a command)."),
+    )
 
     objects = BookingQuerySet.as_manager()
 

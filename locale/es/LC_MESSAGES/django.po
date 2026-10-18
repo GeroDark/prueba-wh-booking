@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 16:25-0500\n"
+"POT-Creation-Date: 2026-10-18 16:49-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -105,7 +105,9 @@ msgstr "Selecciona el indicativo."
 msgid ""
 "I want to receive exclusive member offers, inspiring content and news from "
 "Wynwood House by email."
-msgstr "Quiero recibir por correo ofertas exclusivas para miembros, contenido inspirador y novedades de Wynwood House."
+msgstr ""
+"Quiero recibir por correo ofertas exclusivas para miembros, contenido "
+"inspirador y novedades de Wynwood House."
 
 #: apps/accounts/forms.py:178 apps/accounts/validators.py:70
 msgid "Check the year of your birth date."
@@ -190,7 +192,8 @@ msgstr "consentimiento del boletín otorgado el"
 
 #: apps/accounts/models.py:47
 msgid "When the guest ticked the newsletter box (proof of consent)."
-msgstr "Cuándo el huésped marcó la casilla del boletín (prueba del consentimiento)."
+msgstr ""
+"Cuándo el huésped marcó la casilla del boletín (prueba del consentimiento)."
 
 #: apps/accounts/models.py:56
 msgid "user"
@@ -206,7 +209,8 @@ msgstr "Ya existe una cuenta con este correo electrónico."
 
 #: apps/accounts/phones.py:90
 msgid "The country code is repeated. Enter it only once, or only the number."
-msgstr "El indicativo está repetido. Escríbelo una sola vez o ingresa solo el número."
+msgstr ""
+"El indicativo está repetido. Escríbelo una sola vez o ingresa solo el número."
 
 #: apps/accounts/phones.py:93
 msgid "Enter a valid phone number."
@@ -257,13 +261,34 @@ msgstr "No contiene tu nombre ni tu correo electrónico."
 msgid "Welcome to Wynwood House, %(name)s!"
 msgstr "¡Te damos la bienvenida a Wynwood House, %(name)s!"
 
-#: apps/bookings/admin.py:44
+#: apps/bookings/admin.py:54
 msgid "nights"
 msgstr "noches"
+
+#: apps/bookings/admin.py:58
+msgid "Resend the confirmation e-mail"
+msgstr "Reenviar el correo de confirmación"
+
+#: apps/bookings/admin.py:68
+#, python-format
+msgid "%(count)d e-mail sent."
+msgid_plural "%(count)d e-mails sent."
+msgstr[0] "%(count)d correo enviado."
+msgstr[1] "%(count)d correos enviados."
 
 #: apps/bookings/apps.py:7
 msgid "Bookings"
 msgstr "Reservas"
+
+#: apps/bookings/emails.py:54 templates/pages/booking_confirmation.html:42
+#, python-format
+msgid "Hi, I have a question about my booking %(reference)s."
+msgstr "Hola, tengo una consulta sobre mi reserva %(reference)s."
+
+#: apps/bookings/emails.py:81
+#, python-format
+msgid "Your booking %(reference)s is confirmed"
+msgstr "Tu reserva %(reference)s está confirmada"
 
 #: apps/bookings/forms.py:14 apps/properties/forms.py:58
 msgid "Check-in"
@@ -363,44 +388,53 @@ msgstr "idioma"
 msgid "confirmed at"
 msgstr "confirmada el"
 
-#: apps/bookings/models.py:79 apps/bookings/models.py:121
+#: apps/bookings/models.py:76
+msgid "confirmation e-mail sent at"
+msgstr "correo de confirmación enviado el"
+
+#: apps/bookings/models.py:79
+msgid ""
+"Empty if the e-mail has not been sent yet (it is retried with a command)."
+msgstr "Vacío si el correo aún no se envió (se reintenta con un comando)."
+
+#: apps/bookings/models.py:85 apps/bookings/models.py:127
 #: apps/payments/models.py:26
 msgid "booking"
 msgstr "reserva"
 
-#: apps/bookings/models.py:80
+#: apps/bookings/models.py:86
 msgid "bookings"
 msgstr "reservas"
 
-#: apps/bookings/models.py:87
+#: apps/bookings/models.py:93
 msgid "Check-out must be after check-in."
 msgstr "La salida debe ser posterior a la llegada."
 
-#: apps/bookings/models.py:116
+#: apps/bookings/models.py:122
 msgid "Nights"
 msgstr "Noches"
 
-#: apps/bookings/models.py:117
+#: apps/bookings/models.py:123
 msgid "Cleaning"
 msgstr "Limpieza"
 
-#: apps/bookings/models.py:118
+#: apps/bookings/models.py:124
 msgid "Tax"
 msgstr "Impuesto"
 
-#: apps/bookings/models.py:123 apps/core/models.py:231
+#: apps/bookings/models.py:129 apps/core/models.py:231
 msgid "type"
 msgstr "tipo"
 
-#: apps/bookings/models.py:124 apps/core/models.py:211 apps/core/models.py:232
+#: apps/bookings/models.py:130 apps/core/models.py:211 apps/core/models.py:232
 msgid "label"
 msgstr "etiqueta"
 
-#: apps/bookings/models.py:125 apps/payments/models.py:35
+#: apps/bookings/models.py:131 apps/payments/models.py:35
 msgid "amount"
 msgstr "monto"
 
-#: apps/bookings/models.py:126 apps/core/models.py:135 apps/core/models.py:175
+#: apps/bookings/models.py:132 apps/core/models.py:135 apps/core/models.py:175
 #: apps/core/models.py:195 apps/core/models.py:214 apps/core/models.py:237
 #: apps/core/models.py:272 apps/properties/models.py:29
 #: apps/properties/models.py:111 apps/properties/models.py:241
@@ -408,11 +442,11 @@ msgstr "monto"
 msgid "order"
 msgstr "orden"
 
-#: apps/bookings/models.py:129
+#: apps/bookings/models.py:135
 msgid "price line"
 msgstr "línea de precio"
 
-#: apps/bookings/models.py:130
+#: apps/bookings/models.py:136
 msgid "price lines"
 msgstr "líneas de precio"
 
@@ -977,15 +1011,15 @@ msgstr "pago"
 msgid "payments"
 msgstr "pagos"
 
-#: apps/payments/services.py:21
+#: apps/payments/services.py:24
 msgid "Your card was declined. Try another card."
 msgstr "Tu tarjeta fue rechazada. Prueba con otra tarjeta."
 
-#: apps/payments/services.py:22
+#: apps/payments/services.py:25
 msgid "The card has insufficient funds. Try another card."
 msgstr "La tarjeta no tiene fondos suficientes. Prueba con otra tarjeta."
 
-#: apps/payments/services.py:24
+#: apps/payments/services.py:27
 msgid ""
 "This is a demo and no real charges are made: use one of the test cards shown "
 "below."
@@ -1306,6 +1340,8 @@ msgstr[1] "Hasta %(counter)s huéspedes"
 #: templates/components/booking_card.html:61
 #: templates/components/booking_card.html:67
 #: templates/components/booking_summary.html:50
+#: templates/emails/booking_confirmation.html:104
+#: templates/emails/booking_confirmation.txt:16
 #: templates/pages/booking_confirmation.html:59
 msgid "Total"
 msgstr "Total"
@@ -1368,6 +1404,8 @@ msgid "Change dates"
 msgstr "Cambiar fechas"
 
 #: templates/components/booking_summary.html:35
+#: templates/emails/booking_confirmation.html:85
+#: templates/emails/booking_confirmation.txt:13
 #: templates/pages/booking_confirmation.html:52
 #: templates/pages/property_detail.html:41
 #, python-format
@@ -1491,6 +1529,8 @@ msgid "Search"
 msgstr "Buscar"
 
 #: templates/components/terms_notice.html:7
+#: templates/emails/booking_confirmation.html:176
+#: templates/emails/booking_confirmation.txt:20
 #: templates/pages/booking_confirmation.html:89
 msgid "Cancellation policy"
 msgstr "Política de cancelación"
@@ -1511,6 +1551,103 @@ msgid ""
 msgstr ""
 "Al seleccionar %(button)s, aceptas la %(cancellation)s, los %(terms)s y la "
 "%(privacy)s. También aceptas pagar el importe total mostrado."
+
+#: templates/emails/booking_confirmation.html:8
+#: templates/pages/booking_confirmation.html:4
+#: templates/pages/booking_confirmation.html:32
+#, python-format
+msgid "Booking %(reference)s confirmed"
+msgstr "Reserva %(reference)s confirmada"
+
+#: templates/emails/booking_confirmation.html:17
+#, python-format
+msgid "Booking %(reference)s confirmed: %(title)s."
+msgstr "Reserva %(reference)s confirmada: %(title)s."
+
+#: templates/emails/booking_confirmation.html:32
+#: templates/emails/booking_confirmation.txt:1
+#: templates/pages/booking_confirmation.html:20
+#, python-format
+msgid "Hi, %(name)s!"
+msgstr "¡Hola, %(name)s!"
+
+#: templates/emails/booking_confirmation.html:37
+#: templates/emails/booking_confirmation.txt:3
+#: templates/pages/booking_confirmation.html:22
+msgid "Thank you for choosing Wynwood House for your next stay"
+msgstr "Gracias por elegir Wynwood House para tu próxima estadía"
+
+#: templates/emails/booking_confirmation.html:51
+#: templates/emails/booking_confirmation.txt:5
+#: templates/pages/booking_confirmation.html:34
+msgid "You're all set to start your Wynwood Experience!"
+msgstr "¡Todo listo para comenzar tu Wynwood Experience!"
+
+#: templates/emails/booking_confirmation.html:52
+#: templates/emails/booking_confirmation.txt:6
+msgid ""
+"Your booking is confirmed and we look forward to welcoming you. Before your "
+"arrival you will receive all the check-in information by email."
+msgstr "Tu reserva ha sido confirmada y esperamos recibirte muy pronto. Antes de tu llegada recibirás por correo toda la información para el ingreso."
+
+#: templates/emails/booking_confirmation.html:53
+#: templates/pages/booking_confirmation.html:41
+msgid "If you have any questions, do not hesitate to contact us."
+msgstr "Si tienes alguna inquietud, no dudes en comunicarte con nosotros."
+
+#: templates/emails/booking_confirmation.html:59
+#: templates/emails/booking_confirmation.txt:19
+#: templates/pages/booking_confirmation.html:43
+msgid "Chat with us 24/7"
+msgstr "Conversa con nosotros 24/7"
+
+#: templates/emails/booking_confirmation.html:69
+#: templates/emails/booking_confirmation.txt:8
+msgid "Your booking summary"
+msgstr "Resumen de tu reserva"
+
+#: templates/emails/booking_confirmation.html:73
+#: templates/emails/booking_confirmation.txt:9
+#, python-format
+msgid "Reference %(reference)s"
+msgstr "Referencia %(reference)s"
+
+#: templates/emails/booking_confirmation.html:112
+#: templates/emails/booking_confirmation.txt:18
+msgid "See my booking and the map"
+msgstr "Ver mi reserva y el mapa"
+
+#: templates/emails/booking_confirmation.html:125
+msgid "Other destinations"
+msgstr "Otros destinos"
+
+#: templates/emails/booking_confirmation.html:150
+msgid "Explore your destination with confidence with our city guides."
+msgstr "Explora tu destino con confianza con nuestras guías de ciudades."
+
+#: templates/emails/booking_confirmation.html:153
+msgid ""
+"Don't settle for the basics: personalise your stay with additional services "
+"and enjoy the new way to travel."
+msgstr "No te conformes con lo básico: personaliza tu estancia con servicios adicionales y disfruta de la nueva forma de viajar."
+
+#: templates/emails/booking_confirmation.html:171
+#: templates/emails/booking_confirmation.txt:22
+#: templates/pages/booking_confirmation.html:91 templates/pages/home.html:4
+#: templates/pages/home.html:21
+msgid "Home experience, hotel quality"
+msgstr "Experiencia de hogar, calidad de hotel"
+
+#: templates/emails/booking_confirmation.html:175
+msgid "24/7 support"
+msgstr "Soporte 24/7"
+
+#: templates/emails/booking_confirmation.html:192
+#, python-format
+msgid ""
+"You receive this e-mail at %(email)s because you booked a stay with Wynwood "
+"House."
+msgstr "Recibes este correo en %(email)s porque reservaste una estadía con Wynwood House."
 
 #: templates/pages/accounts/login.html:14
 msgid "Welcome back. Sign in to continue with your booking."
@@ -1546,25 +1683,6 @@ msgstr "Crear cuenta"
 msgid "Already have an account?"
 msgstr "¿Ya tienes una cuenta?"
 
-#: templates/pages/booking_confirmation.html:4
-#: templates/pages/booking_confirmation.html:32
-#, python-format
-msgid "Booking %(reference)s confirmed"
-msgstr "Reserva %(reference)s confirmada"
-
-#: templates/pages/booking_confirmation.html:20
-#, python-format
-msgid "Hi, %(name)s!"
-msgstr "¡Hola, %(name)s!"
-
-#: templates/pages/booking_confirmation.html:22
-msgid "Thank you for choosing Wynwood House for your next stay"
-msgstr "Gracias por elegir Wynwood House para tu próxima estadía"
-
-#: templates/pages/booking_confirmation.html:34
-msgid "You're all set to start your Wynwood Experience!"
-msgstr "¡Todo listo para comenzar tu Wynwood Experience!"
-
 #: templates/pages/booking_confirmation.html:36
 #, python-format
 msgid ""
@@ -1573,19 +1691,6 @@ msgid ""
 msgstr ""
 "Tu reserva está confirmada y esperamos recibirte muy pronto. Antes de tu "
 "llegada recibirás toda la información para el ingreso en %(email)s."
-
-#: templates/pages/booking_confirmation.html:41
-msgid "If you have any questions, do not hesitate to contact us."
-msgstr "Si tienes alguna inquietud, no dudes en comunicarte con nosotros."
-
-#: templates/pages/booking_confirmation.html:42
-#, python-format
-msgid "Hi, I have a question about my booking %(reference)s."
-msgstr "Hola, tengo una consulta sobre mi reserva %(reference)s."
-
-#: templates/pages/booking_confirmation.html:43
-msgid "Chat with us 24/7"
-msgstr "Conversa con nosotros 24/7"
 
 #: templates/pages/booking_confirmation.html:63
 #, python-format
@@ -1619,11 +1724,6 @@ msgstr "Mapa con la ubicación exacta: %(address)s"
 #: templates/pages/booking_confirmation.html:82
 msgid "Open in Google Maps"
 msgstr "Abrir en Google Maps"
-
-#: templates/pages/booking_confirmation.html:91 templates/pages/home.html:4
-#: templates/pages/home.html:21
-msgid "Home experience, hotel quality"
-msgstr "Experiencia de hogar, calidad de hotel"
 
 #: templates/pages/checkout.html:4
 msgid "Complete your booking"
@@ -1664,7 +1764,9 @@ msgstr "Hola, %(name)s. Completa tus datos para continuar con la reserva."
 
 #: templates/pages/checkout.html:80
 msgid "Optional. You can unsubscribe at any time from any email you receive."
-msgstr "Es opcional. Puedes darte de baja cuando quieras desde cualquier correo que recibas."
+msgstr ""
+"Es opcional. Puedes darte de baja cuando quieras desde cualquier correo que "
+"recibas."
 
 #: templates/pages/checkout.html:94
 msgid "Review your booking and complete the payment to confirm it."
@@ -1683,7 +1785,9 @@ msgstr ""
 
 #: templates/pages/checkout.html:119
 msgid "This is a demo: use one of the test cards. Real cards are not accepted."
-msgstr "Esto es una demo: usa una de las tarjetas de prueba. No se aceptan tarjetas reales."
+msgstr ""
+"Esto es una demo: usa una de las tarjetas de prueba. No se aceptan tarjetas "
+"reales."
 
 #: templates/pages/checkout.html:122
 msgid "Test cards"

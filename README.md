@@ -19,7 +19,7 @@ confirmación y correo, en español e inglés.
 | 5 | Detalle de la propiedad: galería, calendario de disponibilidad, precio en vivo y retención de fechas | ✅ |
 | 6 | Registro y login con email, contraseñas seguras con requisitos en vivo, logout seguro | ✅ |
 | 7 | Checkout: registro con datos personales, pago simulado idempotente y confirmación con la ubicación exacta | ✅ |
-| 8 | Correo de confirmación | ⏳ |
+| 8 | Correo de confirmación HTML + texto en el idioma de la reserva (Mailpit en local, Brevo en producción) | ✅ |
 
 ## Stack
 
@@ -107,6 +107,23 @@ El origen y la licencia de cada imagen están en [seed/images/CREDITS.md](seed/i
 
 Un doble clic, recargar la página o pagar desde dos pestañas a la vez nunca cobra dos veces (ver D11).
 
+7. **Correo de confirmación:** se envía una sola vez al confirmarse el pago, en el idioma en que se reservó.
+   En local llega a Mailpit (http://localhost:8025), que también muestra la versión de texto y un chequeo de
+   compatibilidad con clientes de correo.
+
+## Correo
+
+| Entorno | Cómo se envía | Configuración |
+|---|---|---|
+| Docker (local) | SMTP a Mailpit | Ya viene en `docker-compose.yml` (`EMAIL_URL=smtp://mailpit:1025`) |
+| Sin Docker | Se imprime en la consola | `EMAIL_URL=consolemail://` |
+| Producción | API HTTP de Brevo (`django-anymail`) | `BREVO_API_KEY`, `DEFAULT_FROM_EMAIL` (remitente verificado en Brevo) y `SITE_URL` |
+
+Se usa la API y no SMTP porque los planes gratuitos de hosting suelen bloquear los puertos SMTP. Si el proveedor
+falla, el pago no se ve afectado y el correo queda pendiente:
+`python manage.py send_booking_confirmations` envía los pendientes (nunca dos veces), y en el admin la acción
+"Reenviar el correo de confirmación" lo vuelve a mandar a pedido del huésped.
+
 Reglas que valida el servidor: llegada no pasada (según la zona horaria de la ciudad), salida posterior a la llegada,
 capacidad de la propiedad, hasta 30 noches en línea y sin solapamiento con otra reserva o retención vigente,
 también ante dos reservas simultáneas (ver D06 a D09 en [docs/DECISIONS.md](docs/DECISIONS.md)).
@@ -116,6 +133,7 @@ también ante dos reservas simultáneas (ver D06 a D09 en [docs/DECISIONS.md](do
 ```bash
 docker compose exec web pytest                       # tests
 docker compose exec web python manage.py expire_holds # marca como vencidas las retenciones caducadas (opcional, p. ej. con cron)
+docker compose exec web python manage.py send_booking_confirmations # envía los correos de confirmación pendientes
 docker compose exec web ruff check . && docker compose exec web ruff format .
 docker compose exec web python manage.py makemigrations
 docker compose exec web python manage.py makemessages -l es --ignore=.venv --ignore=staticfiles --no-obsolete

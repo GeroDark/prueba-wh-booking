@@ -6,12 +6,15 @@
 | Two tabs paying at once       | `select_for_update` on the booking; the second sees it confirmed |
 | Hold expired while paying     | Checked under the lock, before calling the gateway               |
 | A bug that bypasses all above | DB constraint: one successful payment per booking                |
+
+The confirmation e-mail is sent after the transaction commits (D37).
 """
 
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from apps.bookings.emails import send_confirmation_on_commit
 from apps.bookings.models import Booking
 
 from .gateways import get_gateway
@@ -88,6 +91,7 @@ def pay_booking(*, booking, card, idempotency_key, gateway=None, now=None):
             locked.status = Booking.Status.CONFIRMED
             locked.confirmed_at = now
             locked.save(update_fields=["status", "confirmed_at", "updated_at"])
+            send_confirmation_on_commit(locked)
         else:
             payment.status = Payment.Status.FAILED
             payment.decline_code = result.decline_code
