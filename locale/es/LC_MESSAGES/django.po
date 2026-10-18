@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 11:24-0500\n"
+"POT-Creation-Date: 2026-10-18 11:34-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -27,6 +27,34 @@ msgstr "Fechas importantes"
 #: apps/accounts/apps.py:7
 msgid "Accounts"
 msgstr "Cuentas"
+
+#: apps/accounts/forms.py:18
+msgid "Create a password"
+msgstr "Crear contraseña"
+
+#: apps/accounts/forms.py:23
+msgid "Enter a new password"
+msgstr "Ingresa una nueva contraseña"
+
+#: apps/accounts/forms.py:37
+msgid "Enter your full name"
+msgstr "Ingresa tu nombre completo"
+
+#: apps/accounts/forms.py:49
+msgid "An account with this email already exists. Sign in instead."
+msgstr "Ya existe una cuenta con este correo. Inicia sesión."
+
+#: apps/accounts/forms.py:78 apps/core/models.py:225
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: apps/accounts/forms.py:82
+msgid "Password"
+msgstr "Contraseña"
+
+#: apps/accounts/forms.py:89
+msgid "The email or password is incorrect."
+msgstr "El correo o la contraseña no son correctos."
 
 #: apps/accounts/managers.py:21
 msgid "The email address is required."
@@ -87,6 +115,27 @@ msgstr "usuarios"
 #: apps/accounts/models.py:48
 msgid "An account with this email already exists."
 msgstr "Ya existe una cuenta con este correo electrónico."
+
+#: apps/accounts/validators.py:19
+msgid "The password must contain at least one number or symbol."
+msgstr "La contraseña debe tener al menos un número o un símbolo."
+
+#: apps/accounts/validators.py:24
+msgid "Contains a number or symbol."
+msgstr "Contiene un número o un símbolo."
+
+#: apps/accounts/validators.py:46
+msgid "The password cannot contain your name or e-mail address."
+msgstr "La contraseña no puede contener tu nombre ni tu correo electrónico."
+
+#: apps/accounts/validators.py:51
+msgid "Does not contain your name or e-mail address."
+msgstr "No contiene tu nombre ni tu correo electrónico."
+
+#: apps/accounts/views.py:43
+#, python-format
+msgid "Welcome to Wynwood House, %(name)s!"
+msgstr "¡Te damos la bienvenida a Wynwood House, %(name)s!"
 
 #: apps/bookings/admin.py:42
 msgid "nights"
@@ -621,10 +670,6 @@ msgstr "enlaces"
 msgid "Phone"
 msgstr "Teléfono"
 
-#: apps/core/models.py:225
-msgid "Email"
-msgstr "Correo electrónico"
-
 #: apps/core/models.py:229
 msgid "value"
 msgstr "valor"
@@ -653,7 +698,7 @@ msgstr "red social"
 msgid "social networks"
 msgstr "redes sociales"
 
-#: apps/properties/admin.py:95 templates/pages/property_detail.html:76
+#: apps/properties/admin.py:95 templates/pages/property_detail.html:77
 msgid "Location"
 msgstr "Ubicación"
 
@@ -665,7 +710,7 @@ msgstr "Capacidad"
 msgid "Pricing"
 msgstr "Precios"
 
-#: apps/properties/admin.py:98 templates/pages/property_detail.html:61
+#: apps/properties/admin.py:98 templates/pages/property_detail.html:62
 msgid "Amenities"
 msgstr "Comodidades"
 
@@ -889,11 +934,11 @@ msgid_plural "%(count)d guests"
 msgstr[0] "%(count)d huésped"
 msgstr[1] "%(count)d huéspedes"
 
-#: config/settings.py:118
+#: config/settings.py:124
 msgid "English"
 msgstr "Inglés"
 
-#: config/settings.py:119
+#: config/settings.py:125
 msgid "Spanish"
 msgstr "Español"
 
@@ -909,6 +954,22 @@ msgstr ""
 msgid "Skip to content"
 msgstr "Saltar al contenido"
 
+#: templates/components/account_links.html:9
+#, python-format
+msgid "Hi, %(name)s"
+msgstr "Hola, %(name)s"
+
+#: templates/components/account_links.html:12
+msgid "Sign out"
+msgstr "Cerrar sesión"
+
+#: templates/components/account_links.html:16
+#: templates/pages/accounts/login.html:4 templates/pages/accounts/login.html:13
+#: templates/pages/accounts/login.html:24
+#: templates/pages/accounts/signup.html:30
+msgid "Sign in"
+msgstr "Iniciar sesión"
+
 #: templates/components/booking_card.html:11
 msgid "Daily"
 msgstr "Diario"
@@ -918,7 +979,7 @@ msgid "Monthly"
 msgstr "Mensual"
 
 #: templates/components/booking_card.html:22
-#: templates/pages/property_detail.html:100
+#: templates/pages/property_detail.html:101
 msgid "per night"
 msgstr "por noche"
 
@@ -1002,7 +1063,7 @@ msgid "Dates"
 msgstr "Fechas"
 
 #: templates/components/booking_summary.html:19
-#: templates/pages/property_detail.html:46
+#: templates/pages/property_detail.html:47
 #, python-format
 msgid "%(counter)s guest"
 msgid_plural "%(counter)s guests"
@@ -1031,19 +1092,19 @@ msgstr "Descarga nuestra app gratis"
 msgid "All rights reserved."
 msgstr "Todos los derechos reservados."
 
-#: templates/components/header.html:7
+#: templates/components/header.html:6
 msgid "Open menu"
 msgstr "Abrir menú"
 
-#: templates/components/header.html:16 templates/components/header.html:37
+#: templates/components/header.html:14 templates/components/header.html:35
 msgid "Main menu"
 msgstr "Menú principal"
 
-#: templates/components/header.html:33
+#: templates/components/header.html:31
 msgid "Menu"
 msgstr "Menú"
 
-#: templates/components/header.html:34
+#: templates/components/header.html:32
 msgid "Close"
 msgstr "Cerrar"
 
@@ -1054,6 +1115,40 @@ msgstr "Idioma"
 #: templates/components/pagination.html:6
 msgid "Pages"
 msgstr "Páginas"
+
+#: templates/components/password_field.html:15
+#: templates/components/password_field.html:18
+msgid "Show password"
+msgstr "Mostrar contraseña"
+
+#: templates/components/password_field.html:15
+msgid "Hide password"
+msgstr "Ocultar contraseña"
+
+#: templates/components/password_field.html:24
+#: templates/components/password_field.html:26
+msgid "Password strength: weak"
+msgstr "Seguridad de la contraseña: débil"
+
+#: templates/components/password_field.html:25
+msgid "Password strength: medium"
+msgstr "Seguridad de la contraseña: media"
+
+#: templates/components/password_field.html:26
+msgid "Password strength: strong"
+msgstr "Seguridad de la contraseña: fuerte"
+
+#: templates/components/password_field.html:27
+msgid "Does not contain your name or email address"
+msgstr "No contiene tu nombre ni tu correo electrónico"
+
+#: templates/components/password_field.html:28
+msgid "At least 8 characters"
+msgstr "Al menos 8 caracteres"
+
+#: templates/components/password_field.html:29
+msgid "Contains a number or symbol"
+msgstr "Contiene un número o un símbolo"
 
 #: templates/components/property_card.html:20
 #: templates/components/property_card.html:38
@@ -1076,6 +1171,38 @@ msgstr "Destino"
 #: templates/components/search_bar.html:55
 msgid "Search"
 msgstr "Buscar"
+
+#: templates/pages/accounts/login.html:14
+msgid "Welcome back. Sign in to continue with your booking."
+msgstr "Hola de nuevo. Inicia sesión para continuar con tu reserva."
+
+#: templates/pages/accounts/login.html:28
+msgid "New to Wynwood House?"
+msgstr "¿Es tu primera vez en Wynwood House?"
+
+#: templates/pages/accounts/login.html:29
+msgid "Create an account"
+msgstr "Crea una cuenta"
+
+#: templates/pages/accounts/signup.html:4
+msgid "Create your account"
+msgstr "Crea tu cuenta"
+
+#: templates/pages/accounts/signup.html:13
+msgid "Sign up"
+msgstr "Registro"
+
+#: templates/pages/accounts/signup.html:14
+msgid "Create your account to book faster and keep your stays in one place."
+msgstr "Crea tu cuenta para reservar más rápido y tener tus estadías en un solo lugar."
+
+#: templates/pages/accounts/signup.html:25
+msgid "Create account"
+msgstr "Crear cuenta"
+
+#: templates/pages/accounts/signup.html:29
+msgid "Already have an account?"
+msgstr "¿Ya tienes una cuenta?"
 
 #: templates/pages/checkout.html:4 templates/pages/checkout.html:14
 msgid "Complete your booking"
@@ -1112,61 +1239,61 @@ msgstr "Experiencia de hogar, calidad de hotel"
 msgid "Discover our destinations"
 msgstr "Descubre nuestros destinos"
 
-#: templates/pages/property_detail.html:19
+#: templates/pages/property_detail.html:20
 msgid "Breadcrumb"
 msgstr "Ruta de navegación"
 
-#: templates/pages/property_detail.html:47
+#: templates/pages/property_detail.html:48
 #, python-format
 msgid "%(counter)s bedroom"
 msgid_plural "%(counter)s bedrooms"
 msgstr[0] "%(counter)s habitación"
 msgstr[1] "%(counter)s habitaciones"
 
-#: templates/pages/property_detail.html:48
+#: templates/pages/property_detail.html:49
 #, python-format
 msgid "%(counter)s bed"
 msgid_plural "%(counter)s beds"
 msgstr[0] "%(counter)s cama"
 msgstr[1] "%(counter)s camas"
 
-#: templates/pages/property_detail.html:49
+#: templates/pages/property_detail.html:50
 #, python-format
 msgid "%(counter)s bathroom"
 msgid_plural "%(counter)s bathrooms"
 msgstr[0] "%(counter)s baño"
 msgstr[1] "%(counter)s baños"
 
-#: templates/pages/property_detail.html:54
+#: templates/pages/property_detail.html:55
 msgid "Description"
 msgstr "Descripción"
 
-#: templates/pages/property_detail.html:79
+#: templates/pages/property_detail.html:80
 msgid "The exact address is shared after booking."
 msgstr "La dirección exacta se comparte después de reservar."
 
-#: templates/pages/property_detail.html:83
+#: templates/pages/property_detail.html:84
 msgid "Use Ctrl + scroll to zoom the map"
 msgstr "Usa Ctrl + rueda del mouse para acercar o alejar el mapa"
 
-#: templates/pages/property_detail.html:84
+#: templates/pages/property_detail.html:85
 msgid "Use ⌘ + scroll to zoom the map"
 msgstr "Usa ⌘ + rueda del mouse para acercar o alejar el mapa"
 
-#: templates/pages/property_detail.html:85
+#: templates/pages/property_detail.html:86
 msgid "Use two fingers to move the map"
 msgstr "Usa dos dedos para mover el mapa"
 
-#: templates/pages/property_detail.html:86
+#: templates/pages/property_detail.html:87
 #, python-format
 msgid "Map of the area around %(place)s"
 msgstr "Mapa de la zona de %(place)s"
 
-#: templates/pages/property_detail.html:91
+#: templates/pages/property_detail.html:92
 msgid "Book this property"
 msgstr "Reserva esta propiedad"
 
-#: templates/pages/property_detail.html:101
+#: templates/pages/property_detail.html:102
 msgid "Book"
 msgstr "Reservar"
 
