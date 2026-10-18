@@ -344,3 +344,26 @@ en inglés sin ningún aviso.
 
 **Decisión.** El proyecto sobrescribe el comando `makemessages` y agrega `--no-fuzzy-matching`: los textos nuevos
 empiezan vacíos y se traducen a conciencia.
+
+---
+
+## D27 · Mapas con Leaflet y OpenStreetMap, y ubicación aproximada antes de reservar
+
+**Contexto.** Ver la ubicación es esencial para decidir una reserva. El Figma tiene un mapa en los resultados y otro
+en el detalle ("Ubicación").
+
+**Decisión.**
+- **Leaflet** (JS, licencia BSD) con mapas de **OpenStreetMap**, con atribución. No requieren clave ni tarjeta y no
+  tienen costo para el tráfico de esta demo. Los mapas se tiñen en gris con CSS para acompañar el diseño sobrio del Figma.
+- **"Abrir en Google Maps"**: un enlace `https://www.google.com/maps/search/?api=1&query=lat,lng`, que no necesita clave.
+  Así el huésped usa la app que ya conoce para llegar.
+- **Privacidad, como Airbnb:**
+  - **antes de reservar**, el detalle muestra un círculo de unos 300 m sobre la zona, no el edificio exacto,
+    y la dirección sin número;
+  - **después de pagar**, la confirmación y el correo muestran la dirección exacta.
+- Las coordenadas viven en la propiedad (latitud y longitud con 6 decimales, unos 10 cm de precisión). Las del seed
+  se verificaron con geocodificación inversa: las 12 caen en su barrio.
+
+**Alternativas descartadas.** La API de Google Maps exige una cuenta de facturación con tarjeta, incluso para el
+plan gratuito, y una clave expuesta en el navegador que hay que restringir. Para la demo es costo y riesgo sin beneficio;
+cambiar de proveedor de mapas solo toca un componente de plantilla y su JS.
