@@ -368,6 +368,13 @@ en el detalle ("Ubicación").
   - **después de pagar**, la confirmación y el correo muestran la dirección exacta.
 - Las coordenadas viven en la propiedad (latitud y longitud con 6 decimales, unos 10 cm de precisión). Las del seed
   se verificaron con geocodificación inversa: las 12 caen en su barrio.
+- **Coordenadas públicas:** fuera de la confirmación, el mapa recibe `Property.public_coordinates`, redondeadas a 3
+  decimales (~100 m). Así el código de la página nunca contiene la ubicación exacta antes del pago.
+- **Agrupamiento:** con resultados en varios países, los marcadores de una misma ciudad se superponían. Se agrupan
+  (Leaflet.markercluster, MIT) en un círculo con la cantidad; un clic acerca el mapa y, a nivel de calle, cada
+  propiedad muestra su precio.
+- **Seguridad:** el texto de los marcadores y de la mini tarjeta se inserta con `textContent`, nunca como HTML,
+  porque los títulos vienen del admin (evita XSS).
 
 **Alternativas descartadas.** La API de Google Maps exige una cuenta de facturación con tarjeta, incluso para el
 plan gratuito, y una clave expuesta en el navegador que hay que restringir. Para la demo es costo y riesgo sin beneficio;
@@ -403,3 +410,33 @@ pinta el footer del sitio, no hace esas consultas.
 **Garantía.** Un test comprueba que el número de consultas del home no crece con la cantidad de propiedades
 (sin N+1). Otro recopila los estáticos con el almacenamiento de producción y renderiza las páginas, para detectar
 rutas de `{% static %}` que solo fallarían en el servidor.
+
+---
+
+## D30 · El modelo `Booking` se adelanta a la Fase 4
+
+**Contexto.** El PDF pide que los resultados obedezcan el filtro de fechas. Para saber qué está ocupado hace falta
+el modelo de reservas, que el plan ubicaba en la Fase 5.
+
+**Decisión.** La Fase 4 crea `Booking` con sus estados, restricciones (`check_out > check_in`, `guests >= 1`) y dos
+consultas reutilizables:
+- `blocking()`: reservas confirmadas o retenciones `PENDING` con `expires_at` en el futuro (la expiración es
+  perezosa, D08);
+- `overlapping(check_in, check_out)`: intervalo semiabierto (D06).
+
+La búsqueda las combina con `~Exists(...)`, una subconsulta, sin traer reservas a Python. La Fase 5 reutiliza esas
+mismas consultas en el servicio de reservas, así que **la búsqueda y la validación de una reserva no pueden discrepar**.
+
+**Detalles.** La referencia (`WH-7K3M9QX2`) es aleatoria, no secuencial, y sin caracteres ambiguos (0/O, 1/I/L).
+`--flush` del seed se niega a borrar si existen reservas que no sean de demo.
+
+---
+
+## D31 · Un filtro inválido no anula la búsqueda
+
+**Decisión.** Si un campo del buscador es inválido (por ejemplo, la salida antes de la llegada), la página muestra
+el error y aplica igual los filtros válidos (la ciudad, los huéspedes). Django ya deja fuera de `cleaned_data` los
+campos con error, así que la vista usa solo lo que pasó la validación.
+
+**Por qué.** Es mejor que mostrar cero resultados o ignorar el error en silencio: el usuario ve qué corregir y
+mientras tanto sigue viendo propiedades relevantes.
