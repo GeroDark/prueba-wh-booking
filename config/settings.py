@@ -34,6 +34,8 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 # Applications
 
 INSTALLED_APPS = [
+    # modeltranslation must load before the admin to patch its forms.
+    "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     # Local apps
     "apps.core",
     "apps.accounts",
+    "apps.properties",
 ]
 
 MIDDLEWARE = [
@@ -116,6 +119,13 @@ LANGUAGES = [
 LOCALE_PATHS = [BASE_DIR / "locale"]
 USE_I18N = True
 
+# Content translations (django-modeltranslation): `title` -> `title_es` / `title_en`.
+# Spanish is the source language; an empty English value falls back to Spanish.
+MODELTRANSLATION_DEFAULT_LANGUAGE = "es"
+# Field order in admin forms: the required Spanish value first.
+MODELTRANSLATION_LANGUAGES = ("es", "en")
+MODELTRANSLATION_FALLBACK_LANGUAGES = {"default": ("es",)}
+
 TIME_ZONE = env("TIME_ZONE", default="America/Lima")
 USE_TZ = True
 
@@ -164,6 +174,15 @@ X_FRAME_OPTIONS = "DENY"
 SILENCED_SYSTEM_CHECKS = ["security.W021"]
 
 ADMIN_URL = env("ADMIN_URL", default="admin/")
+
+
+# Business settings
+
+# Prices are stored in this currency (the design shows US$ everywhere).
+CURRENCY = env("CURRENCY", default="USD")
+# Uploaded images are converted to WebP and fit inside this box (requirement 8).
+IMAGE_MAX_DIMENSION = 1200
+IMAGE_WEBP_QUALITY = 80
 
 
 # Logging: everything to stdout, collected by Docker or the hosting provider.
