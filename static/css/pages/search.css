@@ -152,9 +152,3 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-
-/* Provisional detail page (replaced in phase 5) */
-
-.search-page {
-  padding-block: 2.5rem 4rem;
-}

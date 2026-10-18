@@ -1,0 +1,29 @@
+{% load i18n formatting %}
+{% comment %}
+  Booking summary card (Figma "Resumen"): property, dates, guests and the frozen price lines.
+  Used by the checkout and, in phase 7, the confirmation page.
+{% endcomment %}
+{% with prop=booking.property cover=booking.property.cover_image %}
+<section class="booking-summary" aria-labelledby="summary-title">
+  <h2 class="visually-hidden" id="summary-title">{% translate "Booking summary" %}</h2>
+  <div class="booking-summary__property">
+    {% if cover %}<img src="{{ cover.image.url }}" alt="" width="96" height="96">{% endif %}
+    <div>
+      <p class="booking-summary__title">{{ prop.title }}</p>
+      <p class="booking-summary__place">{{ prop.district.name }}, {{ prop.city.name }}, {{ prop.city.country.name }}</p>
+    </div>
+  </div>
+
+  <dl class="booking-summary__facts">
+    <div><dt>{% translate "Dates" %}</dt><dd>{{ booking.check_in|date:"j M Y" }} – {{ booking.check_out|date:"j M Y" }}</dd></div>
+    <div><dt>{% translate "Guests" %}</dt><dd>{% blocktranslate count counter=booking.guests %}{{ counter }} guest{% plural %}{{ counter }} guests{% endblocktranslate %}</dd></div>
+  </dl>
+
+  <dl class="price-lines">
+    {% for line in booking.lines.all %}
+      <div class="price-lines__row"><dt>{{ line.label }}</dt><dd>{{ line.amount|money:booking.currency }}</dd></div>
+    {% endfor %}
+    <div class="price-lines__row price-lines__row--total"><dt>{% translate "Total" %}</dt><dd>{{ booking.total|money:booking.currency }}</dd></div>
+  </dl>
+</section>
+{% endwith %}

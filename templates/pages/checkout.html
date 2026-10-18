@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% translate "Complete your booking" %} | Wynwood House{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/components/booking-card.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages/checkout.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="checkout container-wh">
+    <div class="checkout__main">
+      <h1 class="wh-display">{% translate "Complete your booking" %}</h1>
+
+      <div class="hold-timer" data-hold-timer data-expires-at="{{ booking.expires_at|date:'c' }}" role="timer" aria-live="off">
+        <p>
+          {% translate "Your dates are held for" %}
+          <strong data-hold-timer-value>{{ booking.expires_at|timeuntil }}</strong>
+        </p>
+        <p class="hold-timer__hint">{% translate "After that they are released for other guests." %}</p>
+      </div>
+
+      {# Phase 7 adds here: sign-up for new users, guest details and the simulated payment. #}
+      <section class="checkout__next" aria-labelledby="next-title">
+        <h2 class="checkout__step" id="next-title">{% translate "Next steps" %}</h2>
+        <p>{% translate "Create your account or sign in, then pay securely to confirm the booking." %}</p>
+      </section>
+
+      <form method="post" action="{% url 'bookings:release' booking.reference %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-wh btn-wh--outline">{% translate "Change dates" %}</button>
+      </form>
+    </div>
+
+    <aside class="checkout__aside">
+      {% include "components/booking_summary.html" %}
+    </aside>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/hold-timer.js' %}" defer></script>
+{% endblock %}

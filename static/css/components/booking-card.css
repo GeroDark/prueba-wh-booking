@@ -1,0 +1,207 @@
+/* Booking card (property page), price lines and booking summary (checkout). */
+
+.booking-card {
+  padding: 2rem clamp(1.25rem, 2.6vw, 2.3rem) 2.25rem;
+  border-radius: 2.9rem;
+  background: var(--wh-white);
+  box-shadow: var(--wh-shadow);
+}
+
+.booking-card__tabs {
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.booking-card__tab {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--wh-gray);
+  font-family: var(--wh-font-display);
+  font-size: 2rem;
+  text-transform: uppercase;
+}
+
+.booking-card__tab.active {
+  color: var(--wh-black);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.booking-card__price {
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--wh-black);
+  text-transform: uppercase;
+}
+
+.booking-card__monthly {
+  margin-bottom: 1.5rem;
+}
+
+/* Form */
+
+.booking-form__field {
+  padding-block: 0.9rem 0.5rem;
+  border-bottom: 1px solid var(--wh-black);
+}
+
+.booking-form__label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--wh-gray);
+  font-size: 0.875rem;
+}
+
+.booking-form__control,
+.booking-form .search-bar__range {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 1rem;
+}
+
+.booking-form .search-bar__dates {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.booking-form__hint {
+  margin: 0.35rem 0 0;
+  color: var(--wh-gray);
+  font-size: 0.8125rem;
+}
+
+.booking-form__error {
+  margin: 0.4rem 0 0;
+  color: var(--wh-danger);
+  font-size: 0.875rem;
+}
+
+.booking-form__alert {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #fdecec;
+  color: #8a1010;
+  font-size: 0.9rem;
+}
+
+.booking-form__alert p {
+  margin: 0;
+}
+
+.booking-form__quote {
+  min-height: 1rem;
+}
+
+.booking-form__quote[aria-busy="true"] {
+  opacity: 0.5;
+}
+
+.booking-form__submit {
+  margin-top: 1.5rem;
+}
+
+.booking-form__submit.is-loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.booking-form__note {
+  margin: 0.9rem 0 0;
+  color: var(--wh-gray);
+  font-size: 0.8125rem;
+}
+
+/* Price lines (quote, summary) */
+
+.price-lines {
+  margin: 1.25rem 0 0;
+}
+
+.price-lines__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.3rem;
+}
+
+.price-lines__row dt {
+  font-weight: 400;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.price-lines__row dd {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.price-lines__row--total {
+  margin-top: 0.6rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--wh-gray-light);
+  font-weight: 700;
+}
+
+.price-lines__row--total dt {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Booking summary card (checkout and confirmation) */
+
+.booking-summary {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: var(--wh-white);
+  box-shadow: var(--wh-shadow);
+}
+
+.booking-summary__property {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding-bottom: 1.25rem;
+}
+
+.booking-summary__property img {
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.booking-summary__title {
+  margin: 0 0 0.3rem;
+  font-size: 1.125rem;
+}
+
+.booking-summary__place {
+  margin: 0;
+  color: var(--wh-gray);
+  font-size: 0.875rem;
+}
+
+.booking-summary__facts {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.booking-summary__facts > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--wh-cream);
+}
+
+.booking-summary__facts dt {
+  font-weight: 400;
+}
+
+.booking-summary__facts dd {
+  margin: 0;
+}

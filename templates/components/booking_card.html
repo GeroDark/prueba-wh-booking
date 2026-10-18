@@ -1,0 +1,90 @@
+{% load static i18n formatting content %}
+{% comment %}
+  Booking card of the property page (Figma "Form"). Tabs: daily (book online) and monthly
+  (long stays through WhatsApp). The price breakdown is rendered by the server when the form
+  has valid dates and refreshed by booking-card.js (GET .../quote/) when they change.
+{% endcomment %}
+<div class="booking-card">
+  <ul class="nav booking-card__tabs" role="tablist">
+    <li role="presentation">
+      <button class="booking-card__tab active" id="tab-daily" data-bs-toggle="tab" data-bs-target="#panel-daily"
+              type="button" role="tab" aria-controls="panel-daily" aria-selected="true">{% translate "Daily" %}</button>
+    </li>
+    <li role="presentation">
+      <button class="booking-card__tab" id="tab-monthly" data-bs-toggle="tab" data-bs-target="#panel-monthly"
+              type="button" role="tab" aria-controls="panel-monthly" aria-selected="false">{% translate "Monthly" %}</button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="panel-daily" role="tabpanel" aria-labelledby="tab-daily">
+      <p class="booking-card__price">
+        <strong>{{ property.price_per_night|money }}</strong> {% translate "per night" %}
+      </p>
+
+      <form method="post" action="{{ request.path }}" class="booking-form" novalidate
+            data-booking-form data-quote-url="{% url 'bookings:quote' property.slug %}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="booking-form__alert" role="alert">
+            {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="booking-form__field" data-date-range
+             data-placeholder="{% translate 'Add dates' %}"
+             data-min-date="{{ calendar.min_date }}" data-max-date="{{ calendar.max_date }}"
+             data-max-nights="{{ calendar.max_nights }}" data-disabled-source="unavailable-dates"
+             data-span-error="{% translate 'Those dates include nights that are already booked.' %}">
+          <label class="booking-form__label" for="{{ form.check_in.id_for_label }}">{% translate "Check-in - Check-out" %}</label>
+          <span class="search-bar__dates">
+            {{ form.check_in }}
+            <span class="search-bar__dates-separator" aria-hidden="true">/</span>
+            <label class="visually-hidden" for="{{ form.check_out.id_for_label }}">{{ form.check_out.label }}</label>
+            {{ form.check_out }}
+          </span>
+          {% for error in form.check_in.errors %}<p class="booking-form__error">{{ error }}</p>{% endfor %}
+          {% for error in form.check_out.errors %}<p class="booking-form__error">{{ error }}</p>{% endfor %}
+          <p class="booking-form__error" data-range-error role="alert" hidden></p>
+        </div>
+
+        <div class="booking-form__field">
+          <label class="booking-form__label" for="{{ form.guests.id_for_label }}">{% translate "Guests" %}</label>
+          {{ form.guests }}
+          <p class="booking-form__hint">
+            {% blocktranslate count counter=property.max_guests %}Up to {{ counter }} guest{% plural %}Up to {{ counter }} guests{% endblocktranslate %}
+          </p>
+          {% for error in form.guests.errors %}<p class="booking-form__error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div class="booking-form__quote" data-quote aria-live="polite" data-total-label="{% translate 'Total' %}">
+          {% if form.quote %}
+            <dl class="price-lines">
+              {% for line in form.quote.lines %}
+                <div class="price-lines__row"><dt>{{ line.label }}</dt><dd>{{ line.amount|money }}</dd></div>
+              {% endfor %}
+              <div class="price-lines__row price-lines__row--total"><dt>{% translate "Total" %}</dt><dd>{{ form.quote.total|money }}</dd></div>
+            </dl>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-wh booking-form__submit" data-submit-once>{% translate "Book now" %}</button>
+        <p class="booking-form__note">
+          {% blocktranslate count minutes=hold_minutes %}You won't be charged yet. We hold your dates for {{ minutes }} minute while you complete the booking.{% plural %}You won't be charged yet. We hold your dates for {{ minutes }} minutes while you complete the booking.{% endblocktranslate %}
+        </p>
+      </form>
+    </div>
+
+    <div class="tab-pane fade" id="panel-monthly" role="tabpanel" aria-labelledby="tab-monthly">
+      <p class="booking-card__monthly">
+        {% blocktranslate count nights=calendar.max_nights %}Staying longer than {{ nights }} night? We offer special monthly rates. Write to us and we will prepare a proposal for you.{% plural %}Staying longer than {{ nights }} nights? We offer special monthly rates. Write to us and we will prepare a proposal for you.{% endblocktranslate %}
+      </p>
+      {% blocktranslate asvar monthly_message with title=property.title %}Hi, I'm interested in a monthly stay at {{ title }}.{% endblocktranslate %}
+      {% whatsapp_link monthly_message as monthly_url %}
+      {% if monthly_url %}
+        <a class="btn btn-wh booking-form__submit" href="{{ monthly_url }}" target="_blank" rel="noopener">{% translate "Contact us" %}</a>
+      {% endif %}
+    </div>
+  </div>
+</div>

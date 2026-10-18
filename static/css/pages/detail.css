@@ -1,0 +1,248 @@
+/* Property page (Figma "Página detalle alquiler"): light grey page, white booking card. */
+
+.page-detail {
+  --bs-body-bg: #e9ebea;
+  background: #e9ebea;
+}
+
+.property-detail {
+  padding-block: 1.5rem 5rem;
+}
+
+.property-detail__aside {
+  scroll-margin-top: calc(var(--wh-header-height) + 1rem);
+}
+
+/* Breadcrumb */
+
+.breadcrumb-wh {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb-wh ol {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  list-style: none;
+}
+
+.breadcrumb-wh li + li::before {
+  margin-inline: 0.5rem;
+  color: var(--wh-gray);
+  content: "|";
+}
+
+.breadcrumb-wh a {
+  color: var(--wh-gray);
+  text-decoration: none;
+}
+
+.breadcrumb-wh a:hover {
+  color: var(--wh-black);
+  text-decoration: underline;
+}
+
+/* Gallery: one large photo and two stacked ones */
+
+.gallery {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.gallery__item {
+  overflow: hidden;
+  margin: 0;
+  border-radius: 0.5rem;
+  background: var(--wh-gray-light);
+}
+
+.gallery__item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery__item--main {
+  aspect-ratio: 702 / 439;
+}
+
+.gallery__item:not(.gallery__item--main) {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .gallery--2,
+  .gallery--3 {
+    grid-template-columns: 2.06fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    height: clamp(20rem, 32vw, 27.5rem);
+  }
+
+  .gallery__item--main {
+    grid-row: 1 / -1;
+    aspect-ratio: auto;
+  }
+
+  .gallery__item:not(.gallery__item--main) {
+    display: block;
+  }
+
+  .gallery--2 .gallery__item:nth-child(2) {
+    grid-row: 1 / -1;
+  }
+}
+
+/* Two columns: content and the sticky booking card */
+
+.property-detail__layout {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.property-detail__header {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(35, 35, 36, 0.25);
+}
+
+.property-detail__title {
+  margin-bottom: 0.75rem;
+  font-size: var(--wh-fs-h1);
+}
+
+.property-detail__place,
+.property-detail__facts {
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+}
+
+.property-detail__facts span + span::before {
+  margin-inline: 0.75rem;
+  content: "|";
+}
+
+.property-detail__section {
+  padding-block: 2rem;
+  border-bottom: 1px solid rgba(35, 35, 36, 0.25);
+}
+
+.property-detail__section:last-child {
+  border-bottom: 0;
+}
+
+.property-detail__description {
+  max-width: 38rem;
+  margin: 0;
+  line-height: 1.9;
+}
+
+.property-detail__subtitle {
+  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+}
+
+.amenities {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  gap: 1.75rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.amenities__item {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.property-detail__location-note {
+  margin-bottom: 1rem;
+  color: #5c5c5c;
+}
+
+.detail-map {
+  height: clamp(16rem, 28vw, 23rem);
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+@media (min-width: 992px) {
+  .property-detail__layout {
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, 26rem);
+    gap: clamp(3rem, 6vw, 6rem);
+    align-items: start;
+  }
+
+  .property-detail__aside {
+    position: sticky;
+    top: calc(var(--wh-header-height) + 1.5rem);
+  }
+}
+
+/* Fixed booking bar on phones and tablets */
+
+.mobile-book-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem var(--wh-gutter);
+  border-top: 1px solid var(--wh-gray-light);
+  background: var(--wh-white);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.mobile-book-bar__price {
+  margin: 0;
+}
+
+.page-detail .site-footer {
+  padding-bottom: 6rem; /* room for the fixed bar */
+}
+
+@media (min-width: 992px) {
+  .mobile-book-bar {
+    display: none;
+  }
+
+  .page-detail .site-footer {
+    padding-bottom: 2rem;
+  }
+}
+
+/* Flash messages */
+
+.messages-wh {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.messages-wh__item {
+  margin: 0;
+  padding: 0.85rem 1.1rem;
+  border-left: 3px solid var(--wh-black);
+  border-radius: 0.5rem;
+  background: var(--wh-white);
+}
+
+.messages-wh__item--warning {
+  border-left-color: var(--wh-yellow);
+}
+
+.messages-wh__item--error {
+  border-left-color: var(--wh-danger);
+}
