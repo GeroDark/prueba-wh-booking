@@ -215,14 +215,25 @@ consulta. Para dos idiomas es complejidad innecesaria.
 
 ## D16 · Imágenes optimizadas al guardar
 
-**Decisión.** `PropertyImage.save()` llama a `optimize_image()` solo cuando el archivo cambia. Ese método:
+**Decisión.** Un campo propio, `OptimizedImageField`, reemplaza a `ImageField` en todos los modelos con imágenes:
+fotos de propiedades, hero, banners, secciones y destinos. Su archivo (`OptimizedImageFieldFile.save`) llama a
+`optimize_image()`, que:
 1. corrige la orientación con `ImageOps.exif_transpose`;
-2. reduce con `thumbnail((1200, 1200))`;
-3. guarda en WebP con calidad 80.
+2. reduce con `thumbnail((1200, 1200))`, sin agrandar nunca una imagen chica;
+3. guarda en WebP con calidad 80, conservando la transparencia si existe.
 
-El mismo camino lo usan el admin y el seed, así que las fotos del diseño también se optimizan.
+La optimización vive en el **archivo del campo** y no en `Model.save()` ni en una señal. Así pasa por ahí cualquier
+escritura: las subidas del admin y de formularios (las confirma `pre_save` del campo), el seed y las llamadas directas
+a `instancia.imagen.save(...)`. Solo se procesa lo que se sube: volver a guardar el modelo no reprocesa la imagen.
+Los límites salen de los settings `IMAGE_MAX_DIMENSION` e `IMAGE_WEBP_QUALITY` y se leen al guardar, no quedan
+congelados en las migraciones.
 
-**Ejemplo.** Un JPG de 4000×3000 y 3,1 MB se guarda como WebP de 1200×900 y unos 150 KB.
+**Alternativas descartadas.**
+- Una señal `post_save`: escribe el archivo dos veces y es fácil de saltarse.
+- Procesar en `PropertyImage.save()`: no cubre las demás imágenes del sitio.
+
+**Ejemplo.** Un JPG de 4000×3000 se guarda como `.webp` de 1200×900. Un PNG transparente de 300×300 queda en 300×300
+con su transparencia.
 
 ---
 
@@ -283,3 +294,53 @@ vacía y crea el superusuario desde variables de entorno.
 
 **Decisión.** Se incluyen porque WH las entregó para la prueba y sin ellas el sitio no se ve como el diseño.
 El README aclara que son propiedad de sus autores, que se usan solo para la evaluación y que no las cubre la licencia del repositorio.
+
+---
+
+## D23 · Contenido único del sitio como modelos singleton
+
+**Contexto.** Textos como el título del hero o el número de WhatsApp existen una sola vez, pero deben editarse desde el admin.
+
+**Decisión.** `SingletonModel` abstracto: `save()` fija siempre `pk=1` y `load()` devuelve la única fila (la crea si no
+existe). En el admin, la lista abre directamente esa fila y no se puede borrar ni duplicar.
+
+**Alternativas descartadas.** `django-solo`: es una dependencia para unas 15 líneas de código propio.
+
+---
+
+## D24 · Íconos y banderas se eligen de una lista, no se suben
+
+**Decisión.** Los íconos de comodidades y redes sociales salen de Bootstrap Icons, y las banderas de flag-icons
+(ambos con licencia MIT, incluidos en `static/vendor`). El modelo guarda una clave de una lista de opciones
+(por ejemplo `wifi` o `pe`).
+
+**Por qué.** Un SVG subido por un usuario puede contener JavaScript, lo que abre la puerta a ataques XSS. Además,
+una lista cerrada garantiza que nunca aparezca un ícono roto. Los íconos de comodidades del Figma no se podían
+exportar porque están aplanados dentro de una imagen.
+
+---
+
+## D25 · Datos de prueba con un cargador idempotente
+
+**Decisión.** `seed_data` separa los **datos** (`apps/core/seeding/data.py`, tuplas ES/EN) de la **carga**
+(`loader.py`). Cada registro se busca por una clave natural (slug, código, `key`) con `update_or_create`,
+así que ejecutar el comando dos veces no duplica nada. Las fotos se adjuntan solo si el registro no tiene,
+y pasan por el mismo optimizador que el admin.
+
+**Opciones.** `--flush` borra el contenido sembrado sin tocar los usuarios. `--properties N` carga solo N propiedades.
+`--skip-images` lo hace más rápido.
+
+Las fotos del seed se guardan en el repo a 1600 px como máximo: superan el límite de 1200, así que el seed demuestra
+el redimensionado, sin inflar el repositorio. Las de España vienen de Wikimedia Commons con su licencia registrada
+en `seed/images/CREDITS.md`.
+
+---
+
+## D26 · `makemessages` sin coincidencias aproximadas
+
+**Contexto.** Al extraer textos nuevos, `msgmerge` adivina traducciones a partir de textos parecidos y las marca
+como *fuzzy* (por ejemplo "country" → "Cuentas"). `compilemessages` ignora esas entradas, así que el texto queda
+en inglés sin ningún aviso.
+
+**Decisión.** El proyecto sobrescribe el comando `makemessages` y agrega `--no-fuzzy-matching`: los textos nuevos
+empiezan vacíos y se traducen a conciencia.
