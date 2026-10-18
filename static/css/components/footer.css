@@ -18,7 +18,7 @@
 
 .site-footer__columns {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(10rem, 40vw), 1fr));
   gap: 2.5rem 1.5rem;
   padding-block: 3rem;
 }
@@ -60,6 +60,16 @@
 .site-footer__contact img {
   flex-shrink: 0;
   border-radius: 2px;
+}
+
+/*
+ * Long values (e.g. e-mail addresses) wrap inside their column instead of covering the next one:
+ * first at the <wbr> after the @, and only if a part still does not fit, inside it.
+ */
+.site-footer__column,
+.site-footer__contact span {
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .site-footer__social {

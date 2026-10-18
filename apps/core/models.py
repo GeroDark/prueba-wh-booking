@@ -54,7 +54,10 @@ class SiteSettings(SingletonModel):
         _("WhatsApp message"),
         max_length=200,
         blank=True,
-        help_text=_("Text pre-filled in the chat opened by the 'Contact us' buttons."),
+        help_text=_(
+            "Text pre-filled in every WhatsApp chat opened from the site "
+            "(footer numbers and buttons without their own message)."
+        ),
     )
     app_store_url = models.URLField(_("App Store URL"), blank=True)
     play_store_url = models.URLField(_("Google Play URL"), blank=True)
@@ -66,13 +69,14 @@ class SiteSettings(SingletonModel):
     def __str__(self):
         return str(_("Site settings"))
 
+    def get_whatsapp_url(self, message="", number=""):
+        """Chat link to `number` (default: the site's number) with `message` or the general one."""
+        number = number or self.whatsapp_number
+        return whatsapp_url(number, message or self.whatsapp_message) if number else ""
+
     @property
     def whatsapp_url(self):
-        return (
-            whatsapp_url(self.whatsapp_number, self.whatsapp_message)
-            if self.whatsapp_number
-            else ""
-        )
+        return self.get_whatsapp_url()
 
 
 class HomePage(SingletonModel):
@@ -115,6 +119,15 @@ class Banner(models.Model):
     cta_url = models.CharField(
         _("button URL"), max_length=300, blank=True, help_text=_("Only for the 'Link' action.")
     )
+    cta_message = models.CharField(
+        _("WhatsApp message"),
+        max_length=200,
+        blank=True,
+        help_text=_(
+            "Only for the WhatsApp action: text pre-filled in the chat. "
+            "Empty uses the general message from the site settings."
+        ),
+    )
     order = models.PositiveSmallIntegerField(_("order"), default=0)
     is_active = models.BooleanField(_("active"), default=True)
 
@@ -128,7 +141,7 @@ class Banner(models.Model):
 
     def get_cta_url(self, site_settings):
         if self.cta_target == self.CtaTarget.WHATSAPP:
-            return site_settings.whatsapp_url
+            return site_settings.get_whatsapp_url(self.cta_message)
         return self.cta_url
 
 
@@ -228,10 +241,10 @@ class ContactChannel(models.Model):
     def __str__(self):
         return f"{self.get_kind_display()}: {self.value}"
 
-    @property
-    def href(self):
+    def get_href(self, whatsapp_message=""):
+        """Link for the channel; WhatsApp chats open with `whatsapp_message` pre-filled."""
         if self.kind == self.Kind.WHATSAPP:
-            return whatsapp_url(self.value)
+            return whatsapp_url(self.value, whatsapp_message)
         if self.kind == self.Kind.PHONE:
             return "tel:+" + re.sub(r"\D", "", self.value)
         return f"mailto:{self.value}"

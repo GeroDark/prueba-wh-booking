@@ -1,3 +1,4 @@
+import re
 from io import StringIO
 
 import pytest
@@ -68,10 +69,26 @@ def test_inactive_banners_are_hidden(client, seeded):
     assert "Alquileres a largo plazo" in html
 
 
-def test_long_stay_button_opens_whatsapp_with_the_message(client, seeded):
+def test_long_stay_button_opens_whatsapp_with_its_own_message(client, seeded):
     html = client.get("/es/").text
 
-    assert "https://wa.me/51947022549?text=Hola%2C%20me%20gustar%C3%ADa" in html
+    assert (
+        "https://wa.me/51947022549?text=Hola%2C%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20estad%C3%ADas%20largas"
+        in html
+    )
+
+
+def test_every_footer_whatsapp_number_opens_with_the_general_message(client, seeded):
+    html = client.get("/en/").text
+    footer = html.split('id="footer-whatsapp"')[1].split("</section>")[0]
+
+    links = re.findall(r'href="(https://wa.me/[^"]+)"', footer)
+    assert len(links) == 3
+    assert all("?text=Hi%2C%20I%27d%20like%20to%20know%20more" in link for link in links)
+
+
+def test_long_email_can_wrap_after_the_at_sign(client, seeded):
+    assert "sales@<wbr>wynwoodhouse.com" in client.get("/es/").text
 
 
 def test_footer_shows_menus_contacts_and_flags(client, seeded):

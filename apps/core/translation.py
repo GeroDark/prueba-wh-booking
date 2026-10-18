@@ -30,7 +30,7 @@ class HomePageTranslation(TranslationOptions):
 
 @register(Banner)
 class BannerTranslation(TranslationOptions):
-    fields = ("title", "text", "cta_label")
+    fields = ("title", "text", "cta_label", "cta_message")
     required_languages = ("es",)
 
 

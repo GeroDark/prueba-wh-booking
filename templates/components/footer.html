@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n content %}
 <footer class="site-footer">
   <div class="container-wh">
     <div class="site-footer__search">
@@ -37,13 +37,13 @@
           <ul class="site-footer__list">
             {% for channel in contact_channels.others %}
               <li>
-                <a class="site-footer__contact" href="{{ channel.href }}">
+                <a class="site-footer__contact" href="{% contact_href channel %}">
                   {% if channel.kind == "email" %}
                     <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/envelope.svg' %}" alt="" width="16" height="16" loading="lazy">
                   {% else %}
                     <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/telephone.svg' %}" alt="" width="16" height="16" loading="lazy">
                   {% endif %}
-                  <span>{{ channel.value }}</span>
+                  <span>{{ channel.value|email_break }}</span>
                 </a>
               </li>
             {% endfor %}
@@ -57,7 +57,7 @@
           <ul class="site-footer__list">
             {% for channel in contact_channels.whatsapp %}
               <li>
-                <a class="site-footer__contact" href="{{ channel.href }}" target="_blank" rel="noopener">
+                <a class="site-footer__contact" href="{% contact_href channel %}" target="_blank" rel="noopener">
                   {% if channel.flag_static_path %}
                     <img src="{% static channel.flag_static_path %}" alt="" width="20" height="15" loading="lazy">
                   {% endif %}

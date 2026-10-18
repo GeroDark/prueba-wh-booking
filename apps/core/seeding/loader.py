@@ -122,6 +122,7 @@ class Seeder:
                     **translated("title", banner_data["title"]),
                     **translated("text", banner_data["text"]),
                     **translated("cta_label", banner_data["cta_label"]),
+                    **translated("cta_message", banner_data.get("cta_message", ("", ""))),
                     "layout": banner_data["layout"],
                     "cta_target": banner_data["cta_target"],
                     "cta_url": banner_data["cta_url"],

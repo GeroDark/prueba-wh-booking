@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 02:15-0500\n"
+"POT-Creation-Date: 2026-10-18 02:34-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -112,7 +112,7 @@ msgstr "Portada"
 msgid "Destinations"
 msgstr "Destinos"
 
-#: apps/core/admin.py:72 templates/pages/home.html:51
+#: apps/core/admin.py:72 templates/pages/home.html:52
 msgid "Featured properties"
 msgstr "Propiedades destacadas"
 
@@ -128,7 +128,7 @@ msgstr "Botón"
 msgid "Visibility"
 msgstr "Visibilidad"
 
-#: apps/core/admin.py:91 apps/core/models.py:109 apps/core/models.py:157
+#: apps/core/admin.py:91 apps/core/models.py:113 apps/core/models.py:170
 #: apps/properties/admin.py:24 apps/properties/models.py:27
 #: apps/properties/models.py:202
 msgid "image"
@@ -193,242 +193,250 @@ msgstr ""
 "Formato internacional, por ejemplo +51 947 022 549. Lo usan los botones "
 "«Contáctanos»."
 
-#: apps/core/models.py:54
+#: apps/core/models.py:54 apps/core/models.py:123
 msgid "WhatsApp message"
 msgstr "mensaje de WhatsApp"
 
-#: apps/core/models.py:57
-msgid "Text pre-filled in the chat opened by the 'Contact us' buttons."
-msgstr "Texto precargado en el chat que abren los botones «Contáctanos»."
+#: apps/core/models.py:58
+msgid ""
+"Text pre-filled in every WhatsApp chat opened from the site (footer numbers "
+"and buttons without their own message)."
+msgstr "Texto precargado en todos los chats de WhatsApp que se abren desde el sitio (números del footer y botones sin mensaje propio)."
 
-#: apps/core/models.py:59
+#: apps/core/models.py:62
 msgid "App Store URL"
 msgstr "URL de App Store"
 
-#: apps/core/models.py:60
+#: apps/core/models.py:63
 msgid "Google Play URL"
 msgstr "URL de Google Play"
 
-#: apps/core/models.py:63 apps/core/models.py:64
+#: apps/core/models.py:66 apps/core/models.py:67
 msgid "site settings"
 msgstr "configuración del sitio"
 
-#: apps/core/models.py:67
+#: apps/core/models.py:70
 msgid "Site settings"
 msgstr "Configuración del sitio"
 
-#: apps/core/models.py:79
+#: apps/core/models.py:83
 msgid "hero title"
 msgstr "título de portada"
 
-#: apps/core/models.py:80
+#: apps/core/models.py:84
 msgid "hero subtitle"
 msgstr "subtítulo de portada"
 
-#: apps/core/models.py:81
+#: apps/core/models.py:85
 msgid "hero image"
 msgstr "imagen de portada"
 
-#: apps/core/models.py:82
+#: apps/core/models.py:86
 msgid "destinations title"
 msgstr "título de destinos"
 
-#: apps/core/models.py:83
+#: apps/core/models.py:87
 msgid "featured properties title"
 msgstr "título de propiedades destacadas"
 
-#: apps/core/models.py:84
+#: apps/core/models.py:88
 msgid "featured properties text"
 msgstr "texto de propiedades destacadas"
 
-#: apps/core/models.py:87 apps/core/models.py:88
+#: apps/core/models.py:91 apps/core/models.py:92
 msgid "home page"
 msgstr "página de inicio"
 
-#: apps/core/models.py:91
+#: apps/core/models.py:95
 msgid "Home page"
 msgstr "Página de inicio"
 
-#: apps/core/models.py:96
+#: apps/core/models.py:100
 msgid "Image on the left"
 msgstr "Imagen a la izquierda"
 
-#: apps/core/models.py:97
+#: apps/core/models.py:101
 msgid "Image on the right"
 msgstr "Imagen a la derecha"
 
-#: apps/core/models.py:98
+#: apps/core/models.py:102
 msgid "Full-width background image"
 msgstr "Imagen de fondo a todo el ancho"
 
-#: apps/core/models.py:101
+#: apps/core/models.py:105
 msgid "Link"
 msgstr "Enlace"
 
-#: apps/core/models.py:102
+#: apps/core/models.py:106
 msgid "WhatsApp chat (site settings)"
 msgstr "Chat de WhatsApp (configuración del sitio)"
 
-#: apps/core/models.py:105 apps/core/models.py:138
+#: apps/core/models.py:109 apps/core/models.py:151
 msgid "key"
 msgstr "clave"
 
-#: apps/core/models.py:105
+#: apps/core/models.py:109
 msgid "Identifier used by the templates, e.g. long-stay."
 msgstr "Identificador que usan las plantillas, por ejemplo long-stay."
 
-#: apps/core/models.py:107 apps/core/models.py:139 apps/core/models.py:155
-#: apps/core/models.py:177 apps/properties/models.py:126
+#: apps/core/models.py:111 apps/core/models.py:152 apps/core/models.py:168
+#: apps/core/models.py:190 apps/properties/models.py:126
 msgid "title"
 msgstr "título"
 
-#: apps/core/models.py:108 apps/core/models.py:140
+#: apps/core/models.py:112 apps/core/models.py:153
 msgid "text"
 msgstr "texto"
 
-#: apps/core/models.py:110
+#: apps/core/models.py:114
 msgid "layout"
 msgstr "diseño"
 
-#: apps/core/models.py:111
+#: apps/core/models.py:115
 msgid "button label"
 msgstr "texto del botón"
 
-#: apps/core/models.py:113
+#: apps/core/models.py:117
 msgid "button action"
 msgstr "acción del botón"
 
-#: apps/core/models.py:116
+#: apps/core/models.py:120
 msgid "button URL"
 msgstr "URL del botón"
 
-#: apps/core/models.py:116
+#: apps/core/models.py:120
 msgid "Only for the 'Link' action."
 msgstr "Solo para la acción «Enlace»."
 
-#: apps/core/models.py:118 apps/core/models.py:158 apps/core/models.py:178
-#: apps/core/models.py:197 apps/core/models.py:220 apps/core/models.py:255
+#: apps/core/models.py:127
+msgid ""
+"Only for the WhatsApp action: text pre-filled in the chat. Empty uses the "
+"general message from the site settings."
+msgstr "Solo para la acción WhatsApp: texto precargado en el chat. Si queda vacío, se usa el mensaje general de la configuración del sitio."
+
+#: apps/core/models.py:131 apps/core/models.py:171 apps/core/models.py:191
+#: apps/core/models.py:210 apps/core/models.py:233 apps/core/models.py:268
 #: apps/properties/models.py:28 apps/properties/models.py:110
 #: apps/properties/models.py:208 apps/properties/models.py:232
 msgid "order"
 msgstr "orden"
 
-#: apps/core/models.py:119 apps/core/models.py:141 apps/core/models.py:179
-#: apps/core/models.py:221 apps/core/models.py:256 apps/properties/models.py:29
+#: apps/core/models.py:132 apps/core/models.py:154 apps/core/models.py:192
+#: apps/core/models.py:234 apps/core/models.py:269 apps/properties/models.py:29
 #: apps/properties/models.py:56 apps/properties/models.py:162
 #: apps/properties/models.py:233
 msgid "active"
 msgstr "activo"
 
-#: apps/core/models.py:122
+#: apps/core/models.py:135
 msgid "banner"
 msgstr "banner"
 
-#: apps/core/models.py:123
+#: apps/core/models.py:136
 msgid "banners"
 msgstr "banners"
 
-#: apps/core/models.py:144
+#: apps/core/models.py:157
 msgid "feature section"
 msgstr "sección destacada"
 
-#: apps/core/models.py:145
+#: apps/core/models.py:158
 msgid "feature sections"
 msgstr "secciones destacadas"
 
-#: apps/core/models.py:153
+#: apps/core/models.py:166
 msgid "section"
 msgstr "sección"
 
-#: apps/core/models.py:156 apps/properties/models.py:128
+#: apps/core/models.py:169 apps/properties/models.py:128
 msgid "description"
 msgstr "descripción"
 
-#: apps/core/models.py:161
+#: apps/core/models.py:174
 msgid "feature item"
 msgstr "ítem de sección"
 
-#: apps/core/models.py:162
+#: apps/core/models.py:175
 msgid "feature items"
 msgstr "ítems de sección"
 
-#: apps/core/models.py:173
+#: apps/core/models.py:186
 msgid "Header"
 msgstr "Encabezado"
 
-#: apps/core/models.py:174
+#: apps/core/models.py:187
 msgid "Footer"
 msgstr "Pie de página"
 
-#: apps/core/models.py:176
+#: apps/core/models.py:189
 msgid "placement"
 msgstr "ubicación"
 
-#: apps/core/models.py:182 apps/core/models.py:192
+#: apps/core/models.py:195 apps/core/models.py:205
 msgid "menu"
 msgstr "menú"
 
-#: apps/core/models.py:183
+#: apps/core/models.py:196
 msgid "menus"
 msgstr "menús"
 
-#: apps/core/models.py:194 apps/core/models.py:215
+#: apps/core/models.py:207 apps/core/models.py:228
 msgid "label"
 msgstr "etiqueta"
 
-#: apps/core/models.py:195 apps/core/models.py:254
+#: apps/core/models.py:208 apps/core/models.py:267
 msgid "URL"
 msgstr "URL"
 
-#: apps/core/models.py:196
+#: apps/core/models.py:209
 msgid "open in a new tab"
 msgstr "abrir en una pestaña nueva"
 
-#: apps/core/models.py:200
+#: apps/core/models.py:213
 msgid "link"
 msgstr "enlace"
 
-#: apps/core/models.py:201
+#: apps/core/models.py:214
 msgid "links"
 msgstr "enlaces"
 
-#: apps/core/models.py:211
+#: apps/core/models.py:224
 msgid "Phone"
 msgstr "Teléfono"
 
-#: apps/core/models.py:212
+#: apps/core/models.py:225
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: apps/core/models.py:214
+#: apps/core/models.py:227
 msgid "type"
 msgstr "tipo"
 
-#: apps/core/models.py:216
+#: apps/core/models.py:229
 msgid "value"
 msgstr "valor"
 
-#: apps/core/models.py:218
+#: apps/core/models.py:231
 msgid "country flag"
 msgstr "bandera"
 
-#: apps/core/models.py:224
+#: apps/core/models.py:237
 msgid "contact channel"
 msgstr "canal de contacto"
 
-#: apps/core/models.py:225
+#: apps/core/models.py:238
 msgid "contact channels"
 msgstr "canales de contacto"
 
-#: apps/core/models.py:253
+#: apps/core/models.py:266
 msgid "network"
 msgstr "red"
 
-#: apps/core/models.py:259
+#: apps/core/models.py:272
 msgid "social network"
 msgstr "red social"
 
-#: apps/core/models.py:260
+#: apps/core/models.py:273
 msgid "social networks"
 msgstr "redes sociales"
 
@@ -774,11 +782,11 @@ msgstr "Llegada - Salida"
 msgid "Search"
 msgstr "Buscar"
 
-#: templates/pages/home.html:4 templates/pages/home.html:20
+#: templates/pages/home.html:4 templates/pages/home.html:21
 msgid "Home experience, hotel quality"
 msgstr "Experiencia de hogar, calidad de hotel"
 
-#: templates/pages/home.html:30
+#: templates/pages/home.html:31
 msgid "Discover our destinations"
 msgstr "Descubre nuestros destinos"
 

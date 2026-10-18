@@ -9,8 +9,8 @@ SITE_SETTINGS = {
     "contact_email": "sales@wynwoodhouse.com",
     "whatsapp_number": "+51 947 022 549",
     "whatsapp_message": (
-        "Hola, me gustaría información sobre estadías largas con Wynwood House.",
-        "Hi, I'd like information about long stays with Wynwood House.",
+        "Hola, me gustaría recibir información sobre una estadía con Wynwood House.",
+        "Hi, I'd like to know more about staying with Wynwood House.",
     ),
 }
 
@@ -538,6 +538,10 @@ BANNERS = [
         "cta_label": ("Contáctanos", "Contact us"),
         "cta_target": "whatsapp",
         "cta_url": "",
+        "cta_message": (
+            "Hola, me gustaría información sobre estadías largas con Wynwood House.",
+            "Hi, I'd like information about long stays with Wynwood House.",
+        ),
         "order": 2,
     },
     {

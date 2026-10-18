@@ -208,8 +208,13 @@ consulta. Para dos idiomas es complejidad innecesaria.
 
 ## D15 · CTA "Contáctanos" hacia WhatsApp configurable
 
-**Decisión.** El número y el mensaje están en `SiteSettings`. El botón genera
-`https://wa.me/<número>?text=<mensaje en el idioma activo>`. Un formulario de contacto queda como extra.
+**Decisión.** El número y un **mensaje general** están en `SiteSettings`. **Todo** enlace de WhatsApp del sitio
+(el botón del banner y los números del footer) genera `https://wa.me/<número>?text=<mensaje en el idioma activo>`,
+así el chat nunca se abre vacío. Un banner puede tener su **propio mensaje** (`Banner.cta_message`): el de larga
+estancia pregunta por "estadías largas" y los demás usan el general. Un formulario de contacto queda como extra.
+
+**Ejemplo.** En `/en/`, el número de Colombia del footer abre
+`https://wa.me/573238110133?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20staying%20with%20Wynwood%20House.`
 
 ---
 
