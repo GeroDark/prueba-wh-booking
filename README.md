@@ -17,7 +17,8 @@ confirmación y correo, en español e inglés.
 | 3 | Despliegue | ⏳ |
 | 4 | Resultados: filtros por ubicación, fechas y huéspedes; mapa con precios y agrupamiento | ✅ |
 | 5 | Detalle de la propiedad: galería, calendario de disponibilidad, precio en vivo y retención de fechas | ✅ |
-| 6–8 | Cuentas, checkout con pago simulado, confirmación y correo | ⏳ |
+| 6 | Registro y login con email, contraseñas seguras con requisitos en vivo, logout seguro | ✅ |
+| 7–8 | Checkout con registro y pago simulado, confirmación y correo | ⏳ |
 
 ## Stack
 
@@ -61,7 +62,7 @@ docker compose exec web python manage.py createsuperuser
   y 12 propiedades (6 destacadas) con sus fotos.
 - **Sitio:** textos del home, "Servicios en Wynwood House", "¿Por qué viajar a España?", banners
   (larga estancia, eventos, real estate), menús, canales de contacto y redes sociales.
-- **Huésped de demo:** `demo@wynwoodhouse.test` / `Wynwood-Demo-2026`.
+- **Huésped de demo:** `demo@wynwoodhouse.test` / `Wynwood-Demo-2026` (inicia sesión en `/es/accounts/login/`).
 - **Reservas de demo:** 4 estadías confirmadas con fechas relativas al día en que se ejecuta el comando
   (por ejemplo, el dúplex de Parque Virrey queda ocupado de hoy + 3 a hoy + 8 días). Busca esas fechas y
   la propiedad desaparece de los resultados.
@@ -138,7 +139,7 @@ Toda la configuración se lee de variables de entorno. [.env.example](.env.examp
 ```
 config/          settings, urls, wsgi
 apps/core/       contenido del sitio (home, banners, menús, contacto), optimizador de imágenes, seed_data
-apps/accounts/   usuario con email como identificador
+apps/accounts/   usuario con email como identificador, registro, login y validadores de contraseña
 apps/properties/ países, ciudades, distritos, comodidades, propiedades, fotos e impuestos; búsqueda
 apps/bookings/   reservas: estados, solapamiento, precios (pricing.py), reglas y retenciones (services.py)
 templates/       base.html, pages/ y components/ reutilizables: header, footer, search_bar,

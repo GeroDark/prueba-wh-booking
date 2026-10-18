@@ -293,9 +293,14 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - [x] Tests: los 6 casos de solapamiento, fechas pasadas según la zona horaria, capacidad, expiración, una retención por sesión y **concurrencia real con dos hilos**.
 
 ### Fase 6 — Cuentas
-- Registro, login y logout (POST); validadores de contraseña; lista de requisitos en vivo como en el Figma.
-- [ ] Los estados vacío, con error y con éxito coinciden con los frames de registro.
-- [ ] Tests: email duplicado sin distinguir mayúsculas, contraseñas débiles, `next` seguro.
+- Registro (`SignUpView`, `CreateView`), login con email (`LoginView` de Django con un formulario propio) y logout
+  solo por POST. Al registrarse, la sesión se inicia sola y vuelve a la página de origen (`next` validado).
+- Contraseña: validadores de Django + "número o símbolo" + "no contiene tu nombre ni tu correo", con la lista de
+  requisitos en vivo del Figma y botón para mostrar u ocultar.
+- Header con "Iniciar sesión" o "Hola, Ana · Cerrar sesión"; en móvil, dentro del menú lateral. Mensajes globales.
+- Componentes `form_field` y `password_field`, accesibles (`aria-describedby`, `aria-invalid`).
+- [x] Los estados vacío, con error y con éxito coinciden con los frames de registro.
+- [x] Tests: email duplicado sin distinguir mayúsculas, contraseñas débiles, `next` seguro.
 
 ### Fase 7 — Checkout, pago y confirmación
 - Paso 1: registro dentro del checkout y datos personales (se salta si hay sesión; enlace "Iniciar sesión" que vuelve al checkout).
