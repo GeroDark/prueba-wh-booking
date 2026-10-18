@@ -15,6 +15,7 @@ urlpatterns = [
 urlpatterns += i18n_patterns(
     path(settings.ADMIN_URL, admin.site.urls),
     path("", include("apps.properties.urls")),
+    path("", include("apps.bookings.urls")),
     path("", include("apps.core.urls")),
 )
 
