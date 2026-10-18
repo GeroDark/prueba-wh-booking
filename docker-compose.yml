@@ -1,0 +1,49 @@
+# Local development stack. `docker compose up` works without any extra configuration.
+# Values set here take precedence over a local `.env` file, which settings only use to fill gaps.
+name: wh-booking
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: wh
+      POSTGRES_USER: wh
+      POSTGRES_PASSWORD: wh
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wh -d wh"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:v1.31
+    ports:
+      - "${MAILPIT_PORT:-8025}:8025"
+
+  web:
+    build:
+      context: .
+      args:
+        INSTALL_DEV: "true"
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DEBUG: "true"
+      SECRET_KEY: dev-only-insecure-secret-key
+      DATABASE_URL: postgres://wh:wh@db:5432/wh
+      EMAIL_URL: smtp://mailpit:1025
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      # Host ports are configurable in case 8000/8025 are taken: WEB_PORT=8001 docker compose up
+      - "${WEB_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+volumes:
+  pgdata:

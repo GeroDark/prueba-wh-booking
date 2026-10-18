@@ -1,0 +1,124 @@
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-18 00:42-0500\n"
+"Language: es\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/accounts/admin.py:33
+msgid "Personal info"
+msgstr "Información personal"
+
+#: apps/accounts/admin.py:46
+msgid "Permissions"
+msgstr "Permisos"
+
+#: apps/accounts/admin.py:49
+msgid "Important dates"
+msgstr "Fechas importantes"
+
+#: apps/accounts/apps.py:7
+msgid "Accounts"
+msgstr "Cuentas"
+
+#: apps/accounts/managers.py:21
+msgid "The email address is required."
+msgstr "El correo electrónico es obligatorio."
+
+#: apps/accounts/managers.py:36
+msgid "Superuser must have is_staff=True."
+msgstr "El superusuario debe tener is_staff=True."
+
+#: apps/accounts/managers.py:38
+msgid "Superuser must have is_superuser=True."
+msgstr "El superusuario debe tener is_superuser=True."
+
+#: apps/accounts/models.py:17
+msgid "email address"
+msgstr "correo electrónico"
+
+#: apps/accounts/models.py:18
+msgid "full name"
+msgstr "nombre completo"
+
+#: apps/accounts/models.py:20
+msgid "nationality"
+msgstr "nacionalidad"
+
+#: apps/accounts/models.py:23
+msgid "ISO 3166-1 alpha-2 country code."
+msgstr "Código de país ISO 3166-1 alfa-2."
+
+#: apps/accounts/models.py:25
+msgid "phone prefix"
+msgstr "indicativo"
+
+#: apps/accounts/models.py:26
+msgid "phone number"
+msgstr "teléfono"
+
+#: apps/accounts/models.py:27
+msgid "birth date"
+msgstr "fecha de nacimiento"
+
+#: apps/accounts/models.py:29
+msgid "preferred language"
+msgstr "idioma preferido"
+
+#: apps/accounts/models.py:34
+msgid "subscribed to the newsletter"
+msgstr "suscrito al boletín"
+
+#: apps/accounts/models.py:42
+msgid "user"
+msgstr "usuario"
+
+#: apps/accounts/models.py:43
+msgid "users"
+msgstr "usuarios"
+
+#: apps/accounts/models.py:48
+msgid "An account with this email already exists."
+msgstr "Ya existe una cuenta con este correo electrónico."
+
+#: apps/core/apps.py:7
+msgid "Site content"
+msgstr "Contenido del sitio"
+
+#: config/settings.py:113
+msgid "English"
+msgstr "Inglés"
+
+#: config/settings.py:114
+msgid "Spanish"
+msgstr "Español"
+
+#: templates/base.html:7
+msgid ""
+"Furnished apartments for short and long stays: the comfort of a home with "
+"the quality of a hotel."
+msgstr ""
+"Departamentos amoblados para estadías cortas y largas: la comodidad de un "
+"hogar con la calidad de un hotel."
+
+#: templates/base.html:20
+msgid "Skip to content"
+msgstr "Saltar al contenido"
+
+#: templates/components/footer.html:8
+msgid "All rights reserved."
+msgstr "Todos los derechos reservados."
+
+#: templates/components/language_switcher.html:7
+msgid "Language"
+msgstr "Idioma"
+
+# The design keeps the brand tagline in English on the Spanish site.
+#: templates/pages/home.html:4 templates/pages/home.html:10
+msgid "Home experience, hotel quality"
+msgstr "Home experience, hotel quality"
+
+#: templates/pages/home.html:11
+msgid "Best of both worlds"
+msgstr "Best of both worlds"

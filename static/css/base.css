@@ -1,0 +1,130 @@
+/* Global elements, layout helpers and typography utilities shared by every page. */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--wh-header-height);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+main:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--wh-black);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 1080;
+  padding: 0.5rem 1rem;
+  background: var(--wh-black);
+  color: var(--wh-white);
+  transform: translateY(-200%);
+  transition: transform var(--wh-transition);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+  color: var(--wh-white);
+}
+
+/* Layout */
+
+.container-wh {
+  width: 100%;
+  max-width: var(--wh-container-max);
+  margin-inline: auto;
+  padding-inline: var(--wh-gutter);
+}
+
+/* Typography */
+
+.wh-hero-title,
+.wh-display {
+  margin: 0;
+  font-family: var(--wh-font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.wh-hero-title {
+  font-size: var(--wh-fs-hero);
+}
+
+.wh-display {
+  font-size: var(--wh-fs-h2);
+}
+
+.wh-eyebrow {
+  margin: 0;
+  font-size: 0.984rem;
+  letter-spacing: var(--wh-letter-wide);
+  text-transform: uppercase;
+}
+
+/* Buttons: black pill from the design system */
+
+.btn-wh {
+  --bs-btn-padding-x: 2rem;
+  --bs-btn-padding-y: 0.6rem;
+  --bs-btn-font-size: 0.875rem;
+  --bs-btn-color: var(--wh-white);
+  --bs-btn-bg: var(--wh-black);
+  --bs-btn-border-color: var(--wh-black);
+  --bs-btn-hover-color: var(--wh-white);
+  --bs-btn-hover-bg: #000;
+  --bs-btn-hover-border-color: #000;
+  --bs-btn-active-color: var(--wh-white);
+  --bs-btn-active-bg: #000;
+  --bs-btn-border-radius: var(--wh-radius-pill);
+  text-transform: uppercase;
+  transition: transform var(--wh-transition), background-color var(--wh-transition);
+}
+
+.btn-wh:hover {
+  transform: translateY(-1px);
+}
+
+/* Temporary hero until the home sections are built (phase 2). */
+
+.hero-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  padding-block: 4rem;
+  background: var(--wh-black);
+  color: var(--wh-white);
+  text-align: center;
+}
+
+.hero-placeholder .wh-eyebrow {
+  margin-top: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
