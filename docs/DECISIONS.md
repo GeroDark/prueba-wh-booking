@@ -208,8 +208,13 @@ consulta. Para dos idiomas es complejidad innecesaria.
 
 ## D15 · CTA "Contáctanos" hacia WhatsApp configurable
 
-**Decisión.** El número y el mensaje están en `SiteSettings`. El botón genera
-`https://wa.me/<número>?text=<mensaje en el idioma activo>`. Un formulario de contacto queda como extra.
+**Decisión.** El número y un **mensaje general** están en `SiteSettings`. **Todo** enlace de WhatsApp del sitio
+(el botón del banner y los números del footer) genera `https://wa.me/<número>?text=<mensaje en el idioma activo>`,
+así el chat nunca se abre vacío. Un banner puede tener su **propio mensaje** (`Banner.cta_message`): el de larga
+estancia pregunta por "estadías largas" y los demás usan el general. Un formulario de contacto queda como extra.
+
+**Ejemplo.** En `/en/`, el número de Colombia del footer abre
+`https://wa.me/573238110133?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20staying%20with%20Wynwood%20House.`
 
 ---
 
@@ -344,3 +349,57 @@ en inglés sin ningún aviso.
 
 **Decisión.** El proyecto sobrescribe el comando `makemessages` y agrega `--no-fuzzy-matching`: los textos nuevos
 empiezan vacíos y se traducen a conciencia.
+
+---
+
+## D27 · Mapas con Leaflet y OpenStreetMap, y ubicación aproximada antes de reservar
+
+**Contexto.** Ver la ubicación es esencial para decidir una reserva. El Figma tiene un mapa en los resultados y otro
+en el detalle ("Ubicación").
+
+**Decisión.**
+- **Leaflet** (JS, licencia BSD) con mapas de **OpenStreetMap**, con atribución. No requieren clave ni tarjeta y no
+  tienen costo para el tráfico de esta demo. Los mapas se tiñen en gris con CSS para acompañar el diseño sobrio del Figma.
+- **"Abrir en Google Maps"**: un enlace `https://www.google.com/maps/search/?api=1&query=lat,lng`, que no necesita clave.
+  Así el huésped usa la app que ya conoce para llegar.
+- **Privacidad, como Airbnb:**
+  - **antes de reservar**, el detalle muestra un círculo de unos 300 m sobre la zona, no el edificio exacto,
+    y la dirección sin número;
+  - **después de pagar**, la confirmación y el correo muestran la dirección exacta.
+- Las coordenadas viven en la propiedad (latitud y longitud con 6 decimales, unos 10 cm de precisión). Las del seed
+  se verificaron con geocodificación inversa: las 12 caen en su barrio.
+
+**Alternativas descartadas.** La API de Google Maps exige una cuenta de facturación con tarjeta, incluso para el
+plan gratuito, y una clave expuesta en el navegador que hay que restringir. Para la demo es costo y riesgo sin beneficio;
+cambiar de proveedor de mapas solo toca un componente de plantilla y su JS.
+
+---
+
+## D28 · Componentes de plantilla y mejora progresiva
+
+**Decisión.** Cada pieza visual que se repite es un componente en `templates/components/` con su propio CSS:
+`search_bar` (variantes `hero` y `footer`), `property_card` (`overlay` y, en la Fase 4, `stacked`),
+`feature_grid` (`tiles` y `cards`), `banner` (tres diseños) y `carousel_controls`.
+"Servicios" y "Por qué viajar a España" son el mismo componente con otra variante.
+
+**Mejora progresiva.** Todo funciona sin JavaScript, y el JS solo mejora:
+| Sin JS | Con JS |
+|---|---|
+| Dos campos de fecha nativos | Un selector de rango (flatpickr) que escribe en esos mismos campos |
+| Distritos agrupados por ciudad (`<optgroup>`) | Solo los distritos de la ciudad elegida |
+| Carruseles con scroll nativo (táctil, trackpad, teclado) | Flechas anterior y siguiente |
+| Contenido visible | Aparición al hacer scroll (desactivada con "reducir movimiento") |
+
+El servidor siempre recibe los mismos campos y valida igual (por ejemplo, que el distrito pertenezca a la ciudad).
+
+---
+
+## D29 · Header y footer con un context processor perezoso
+
+**Decisión.** `apps.core.context_processors.site` expone menús, contactos, redes, destinos y el buscador del footer
+a todas las páginas, envueltos en `SimpleLazyObject`. Solo se consultan si la plantilla los usa: el admin, que no
+pinta el footer del sitio, no hace esas consultas.
+
+**Garantía.** Un test comprueba que el número de consultas del home no crece con la cantidad de propiedades
+(sin N+1). Otro recopila los estáticos con el almacenamiento de producción y renderiza las páginas, para detectar
+rutas de `{% static %}` que solo fallarían en el servidor.

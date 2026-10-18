@@ -9,8 +9,8 @@ SITE_SETTINGS = {
     "contact_email": "sales@wynwoodhouse.com",
     "whatsapp_number": "+51 947 022 549",
     "whatsapp_message": (
-        "Hola, me gustaría información sobre estadías largas con Wynwood House.",
-        "Hi, I'd like information about long stays with Wynwood House.",
+        "Hola, me gustaría recibir información sobre una estadía con Wynwood House.",
+        "Hi, I'd like to know more about staying with Wynwood House.",
     ),
 }
 
@@ -538,7 +538,11 @@ BANNERS = [
         "cta_label": ("Contáctanos", "Contact us"),
         "cta_target": "whatsapp",
         "cta_url": "",
-        "order": 1,
+        "cta_message": (
+            "Hola, me gustaría información sobre estadías largas con Wynwood House.",
+            "Hi, I'd like information about long stays with Wynwood House.",
+        ),
+        "order": 2,
     },
     {
         "key": "events",
@@ -550,11 +554,11 @@ BANNERS = [
             "events. Enjoy art, culture and inspiration like never before.",
         ),
         "image": "banners/events-2.jpg",
-        "layout": "image_left",
+        "layout": "image_right",
         "cta_label": ("Ver todos los eventos", "See all events"),
         "cta_target": "link",
         "cta_url": "https://wynwoodhouse.com/",
-        "order": 2,
+        "order": 1,
     },
     {
         "key": "real-estate",

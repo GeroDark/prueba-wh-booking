@@ -34,17 +34,20 @@ Las decisiones técnicas y su justificación están en [DECISIONS.md](DECISIONS.
 Distritos por ciudad · tarifa de limpieza · comodidades en el detalle · impuestos por país (modelo) ·
 migas de pan · tarjeta de resumen de la reserva como componente · lista de requisitos de la contraseña en vivo ·
 datos personales en el registro del checkout (nombre, nacionalidad, teléfono, fecha de nacimiento) ·
-aceptación de términos y casilla de boletín · mapa en el detalle (Leaflet + OpenStreetMap) ·
-pestaña "Mensual" que lleva al CTA de larga estancia.
+aceptación de términos y casilla de boletín · pestaña "Mensual" que lleva al CTA de larga estancia ·
+**mapas al estilo Airbnb** (Leaflet + OpenStreetMap, ver D27):
+- en los resultados: lista y mapa lado a lado, con marcadores que muestran el precio y se resaltan al pasar sobre la tarjeta;
+- en el detalle: zona aproximada antes de reservar;
+- en la confirmación: ubicación exacta y botón "Abrir en Google Maps".
 
 ### 🟨 Extras, solo si el núcleo y el 🟧 están cerrados (en este orden)
 
 1. Servicios adicionales simples (agregar/quitar, precio fijo) como líneas de la reserva.
-2. Mapa en los resultados.
-3. Filtros de rango de precio y comodidades.
-4. Datos de facturación en el pago.
-5. Carrusel de destinos, barra de promoción con cuenta regresiva y banners de eventos, inversión y Casa Wynwood.
-6. Cron para `expire_holds` y límite de intentos en el login.
+2. Filtros de rango de precio y comodidades.
+3. Datos de facturación en el pago.
+4. Carrusel de destinos, barra de promoción con cuenta regresiva y banners de eventos, inversión y Casa Wynwood.
+5. Cron para `expire_holds` y límite de intentos en el login.
+6. Buscar al mover el mapa ("buscar en esta zona").
 
 ### ⬜ Fuera de alcance (documentado)
 
@@ -243,11 +246,15 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - [x] Tests: optimizador, seed repetible, restricciones de modelos y email único.
 
 ### Fase 2 — Home
-- Header (logo, navegación, ES/EN, acceso), hero con buscador, destacadas, "Por qué viajar a España" (`feature_grid`),
-  banner de larga estancia (CTA a WhatsApp), footer completo; diseño adaptable y animaciones (hover, scroll suave).
-- [ ] Coincide con el Figma a 1440 px y se ve bien en 375, 768, 1366 y 1920.
-- [ ] Un cambio de texto en el admin se refleja en el home, en ambos idiomas.
-- [ ] Tests: consulta de destacadas, contenido desde modelos, número de consultas acotado.
+- Header (logo, navegación, ES/EN; el acceso llega en la Fase 6), hero con buscador, destacadas, "Por qué viajar a España"
+  (`feature_grid`), banner de larga estancia (CTA a WhatsApp), footer completo; diseño adaptable y animaciones
+  (hover, aparición al hacer scroll, scroll suave).
+- Se suman, porque los datos ya existían: carrusel de destinos, servicios y los banners de eventos y real estate.
+- `SearchForm` compartido (hero, footer y resultados) y rutas provisionales de resultados y detalle,
+  que se completan en las fases 4 y 5.
+- [x] Coincide con el Figma a 1440 px y se ve bien en 375, 768, 1366 y 1920.
+- [x] Un cambio de texto en el admin se refleja en el home, en ambos idiomas.
+- [x] Tests: consulta de destacadas, contenido desde modelos, número de consultas acotado.
 
 ### Fase 3 — Primer despliegue
 - Render (Docker) + Neon (PostgreSQL) + Cloudinary (media) + Brevo (email); el script de arranque migra, ejecuta el seed si la base está vacía y crea el superusuario.
@@ -258,12 +265,18 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 ### Fase 4 — Búsqueda
 - `SearchForm` (validación de fechas, distrito perteneciente a la ciudad); `PropertyQuerySet.in_city().in_district().for_guests().available()`.
 - Cuadrícula de resultados con `property_card`, paginación y estado vacío; los filtros se mantienen en la barra.
+- **Mapa de resultados** (como en el Figma): lista a la izquierda y mapa a la derecha.
+  - Un marcador por propiedad con su precio; el mapa se ajusta a los resultados.
+  - Pasar el mouse sobre una tarjeta resalta su marcador; un clic en el marcador muestra una mini tarjeta.
+  - En móvil, botón "Mapa / Lista".
 - [ ] Una búsqueda desde el home lleva a resultados coherentes con los filtros.
+- [ ] El mapa muestra exactamente las propiedades de la página de resultados.
 - [ ] Una búsqueda sin coincidencias muestra un estado vacío útil.
 - [ ] Tests: cada filtro por separado y la exclusión de propiedades ocupadas.
 
 ### Fase 5 — Detalle y motor de reservas
-- Galería, información, comodidades, mapa (🟧), formulario de reserva (fechas + huéspedes) con flatpickr y fechas ocupadas deshabilitadas.
+- Galería, información, comodidades, sección "Ubicación" con mapa de la zona aproximada (como Airbnb), formulario de
+  reserva (fechas + huéspedes) con flatpickr y fechas ocupadas deshabilitadas.
 - Desglose de precio calculado en el servidor.
 - `hold_dates()` con bloqueo de la propiedad, `ExclusionConstraint` y expiración perezosa.
 - [ ] El calendario no deja elegir fechas ocupadas ni pasadas.
@@ -278,7 +291,8 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 ### Fase 7 — Checkout, pago y confirmación
 - Paso 1: registro dentro del checkout y datos personales (se salta si hay sesión; enlace "Iniciar sesión" que vuelve al checkout).
 - Paso 2: tarjeta simulada (`4242…` aprueba, `4000 0000 0000 0002` rechaza), idempotencia, bloqueo del doble envío.
-- Confirmación protegida (solo el dueño); aviso y vuelta al detalle si la retención venció.
+- Confirmación protegida (solo el dueño), con la dirección exacta, su mapa y "Abrir en Google Maps"; aviso y vuelta
+  al detalle si la retención venció.
 - [ ] El flujo completo funciona de punta a punta, como usuario nuevo y como usuario con sesión.
 - [ ] Tests: misma clave = un cobro; dos pestañas = un cobro; rechazo y reintento; pago vencido; otro usuario recibe 404.
 

@@ -84,7 +84,7 @@ class BannerAdmin(TranslationAdmin):
     readonly_fields = ("thumbnail",)
     fieldsets = (
         (None, {"fields": ("key", "title", "text", "image", "thumbnail", "layout")}),
-        (_("Button"), {"fields": ("cta_label", "cta_target", "cta_url")}),
+        (_("Button"), {"fields": ("cta_label", "cta_target", "cta_url", "cta_message")}),
         (_("Visibility"), {"fields": ("order", "is_active")}),
     )
 

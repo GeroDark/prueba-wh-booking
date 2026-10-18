@@ -1,9 +1,100 @@
-{% load static i18n %}
+{% load static i18n content %}
 <footer class="site-footer">
-  <div class="container-wh site-footer__inner">
-    <a class="site-footer__brand" href="{% url 'core:home' %}">
-      <img src="{% static 'img/brand/logo.svg' %}" alt="Wynwood House" width="161" height="43" loading="lazy">
-    </a>
+  <div class="container-wh">
+    <div class="site-footer__search">
+      <a class="site-footer__brand" href="{% url 'core:home' %}">
+        <img src="{% static 'img/brand/logo.svg' %}" alt="Wynwood House" width="161" height="43" loading="lazy">
+      </a>
+      {% include "components/search_bar.html" with form=footer_search_form variant="footer" %}
+    </div>
+
+    <div class="site-footer__columns">
+      {% for group in footer_menus %}
+        <section class="site-footer__column" aria-labelledby="footer-menu-{{ group.pk }}">
+          <h2 class="site-footer__title" id="footer-menu-{{ group.pk }}">{{ group.title }}</h2>
+          <ul class="site-footer__list">
+            {% for link in group.links.all %}
+              <li><a href="{{ link.url }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a></li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endfor %}
+
+      {% if footer_destinations %}
+        <section class="site-footer__column" aria-labelledby="footer-destinations">
+          <h2 class="site-footer__title" id="footer-destinations">{% translate "Destinations" %}</h2>
+          <ul class="site-footer__list">
+            {% for country in footer_destinations %}
+              <li><a href="{% url 'properties:search' %}?country={{ country.slug }}">{{ country.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% if contact_channels.others %}
+        <section class="site-footer__column" aria-labelledby="footer-contact">
+          <h2 class="site-footer__title" id="footer-contact">{% translate "Contact us" %}</h2>
+          <ul class="site-footer__list">
+            {% for channel in contact_channels.others %}
+              <li>
+                <a class="site-footer__contact" href="{% contact_href channel %}">
+                  {% if channel.kind == "email" %}
+                    <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/envelope.svg' %}" alt="" width="16" height="16" loading="lazy">
+                  {% else %}
+                    <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/telephone.svg' %}" alt="" width="16" height="16" loading="lazy">
+                  {% endif %}
+                  <span>{{ channel.value|email_break }}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% if contact_channels.whatsapp %}
+        <section class="site-footer__column" aria-labelledby="footer-whatsapp">
+          <h2 class="site-footer__title" id="footer-whatsapp">WhatsApp</h2>
+          <ul class="site-footer__list">
+            {% for channel in contact_channels.whatsapp %}
+              <li>
+                <a class="site-footer__contact" href="{% contact_href channel %}" target="_blank" rel="noopener">
+                  {% if channel.flag_static_path %}
+                    <img src="{% static channel.flag_static_path %}" alt="" width="20" height="15" loading="lazy">
+                  {% endif %}
+                  <span>
+                    {% if channel.label %}<span class="visually-hidden">{{ channel.label }}: </span>{% endif %}
+                    {{ channel.value }}
+                  </span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% if social_links or site_settings.app_store_url or site_settings.play_store_url %}
+        <section class="site-footer__column" aria-labelledby="footer-social">
+          <h2 class="site-footer__title" id="footer-social">{% translate "Follow us" %}</h2>
+          <ul class="site-footer__social">
+            {% for social in social_links %}
+              <li>
+                <a href="{{ social.url }}" target="_blank" rel="noopener" aria-label="{{ social.get_network_display }}">
+                  <img src="{% static social.icon_static_path %}" alt="" width="22" height="22" loading="lazy">
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+          {% if site_settings.app_store_url or site_settings.play_store_url %}
+            <p class="site-footer__app">{% translate "Download our app for free" %}</p>
+            <ul class="site-footer__stores">
+              {% if site_settings.app_store_url %}<li><a href="{{ site_settings.app_store_url }}" target="_blank" rel="noopener">App Store</a></li>{% endif %}
+              {% if site_settings.play_store_url %}<li><a href="{{ site_settings.play_store_url }}" target="_blank" rel="noopener">Google Play</a></li>{% endif %}
+            </ul>
+          {% endif %}
+        </section>
+      {% endif %}
+    </div>
+
     <p class="site-footer__copy">
       &copy; {% now "Y" %} Wynwood House. {% translate "All rights reserved." %}
     </p>

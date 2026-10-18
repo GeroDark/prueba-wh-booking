@@ -1,0 +1,139 @@
+/* Hero: photo with a light overlay, title, subtitle and the search bar */
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: clamp(36rem, 88vh, 47.25rem);
+  padding-block: 4rem;
+  overflow: hidden;
+  background: var(--wh-black);
+  color: var(--wh-white);
+  text-align: center;
+}
+
+.hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.32);
+  content: "";
+}
+
+.hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero__subtitle {
+  margin-top: 1.25rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.hero .search-bar {
+  max-width: 76.5rem;
+  margin-inline: auto;
+}
+
+/* Destinations carousel */
+
+.destinations {
+  padding-block: clamp(3rem, 6vw, 5.5rem) 1rem;
+}
+
+.destinations__track {
+  --carousel-item-width: clamp(13.5rem, 21vw, 18.2rem);
+  --carousel-gap: 0.25rem;
+  /* Full-bleed track whose first card lines up with the centered container on wide screens. */
+  --track-inset: max(var(--wh-gutter), calc((100% - var(--wh-container-max)) / 2 + var(--wh-gutter)));
+  padding-inline: var(--track-inset);
+  scroll-padding-inline: var(--track-inset);
+}
+
+.destination-card a {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  aspect-ratio: 291 / 335;
+  place-items: center;
+  color: var(--wh-white);
+  text-decoration: none;
+}
+
+.destination-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms ease;
+}
+
+.destination-card a::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.18);
+  content: "";
+  transition: background-color var(--wh-transition);
+}
+
+.destination-card a:hover img,
+.destination-card a:focus-visible img {
+  transform: scale(1.06);
+}
+
+.destination-card a:hover::before {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.destination-card__name {
+  position: relative;
+  z-index: 2;
+  font-family: var(--wh-font-display);
+  font-size: clamp(2.5rem, 4.6vw, 4.125rem);
+  text-transform: uppercase;
+}
+
+/* Featured properties */
+
+.featured {
+  margin-top: clamp(2rem, 4vw, 3.5rem);
+  padding-block: clamp(2.5rem, 4vw, 3.5rem);
+  background: var(--wh-cream);
+}
+
+.featured__inner {
+  display: grid;
+  gap: 2rem;
+}
+
+.featured__intro p {
+  max-width: 22rem;
+  margin: 0.75rem 0 1.5rem;
+  font-size: 0.984rem;
+}
+
+.featured__track {
+  --carousel-item-width: min(85vw, 29rem);
+}
+
+@media (min-width: 992px) {
+  .featured__inner {
+    grid-template-columns: minmax(16rem, 0.55fr) 2fr;
+    align-items: end;
+    gap: 3rem;
+  }
+
+  .featured__intro {
+    align-self: end;
+  }
+}

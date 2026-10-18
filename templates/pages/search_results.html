@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% translate "Search results" %} | Wynwood House{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/components/property-card.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages/search.css' %}">
+{% endblock %}
+
+{% block content %}
+  {# Phase 2: lists every active property. Filters, pagination controls and the map arrive in phase 4. #}
+  <section class="search-page" aria-labelledby="results-title">
+    <div class="container-wh">
+      {% include "components/search_bar.html" with form=search_form variant="hero" %}
+      <h1 class="wh-display search-page__title" id="results-title">{% translate "Properties" %}</h1>
+      <ul class="search-page__grid">
+        {% for property in properties %}
+          <li>{% include "components/property_card.html" with property=property variant="overlay" %}</li>
+        {% empty %}
+          <li>{% translate "There are no properties available yet." %}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,18 @@
+/* Provisional styles for the results and detail pages (replaced in phases 4 and 5). */
+
+.search-page {
+  padding-block: 2.5rem 4rem;
+}
+
+.search-page__title {
+  margin-block: 2.5rem 1.5rem;
+}
+
+.search-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

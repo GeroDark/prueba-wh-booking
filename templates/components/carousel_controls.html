@@ -1,0 +1,11 @@
+{% load static i18n %}
+<div class="carousel-controls">
+  <button type="button" class="carousel-controls__button" data-carousel-prev aria-controls="{{ target }}"
+          aria-label="{% translate 'Previous' %}">
+    <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/chevron-left.svg' %}" alt="" width="20" height="20">
+  </button>
+  <button type="button" class="carousel-controls__button" data-carousel-next aria-controls="{{ target }}"
+          aria-label="{% translate 'Next' %}">
+    <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/chevron-right.svg' %}" alt="" width="20" height="20">
+  </button>
+</div>

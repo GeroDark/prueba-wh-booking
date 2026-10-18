@@ -1,11 +1,46 @@
 {% load static i18n %}
 <header class="site-header">
   <div class="container-wh site-header__inner">
-    <a class="site-header__brand" href="{% url 'core:home' %}">
-      <img src="{% static 'img/brand/logo.svg' %}" alt="Wynwood House" width="161" height="43">
-    </a>
+    <div class="site-header__start">
+      {% if header_menu %}
+        <button class="site-header__toggle d-lg-none" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#site-menu" aria-controls="site-menu" aria-label="{% translate 'Open menu' %}">
+          <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/list.svg' %}" alt="" width="26" height="26">
+        </button>
+      {% endif %}
+      <a class="site-header__brand" href="{% url 'core:home' %}">
+        <img src="{% static 'img/brand/logo.svg' %}" alt="Wynwood House" width="161" height="43">
+      </a>
+    </div>
+
+    <nav class="site-header__nav d-none d-lg-flex" aria-label="{% translate 'Main menu' %}">
+      {% for group in header_menu %}
+        {% for link in group.links.all %}
+          <a class="site-header__link" href="{{ link.url }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
+        {% endfor %}
+      {% endfor %}
+    </nav>
+
     <div class="site-header__actions">
       {% include "components/language_switcher.html" %}
     </div>
   </div>
 </header>
+
+{% if header_menu %}
+  <div class="offcanvas offcanvas-start site-menu" tabindex="-1" id="site-menu" aria-labelledby="site-menu-title">
+    <div class="offcanvas-header">
+      <p class="offcanvas-title wh-eyebrow" id="site-menu-title">{% translate "Menu" %}</p>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{% translate 'Close' %}"></button>
+    </div>
+    <div class="offcanvas-body">
+      <nav aria-label="{% translate 'Main menu' %}">
+        {% for group in header_menu %}
+          {% for link in group.links.all %}
+            <a class="site-menu__link" href="{{ link.url }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
+          {% endfor %}
+        {% endfor %}
+      </nav>
+    </div>
+  </div>
+{% endif %}
