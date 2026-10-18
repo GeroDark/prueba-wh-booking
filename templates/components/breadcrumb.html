@@ -1,0 +1,18 @@
+{% load static i18n %}
+{% comment %}
+  Breadcrumb of a property: Country | City | Property [| current]. With `current`, the property
+  becomes a link back to its page (checkout, confirmation).
+{% endcomment %}
+<nav class="breadcrumb-wh" aria-label="{% translate 'Breadcrumb' %}">
+  <img src="{% static 'img/brand/favicon.svg' %}" alt="" width="18" height="18">
+  <ol>
+    <li><a href="{% url 'properties:search' %}?country={{ prop.city.country.slug }}">{{ prop.city.country.name }}</a></li>
+    <li><a href="{% url 'properties:search' %}?city={{ prop.city.slug }}">{{ prop.city.name }}</a></li>
+    {% if current %}
+      <li><a href="{% url 'properties:detail' prop.slug %}">{{ prop.title }}</a></li>
+      <li aria-current="page">{{ current }}</li>
+    {% else %}
+      <li aria-current="page">{{ prop.title }}</li>
+    {% endif %}
+  </ol>
+</nav>

@@ -172,7 +172,23 @@ de Ana siguen mostrando US$ 120.
 | Fallo en el código | `UniqueConstraint`: solo un pago `SUCCEEDED` por reserva |
 
 Otras medidas:
-- Nunca se guardan ni se registran en logs los datos de tarjeta; solo la marca y los últimos 4 dígitos.
+- La pasarela simulada solo aprueba o rechaza las tarjetas de prueba documentadas; cualquier otra se rechaza con un
+  aviso de demo, así nadie "paga" con una tarjeta real ni en apariencia.
+- El cobro ocurre con la fila de la reserva bloqueada. Con una pasarela real la llamada se haría igual, dentro del
+  bloqueo, y la clave de idempotencia de la pasarela cubriría los reintentos de red.
+- Un rechazo muestra el motivo y un formulario nuevo (otra clave, campos de tarjeta vacíos): reintentar es un intento
+  nuevo. La misma clave enviada otra vez devuelve el mismo resultado, sin cobrar.
+- La página de pago no se guarda en caché (`never_cache`) y los campos de tarjeta y contraseña se ocultan en los
+  reportes de error de Django (`sensitive_post_parameters`). El código de seguridad nunca se vuelve a escribir en la página.
+- Nunca se guardan ni se registran en logs los datos de tarjeta; solo la marca y los últimos 4 dígitos (PCI DSS
+  permite conservar como máximo los primeros 6 y los últimos 4, y prohíbe guardar el código de seguridad).
+- **Tarjetas reales en la demo.** Un número no se puede clasificar como "real" o "de prueba" por su forma: cualquier
+  número que pase Luhn podría existir. Por eso se usa una lista blanca: las tarjetas de prueba públicas (las de
+  Stripe, que no pertenecen a nadie). Con JavaScript, cualquier otro número se detiene en el navegador y no se
+  envía; sin JavaScript, el servidor lo rechaza, lo descarta y no lo guarda.
+- **En producción** el número no debería pasar por nuestro servidor: la pasarela (Stripe Elements, dLocal Smart Fields)
+  lo captura en un iframe propio y devuelve un *token*. Así el sitio queda fuera de casi todo el alcance de PCI DSS
+  (SAQ A). Es el siguiente paso al integrar una pasarela real.
 - El monto sale de la reserva.
 - Se registra cada intento, también los fallidos.
 - Solo el dueño puede pagar o ver su reserva.
@@ -191,6 +207,11 @@ y confirmar al recibir el webhook.
 **Decisión.** Paso 1: crear la cuenta y los datos personales; el usuario inicia sesión y queda asociado a la retención.
 Paso 2: el pago. Si el usuario ya tiene sesión, empieza en el paso 2. "¿Ya tienes una cuenta? Iniciar sesión" vuelve
 al checkout gracias a un `next` validado. La sesión de Django conserva la retención al iniciar sesión, porque mantiene sus datos.
+
+**Implementación.** Los dos pasos viven en una sola URL (`/checkout/<referencia>/`); la vista decide el paso según el
+visitante: sin sesión → registro completo; con sesión y perfil incompleto → solo los datos que faltan; perfil
+completo → pago. Cada POST correcto redirige a la misma URL (PRG). Al registrarse o iniciar sesión, la retención
+pasa a ser del usuario (`assign_guest`), solo si aún no tenía dueño.
 
 ---
 
@@ -528,3 +549,30 @@ aceptado y mensajes de Django en "usted" ("Introduzca una fecha válida").
   valor enviado. En la búsqueda, cada error indica su campo ("Llegada: Ingresa una fecha válida.").
 
 **Límite.** No se puede distinguir un nombre real de letras al azar sin verificar un documento.
+
+---
+
+## D36 · Datos personales del checkout
+
+**Contexto.** El Figma pide nombre completo, nacionalidad, indicativo y teléfono, y fecha de nacimiento.
+
+**Decisión.**
+- **Nacionalidad** con `django-countries`: los ~250 países con nombres traducidos al español y al inglés; los países
+  donde opera Wynwood House aparecen primero (`COUNTRIES_FIRST`).
+- **Teléfono** con `phonenumbers` (libphonenumber de Google): cada país tiene sus propias longitudes y prefijos, algo
+  que una expresión regular no puede validar. Se guarda como indicativo (`+51`) + número nacional (`987654321`).
+  Si el número se escribe con su propio `+`, manda ese indicativo. Se rechazan letras (libphonenumber convertiría
+  "1-800-FLOWERS" en dígitos). El indicativo sigue a la nacionalidad mientras el usuario no lo cambie.
+- **Fecha de nacimiento:** en el pasado, como máximo 120 años y **mayor de edad** (`BOOKING_MIN_GUEST_AGE = 18`):
+  quien reserva y paga firma el alquiler. La edad se calcula con la fecha local del sitio.
+- **Términos:** como en el Figma, se aceptan al pulsar el botón ("Al seleccionar Continuar, aceptas…"). Los enlaces
+  vienen de `SiteSettings` (admin); sin URL se muestran como texto.
+- **Boletín con consentimiento explícito.** El Figma usa "No deseo suscribirme" (suscripción por defecto), pero el
+  GDPR (España) y la Ley 29733 (Perú) piden consentimiento libre e inequívoco. La casilla es "Quiero recibir…",
+  **desmarcada**, está **antes** del botón y se guarda la fecha del consentimiento (`marketing_consent_at`) como
+  prueba; retirarlo la borra. Se aplica a todos los países: una sola regla, la más estricta.
+- **El indicativo nunca se duplica.** Se guarda aparte del número; `987654321`, `+51 987654321`, `51987654321` y
+  `0051 987654321` quedan como `+51` + `987654321`. Si se escribe dos veces (`+51 51 987…`), el mensaje lo dice.
+
+**Fuera de alcance (documentado).** Servicios adicionales, datos de facturación, cuotas, Wynwood Points y
+Apple Pay/Google Pay (requieren una pasarela real).

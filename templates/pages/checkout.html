@@ -1,17 +1,24 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load static i18n content %}
 
 {% block title %}{% translate "Complete your booking" %} | Wynwood House{% endblock %}
 
 {% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/components/breadcrumb.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/forms.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/booking-card.css' %}">
   <link rel="stylesheet" href="{% static 'css/pages/checkout.css' %}">
 {% endblock %}
 
 {% block content %}
+  {% translate "Continue" as continue_label %}
+  {% translate "Complete booking" as complete_label %}
   <div class="checkout container-wh">
+    <div class="checkout__crumbs">
+      {% translate "Checkout" as current_page %}
+      {% include "components/breadcrumb.html" with prop=booking.property current=current_page %}
+    </div>
     <div class="checkout__main">
-      <h1 class="wh-display">{% translate "Complete your booking" %}</h1>
 
       <div class="hold-timer" data-hold-timer data-expires-at="{{ booking.expires_at|date:'c' }}" role="timer" aria-live="off">
         <p>
@@ -21,24 +28,138 @@
         <p class="hold-timer__hint">{% translate "After that they are released for other guests." %}</p>
       </div>
 
-      {# Phase 7 adds here: sign-up for new users, guest details and the simulated payment. #}
-      <section class="checkout__next" aria-labelledby="next-title">
-        <h2 class="checkout__step" id="next-title">{% translate "Next steps" %}</h2>
-        <p>{% translate "Create your account or sign in, then pay securely to confirm the booking." %}</p>
-      </section>
-
-      <form method="post" action="{% url 'bookings:release' booking.reference %}">
+      <form method="post" class="checkout__form" novalidate data-validate data-checkout-form>
         {% csrf_token %}
-        <button type="submit" class="btn btn-wh btn-wh--outline">{% translate "Change dates" %}</button>
+        {% if form.non_field_errors %}
+          <div class="form-alert" role="alert">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+        {% endif %}
+
+        {% if step == "signup" %}
+          {# Step 1, new visitor (Figma "Página registro"): the account and the personal details. #}
+          <section class="checkout__section" aria-labelledby="signup-title">
+            <h1 class="checkout__step" id="signup-title">{% translate "Sign up" %}</h1>
+            <p class="checkout__lead">{% translate "We will send the booking confirmation to your email." %}</p>
+            {% include "components/form_field.html" with field=form.email %}
+            {% include "components/password_field.html" with field=form.password %}
+            <p class="checkout__switch">
+              {% translate "Already have an account?" %}
+              <a href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}">{% translate "Sign in" %}</a>
+            </p>
+          </section>
+        {% endif %}
+
+        {% if step == "signup" or step == "details" %}
+          <section class="checkout__section" aria-labelledby="details-title">
+            {% if step == "details" %}
+              <h1 class="checkout__step" id="details-title">{% translate "Personal information" %}</h1>
+              <p class="checkout__lead">
+                {% blocktranslate trimmed with name=user.get_short_name %}
+                  Hi {{ name }}, complete your details to continue with the booking.
+                {% endblocktranslate %}
+              </p>
+            {% else %}
+              <h2 class="checkout__step" id="details-title">{% translate "Personal information" %}</h2>
+            {% endif %}
+            <div class="checkout__grid">
+              {% include "components/form_field.html" with field=form.full_name %}
+              {% include "components/form_field.html" with field=form.nationality %}
+              <div class="checkout__phone">
+                {% include "components/form_field.html" with field=form.phone_region %}
+                {% include "components/form_field.html" with field=form.phone_number %}
+              </div>
+              {% include "components/form_field.html" with field=form.birth_date %}
+            </div>
+          </section>
+
+          {# Explicit, unticked consent, seen before the button (D36). #}
+          <div class="checkout__newsletter">
+            <div class="form-check-wh">
+              {{ form.newsletter }}
+              <label for="{{ form.newsletter.id_for_label }}">{{ form.newsletter.label }}</label>
+            </div>
+            <p class="checkout__newsletter-hint">{% translate "Optional. You can unsubscribe at any time from any email you receive." %}</p>
+          </div>
+
+          {% include "components/terms_notice.html" with button=continue_label %}
+          <button type="submit" class="btn btn-wh checkout__submit" data-submit-once>{{ continue_label }}</button>
+
+        {% else %}
+          {# Step 2 (Figma "Página de pago"). #}
+          <section class="checkout__section checkout__section--welcome" aria-labelledby="welcome-title">
+            <h1 class="wh-display checkout__welcome" id="welcome-title">
+              {% blocktranslate trimmed with name=user.get_short_name %}
+                Welcome to Wynwood House, {{ name }}!
+              {% endblocktranslate %}
+            </h1>
+            <p>{% translate "Review your booking and complete the payment to confirm it." %}</p>
+          </section>
+
+          <section class="checkout__section" aria-labelledby="payment-title">
+            <h2 class="checkout__step" id="payment-title">{% translate "Payment information" %}</h2>
+            <p class="checkout__secure">
+              <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/lock.svg' %}" alt="" width="14" height="14">
+              {% translate "Simulated payment: no real charge is made and card details are not stored." %}
+            </p>
+
+            {% if payment_error %}
+              <div class="form-alert" role="alert"><p>{{ payment_error }}</p></div>
+            {% endif %}
+
+            {{ form.idempotency_key }}
+            <div class="card-number" data-card-number>
+              {% include "components/form_field.html" with field=form.card_number %}
+              <span class="card-number__brand" data-card-brand aria-hidden="true"></span>
+            </div>
+            <div class="checkout__grid checkout__grid--card">
+              {% include "components/form_field.html" with field=form.expiry %}
+              {% include "components/form_field.html" with field=form.cvc %}
+            </div>
+
+            {% if test_cards %}
+              <div class="test-cards" data-demo-message="{% translate 'This is a demo: use one of the test cards. Real cards are not accepted.' %}">
+                <p class="test-cards__title">
+                  <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/credit-card.svg' %}" alt="" width="16" height="16">
+                  {% translate "Test cards" %}
+                </p>
+                <dl>
+                  {% for number, decline_code in test_cards %}
+                    <div>
+                      <dt><button type="button" class="test-cards__number" data-test-card="{{ number }}">{{ number }}</button></dt>
+                      <dd>
+                        {% if not decline_code %}{% translate "Approved" %}
+                        {% elif decline_code == "insufficient_funds" %}{% translate "Insufficient funds" %}
+                        {% else %}{% translate "Declined" %}{% endif %}
+                      </dd>
+                    </div>
+                  {% endfor %}
+                </dl>
+                <p class="test-cards__hint">{% translate "Any future expiry date. Security code: any 3 digits (4 for American Express)." %}</p>
+              </div>
+            {% endif %}
+          </section>
+
+          {% include "components/terms_notice.html" with button=complete_label %}
+          <button type="submit" class="btn btn-wh checkout__submit" data-submit-once>{{ complete_label }}</button>
+        {% endif %}
       </form>
     </div>
 
     <aside class="checkout__aside">
-      {% include "components/booking_summary.html" %}
+      {% blocktranslate with reference=booking.reference asvar help_message %}Hi, I need help completing my booking {{ reference }}.{% endblocktranslate %}
+      <p class="checkout__help">
+        <a href="{% whatsapp_link help_message %}" target="_blank" rel="noopener">{% translate "Need help completing your booking?" %}</a>
+      </p>
+      {% include "components/booking_summary.html" with edit_form="release-hold" %}
+      <form id="release-hold" method="post" action="{% url 'bookings:release' booking.reference %}" class="checkout__release">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-wh btn-wh--outline">{% translate "Change dates" %}</button>
+      </form>
     </aside>
   </div>
 {% endblock %}
 
 {% block extra_js %}
   <script src="{% static 'js/hold-timer.js' %}" defer></script>
+  <script src="{% static 'js/password-field.js' %}" defer></script>
+  <script src="{% static 'js/checkout.js' %}" defer></script>
 {% endblock %}

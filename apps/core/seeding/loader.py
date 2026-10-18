@@ -82,6 +82,8 @@ class Seeder:
         site = SiteSettings.load()
         site.contact_email = data.SITE_SETTINGS["contact_email"]
         site.whatsapp_number = data.SITE_SETTINGS["whatsapp_number"]
+        for field in ("terms_url", "privacy_url", "cancellation_policy_url"):
+            setattr(site, field, data.SITE_SETTINGS["legal_url"])
         for key, value in translated(
             "whatsapp_message", data.SITE_SETTINGS["whatsapp_message"]
         ).items():
@@ -265,8 +267,9 @@ class Seeder:
 
     def seed_demo_user(self):
         User = get_user_model()
-        user, created = User.objects.get_or_create(
-            email=data.DEMO_USER["email"], defaults={"full_name": data.DEMO_USER["full_name"]}
+        user, created = User.objects.update_or_create(
+            email=data.DEMO_USER["email"],
+            defaults={"full_name": data.DEMO_USER["full_name"], **data.DEMO_USER["details"]},
         )
         if created:
             user.set_password(data.DEMO_USER["password"])

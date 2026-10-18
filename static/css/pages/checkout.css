@@ -2,8 +2,17 @@
 
 .checkout {
   display: grid;
-  gap: 2.5rem;
+  gap: 2rem;
   padding-block: 2.5rem 5rem;
+}
+
+.checkout__crumbs {
+  grid-column: 1 / -1;
+  order: -2;
+}
+
+.checkout__crumbs .breadcrumb-wh {
+  margin-bottom: 0;
 }
 
 .checkout__main h1 {
@@ -17,10 +26,160 @@
   text-transform: uppercase;
 }
 
-.checkout__next {
-  margin-block: 2rem;
-  padding-block: 2rem;
-  border-block: 1px solid var(--wh-gray-light);
+.checkout__lead {
+  margin-bottom: 1.5rem;
+}
+
+.checkout__form {
+  margin-top: 2rem;
+}
+
+.checkout__section + .checkout__section {
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--wh-gray-light);
+}
+
+.checkout__section--welcome p {
+  margin: 0.75rem 0 0;
+}
+
+.checkout__welcome {
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+}
+
+.checkout__switch {
+  margin: 0;
+}
+
+/* Personal information: two columns from tablets up (Figma), phone prefix + number together */
+
+.checkout__grid {
+  display: grid;
+  column-gap: 1.25rem;
+}
+
+.checkout__phone {
+  display: grid;
+  grid-template-columns: minmax(7rem, 9.5rem) minmax(0, 1fr);
+  column-gap: 0.75rem;
+}
+
+.checkout__grid--card {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.checkout__submit {
+  width: 100%;
+  margin-top: 1rem;
+  --bs-btn-padding-y: 0.75rem;
+}
+
+.checkout__newsletter {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--wh-gray-light);
+  font-size: 0.875rem;
+}
+
+.checkout__newsletter-hint {
+  margin: 0.5rem 0 0 1.875rem;
+  color: var(--wh-gray);
+}
+
+.checkout__secure {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  color: var(--wh-gray);
+  font-size: 0.875rem;
+}
+
+/* Card number with the brand detected while typing */
+
+.card-number {
+  position: relative;
+}
+
+.card-number__brand {
+  position: absolute;
+  top: 2.55rem;
+  right: 1rem;
+  color: #1a1f71;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+.card-number__brand:empty {
+  display: none;
+}
+
+/* Test cards of the simulated gateway */
+
+.test-cards {
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--wh-gray);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.test-cards__title {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+.test-cards dl {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.test-cards dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.test-cards dd {
+  margin: 0;
+  color: var(--wh-gray);
+}
+
+.test-cards__number {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-variant-numeric: tabular-nums;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.test-cards__hint {
+  margin: 0.75rem 0 0;
+  color: var(--wh-gray);
+}
+
+/* Aside */
+
+.checkout__help {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.checkout__help a {
+  color: var(--wh-black);
+}
+
+.checkout__release {
+  margin-top: 1rem;
+  text-align: center;
 }
 
 .hold-timer {
@@ -46,10 +205,23 @@
   background: #fff4dc;
 }
 
+/* Phones and tablets: what is being paid comes first, the form after it. */
+@media (max-width: 991.98px) {
+  .checkout__aside {
+    order: -1;
+  }
+}
+
+@media (min-width: 768px) {
+  .checkout__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 992px) {
   .checkout {
     grid-template-columns: minmax(0, 1fr) minmax(20rem, 25rem);
-    gap: clamp(3rem, 7vw, 7rem);
+    column-gap: clamp(3rem, 7vw, 7rem);
     align-items: start;
   }
 

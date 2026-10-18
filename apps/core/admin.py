@@ -60,6 +60,7 @@ class SiteSettingsAdmin(SingletonAdmin, TranslationAdmin):
     fieldsets = (
         (_("Contact"), {"fields": ("contact_email", "whatsapp_number", "whatsapp_message")}),
         (_("Mobile app"), {"fields": ("app_store_url", "play_store_url")}),
+        (_("Legal"), {"fields": ("terms_url", "privacy_url", "cancellation_policy_url")}),
     )
 
 

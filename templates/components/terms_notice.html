@@ -1,0 +1,18 @@
+{% load i18n content %}
+{% comment %}
+  Text accepted by pressing the step's button (Figma "Al seleccionar continuar, aceptas...").
+  The policy links come from the site settings; without a URL they show as plain text.
+  button: label of the button that accepts.
+{% endcomment %}
+{% translate "Cancellation policy" as cancellation_label %}
+{% translate "Terms of service" as terms_label %}
+{% translate "Privacy policy" as privacy_label %}
+{% optional_link site_settings.cancellation_policy_url cancellation_label as cancellation %}
+{% optional_link site_settings.terms_url terms_label as terms %}
+{% optional_link site_settings.privacy_url privacy_label as privacy %}
+<p class="terms-notice">
+  {% blocktranslate trimmed %}
+    By selecting {{ button }}, you accept the {{ cancellation }}, the {{ terms }} and the
+    {{ privacy }}. You also agree to pay the total amount shown.
+  {% endblocktranslate %}
+</p>

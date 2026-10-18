@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 11:57-0500\n"
+"POT-Creation-Date: 2026-10-18 16:25-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -28,51 +28,107 @@ msgstr "Fechas importantes"
 msgid "Accounts"
 msgstr "Cuentas"
 
-#: apps/accounts/forms.py:30
+#: apps/accounts/forms.py:33
 msgid "Create a password"
 msgstr "Crear contraseña"
 
-#: apps/accounts/forms.py:32
+#: apps/accounts/forms.py:35
 msgid "Create a password."
 msgstr "Crea una contraseña."
 
-#: apps/accounts/forms.py:36
+#: apps/accounts/forms.py:39
 msgid "Enter a new password"
 msgstr "Ingresa una nueva contraseña"
 
-#: apps/accounts/forms.py:46 apps/accounts/forms.py:109
+#: apps/accounts/forms.py:49 apps/accounts/forms.py:233
 msgid "Enter your email address."
 msgstr "Ingresa tu correo electrónico."
 
-#: apps/accounts/forms.py:47 apps/accounts/validators.py:39
+#: apps/accounts/forms.py:50 apps/accounts/forms.py:122
+#: apps/accounts/validators.py:41
 msgid "Enter your first and last name."
 msgstr "Ingresa tu nombre y apellido."
 
-#: apps/accounts/forms.py:54
+#: apps/accounts/forms.py:53
+msgid "name@example.com"
+msgstr "nombre@ejemplo.com"
+
+#: apps/accounts/forms.py:57
 msgid "Enter your full name"
 msgstr "Ingresa tu nombre completo"
 
-#: apps/accounts/forms.py:57
+#: apps/accounts/forms.py:59
 msgid "Enter your first and last name using letters only."
 msgstr "Ingresa tu nombre y apellido usando solo letras."
 
-#: apps/accounts/forms.py:71
+#: apps/accounts/forms.py:72
 msgid "An account with this email already exists. Sign in instead."
 msgstr "Ya existe una cuenta con este correo. Inicia sesión."
 
-#: apps/accounts/forms.py:108 apps/core/models.py:225
+#: apps/accounts/forms.py:111
+msgid "Enter your phone number"
+msgstr "Ingresa tu número de teléfono"
+
+#: apps/accounts/forms.py:114 apps/accounts/phones.py:82
+msgid "Use only digits, spaces or dashes."
+msgstr "Usa solo números, espacios o guiones."
+
+#: apps/accounts/forms.py:123
+msgid "Select your nationality."
+msgstr "Selecciona tu nacionalidad."
+
+#: apps/accounts/forms.py:124
+msgid "Enter your phone number."
+msgstr "Ingresa tu número de teléfono."
+
+#: apps/accounts/forms.py:125
+msgid "Enter your birth date."
+msgstr "Ingresa tu fecha de nacimiento."
+
+#: apps/accounts/forms.py:127 apps/core/forms.py:19
+msgid "Select one of the available options."
+msgstr "Elige una de las opciones disponibles."
+
+#: apps/accounts/forms.py:148
+msgid "Select your country"
+msgstr "Selecciona tu país"
+
+#: apps/accounts/forms.py:152 apps/accounts/forms.py:153
+msgid "Code"
+msgstr "Indicativo"
+
+#: apps/accounts/forms.py:154
+msgid "Select the code."
+msgstr "Selecciona el indicativo."
+
+#: apps/accounts/forms.py:159
+msgid ""
+"I want to receive exclusive member offers, inspiring content and news from "
+"Wynwood House by email."
+msgstr "Quiero recibir por correo ofertas exclusivas para miembros, contenido inspirador y novedades de Wynwood House."
+
+#: apps/accounts/forms.py:178 apps/accounts/validators.py:70
+msgid "Check the year of your birth date."
+msgstr "Revisa el año de tu fecha de nacimiento."
+
+#: apps/accounts/forms.py:179 apps/accounts/validators.py:73
+#, python-format
+msgid "You must be at least %(age)s years old to book."
+msgstr "Debes tener al menos %(age)s años para reservar."
+
+#: apps/accounts/forms.py:232 apps/core/models.py:229
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: apps/accounts/forms.py:113
+#: apps/accounts/forms.py:237
 msgid "Password"
 msgstr "Contraseña"
 
-#: apps/accounts/forms.py:115
+#: apps/accounts/forms.py:239
 msgid "Enter your password."
 msgstr "Ingresa tu contraseña."
 
-#: apps/accounts/forms.py:121
+#: apps/accounts/forms.py:245
 msgid "The email or password is incorrect."
 msgstr "El correo o la contraseña no son correctos."
 
@@ -88,90 +144,120 @@ msgstr "El superusuario debe tener is_staff=True."
 msgid "Superuser must have is_superuser=True."
 msgstr "El superusuario debe tener is_superuser=True."
 
-#: apps/accounts/models.py:18
+#: apps/accounts/models.py:20
 msgid "email address"
 msgstr "correo electrónico"
 
-#: apps/accounts/models.py:20
+#: apps/accounts/models.py:22
 msgid "full name"
 msgstr "nombre completo"
 
-#: apps/accounts/models.py:23
+#: apps/accounts/models.py:25
 msgid "nationality"
 msgstr "nacionalidad"
 
-#: apps/accounts/models.py:26
-msgid "ISO 3166-1 alpha-2 country code."
-msgstr "Código de país ISO 3166-1 alfa-2."
-
-#: apps/accounts/models.py:28
+#: apps/accounts/models.py:27
 msgid "phone prefix"
 msgstr "indicativo"
 
-#: apps/accounts/models.py:29
+#: apps/accounts/models.py:27
+msgid "Country calling code, e.g. +51."
+msgstr "Indicativo internacional del país, por ejemplo +51."
+
+#: apps/accounts/models.py:30
 msgid "phone number"
 msgstr "teléfono"
 
-#: apps/accounts/models.py:30
+#: apps/accounts/models.py:33
+msgid "National number without the prefix, digits only."
+msgstr "Número nacional sin el indicativo, solo dígitos."
+
+#: apps/accounts/models.py:35
 msgid "birth date"
 msgstr "fecha de nacimiento"
 
-#: apps/accounts/models.py:32
+#: apps/accounts/models.py:37
 msgid "preferred language"
 msgstr "idioma preferido"
 
-#: apps/accounts/models.py:37
+#: apps/accounts/models.py:42
 msgid "subscribed to the newsletter"
 msgstr "suscrito al boletín"
 
-#: apps/accounts/models.py:45
+#: apps/accounts/models.py:44
+msgid "newsletter consent given at"
+msgstr "consentimiento del boletín otorgado el"
+
+#: apps/accounts/models.py:47
+msgid "When the guest ticked the newsletter box (proof of consent)."
+msgstr "Cuándo el huésped marcó la casilla del boletín (prueba del consentimiento)."
+
+#: apps/accounts/models.py:56
 msgid "user"
 msgstr "usuario"
 
-#: apps/accounts/models.py:46
+#: apps/accounts/models.py:57
 msgid "users"
 msgstr "usuarios"
 
-#: apps/accounts/models.py:51
+#: apps/accounts/models.py:62
 msgid "An account with this email already exists."
 msgstr "Ya existe una cuenta con este correo electrónico."
 
-#: apps/accounts/validators.py:36
+#: apps/accounts/phones.py:90
+msgid "The country code is repeated. Enter it only once, or only the number."
+msgstr "El indicativo está repetido. Escríbelo una sola vez o ingresa solo el número."
+
+#: apps/accounts/phones.py:93
+msgid "Enter a valid phone number."
+msgstr "Ingresa un número de teléfono válido."
+
+#: apps/accounts/phones.py:95
+msgid "Enter a valid phone number for the selected country."
+msgstr "Ingresa un número de teléfono válido para el país seleccionado."
+
+#: apps/accounts/validators.py:38
 msgid "Use only letters, spaces, hyphens or apostrophes."
 msgstr "Usa solo letras, espacios, guiones o apóstrofos."
 
-#: apps/accounts/validators.py:73
+#: apps/accounts/validators.py:67
+msgid "The birth date must be in the past."
+msgstr "La fecha de nacimiento debe ser anterior a hoy."
+
+#: apps/accounts/validators.py:110
 msgid ""
 "This password is a common word with numbers or symbols. Choose one that is "
 "harder to guess."
-msgstr "Esta contraseña es una palabra común con números o símbolos. Elige una más difícil de adivinar."
+msgstr ""
+"Esta contraseña es una palabra común con números o símbolos. Elige una más "
+"difícil de adivinar."
 
-#: apps/accounts/validators.py:80
+#: apps/accounts/validators.py:117
 msgid "Is not a common word with numbers or symbols."
 msgstr "No es una palabra común con números o símbolos."
 
-#: apps/accounts/validators.py:89
+#: apps/accounts/validators.py:126
 msgid "The password must contain at least one number or symbol."
 msgstr "La contraseña debe tener al menos un número o un símbolo."
 
-#: apps/accounts/validators.py:94
+#: apps/accounts/validators.py:131
 msgid "Contains a number or symbol."
 msgstr "Contiene un número o un símbolo."
 
-#: apps/accounts/validators.py:116
+#: apps/accounts/validators.py:153
 msgid "The password cannot contain your name or e-mail address."
 msgstr "La contraseña no puede contener tu nombre ni tu correo electrónico."
 
-#: apps/accounts/validators.py:121
+#: apps/accounts/validators.py:158
 msgid "Does not contain your name or e-mail address."
 msgstr "No contiene tu nombre ni tu correo electrónico."
 
-#: apps/accounts/views.py:44
+#: apps/accounts/views.py:44 templates/pages/checkout.html:90
 #, python-format
 msgid "Welcome to Wynwood House, %(name)s!"
 msgstr "¡Te damos la bienvenida a Wynwood House, %(name)s!"
 
-#: apps/bookings/admin.py:42
+#: apps/bookings/admin.py:44
 msgid "nights"
 msgstr "noches"
 
@@ -189,7 +275,7 @@ msgstr "Salida"
 
 #: apps/bookings/forms.py:18 apps/properties/forms.py:64
 #: templates/components/booking_card.html:53
-#: templates/components/booking_summary.html:19
+#: templates/components/booking_summary.html:33
 #: templates/components/property_card.html:22
 #: templates/components/property_card.html:24
 #: templates/components/property_card.html:34
@@ -216,8 +302,8 @@ msgstr "Cancelada"
 msgid "reference"
 msgstr "referencia"
 
-#: apps/bookings/models.py:40 apps/properties/models.py:167
-#: apps/properties/models.py:210
+#: apps/bookings/models.py:40 apps/properties/models.py:168
+#: apps/properties/models.py:233
 msgid "property"
 msgstr "propiedad"
 
@@ -231,7 +317,7 @@ msgstr ""
 "Vacío mientras un visitante sin cuenta retiene las fechas durante el "
 "checkout."
 
-#: apps/bookings/models.py:52
+#: apps/bookings/models.py:52 apps/payments/models.py:34
 msgid "status"
 msgstr "estado"
 
@@ -256,7 +342,7 @@ msgid "Pending bookings stop blocking their dates after this moment."
 msgstr ""
 "Las reservas pendientes dejan de bloquear sus fechas después de este momento."
 
-#: apps/bookings/models.py:63
+#: apps/bookings/models.py:63 apps/payments/models.py:36
 msgid "currency"
 msgstr "moneda"
 
@@ -278,6 +364,7 @@ msgid "confirmed at"
 msgstr "confirmada el"
 
 #: apps/bookings/models.py:79 apps/bookings/models.py:121
+#: apps/payments/models.py:26
 msgid "booking"
 msgstr "reserva"
 
@@ -301,23 +388,23 @@ msgstr "Limpieza"
 msgid "Tax"
 msgstr "Impuesto"
 
-#: apps/bookings/models.py:123 apps/core/models.py:227
+#: apps/bookings/models.py:123 apps/core/models.py:231
 msgid "type"
 msgstr "tipo"
 
-#: apps/bookings/models.py:124 apps/core/models.py:207 apps/core/models.py:228
+#: apps/bookings/models.py:124 apps/core/models.py:211 apps/core/models.py:232
 msgid "label"
 msgstr "etiqueta"
 
-#: apps/bookings/models.py:125
+#: apps/bookings/models.py:125 apps/payments/models.py:35
 msgid "amount"
 msgstr "monto"
 
-#: apps/bookings/models.py:126 apps/core/models.py:131 apps/core/models.py:171
-#: apps/core/models.py:191 apps/core/models.py:210 apps/core/models.py:233
-#: apps/core/models.py:268 apps/properties/models.py:28
-#: apps/properties/models.py:110 apps/properties/models.py:218
-#: apps/properties/models.py:242
+#: apps/bookings/models.py:126 apps/core/models.py:135 apps/core/models.py:175
+#: apps/core/models.py:195 apps/core/models.py:214 apps/core/models.py:237
+#: apps/core/models.py:272 apps/properties/models.py:29
+#: apps/properties/models.py:111 apps/properties/models.py:241
+#: apps/properties/models.py:265
 msgid "order"
 msgstr "orden"
 
@@ -383,11 +470,7 @@ msgid_plural "This property hosts up to %(count)d guests."
 msgstr[0] "Esta propiedad admite hasta %(count)d huésped."
 msgstr[1] "Esta propiedad admite hasta %(count)d huéspedes."
 
-#: apps/bookings/views.py:82
-msgid "This booking is already confirmed."
-msgstr "Esta reserva ya está confirmada."
-
-#: apps/bookings/views.py:87
+#: apps/bookings/views.py:125
 msgid ""
 "Your time to complete the booking ran out and the dates were released. Check "
 "if they are still available and try again."
@@ -411,37 +494,41 @@ msgstr "Contacto"
 msgid "Mobile app"
 msgstr "App móvil"
 
-#: apps/core/admin.py:70
+#: apps/core/admin.py:63
+msgid "Legal"
+msgstr "Legal"
+
+#: apps/core/admin.py:71
 msgid "Hero"
 msgstr "Portada"
 
-#: apps/core/admin.py:71 templates/components/footer.html:25
+#: apps/core/admin.py:72 templates/components/footer.html:25
 msgid "Destinations"
 msgstr "Destinos"
 
-#: apps/core/admin.py:72 templates/pages/home.html:52
+#: apps/core/admin.py:73 templates/pages/home.html:52
 msgid "Featured properties"
 msgstr "Propiedades destacadas"
 
-#: apps/core/admin.py:75 apps/core/admin.py:102 apps/properties/admin.py:69
+#: apps/core/admin.py:76 apps/core/admin.py:103 apps/properties/admin.py:69
 msgid "preview"
 msgstr "vista previa"
 
-#: apps/core/admin.py:87
+#: apps/core/admin.py:88
 msgid "Button"
 msgstr "Botón"
 
-#: apps/core/admin.py:88 apps/properties/admin.py:99
+#: apps/core/admin.py:89 apps/properties/admin.py:99
 msgid "Visibility"
 msgstr "Visibilidad"
 
-#: apps/core/admin.py:91 apps/core/models.py:113 apps/core/models.py:170
-#: apps/properties/admin.py:24 apps/properties/models.py:27
-#: apps/properties/models.py:212
+#: apps/core/admin.py:92 apps/core/models.py:117 apps/core/models.py:174
+#: apps/properties/admin.py:24 apps/properties/models.py:28
+#: apps/properties/models.py:235
 msgid "image"
 msgstr "imagen"
 
-#: apps/core/admin.py:112
+#: apps/core/admin.py:113
 msgid "items"
 msgstr "ítems"
 
@@ -477,31 +564,36 @@ msgstr "Perú"
 msgid "United States"
 msgstr "Estados Unidos"
 
-#: apps/core/forms.py:7
+#: apps/core/forms.py:9
+#, python-format
+msgid "Use at most %(limit_value)d characters (it has %(show_value)d)."
+msgstr "Usa como máximo %(limit_value)d caracteres (tiene %(show_value)d)."
+
+#: apps/core/forms.py:11
+msgid "The form expired. Reload the page and try again."
+msgstr "El formulario caducó. Recarga la página e inténtalo de nuevo."
+
+#: apps/core/forms.py:12
 msgid "Enter a valid email address, for example name@example.com."
 msgstr "Ingresa un correo electrónico válido, por ejemplo nombre@ejemplo.com."
 
-#: apps/core/forms.py:8
+#: apps/core/forms.py:13
 msgid "Enter a valid date."
 msgstr "Ingresa una fecha válida."
 
-#: apps/core/forms.py:10
+#: apps/core/forms.py:15
 msgid "Enter a whole number."
 msgstr "Ingresa un número entero."
 
-#: apps/core/forms.py:11
+#: apps/core/forms.py:16
 #, python-format
 msgid "Enter a number greater than or equal to %(limit_value)s."
 msgstr "Ingresa un número mayor o igual a %(limit_value)s."
 
-#: apps/core/forms.py:12
+#: apps/core/forms.py:17
 #, python-format
 msgid "Enter a number less than or equal to %(limit_value)s."
 msgstr "Ingresa un número menor o igual a %(limit_value)s."
-
-#: apps/core/forms.py:14
-msgid "Select one of the available options."
-msgstr "Elige una de las opciones disponibles."
 
 #: apps/core/models.py:12
 msgid "created at"
@@ -526,7 +618,7 @@ msgstr ""
 "Formato internacional, por ejemplo +51 947 022 549. Lo usan los botones "
 "«Contáctanos»."
 
-#: apps/core/models.py:54 apps/core/models.py:123
+#: apps/core/models.py:54 apps/core/models.py:127
 msgid "WhatsApp message"
 msgstr "mensaje de WhatsApp"
 
@@ -546,104 +638,116 @@ msgstr "URL de App Store"
 msgid "Google Play URL"
 msgstr "URL de Google Play"
 
-#: apps/core/models.py:66 apps/core/models.py:67
+#: apps/core/models.py:65
+msgid "terms of service URL"
+msgstr "URL de los términos de servicio"
+
+#: apps/core/models.py:66
+msgid "privacy policy URL"
+msgstr "URL de la política de privacidad"
+
+#: apps/core/models.py:67
+msgid "cancellation policy URL"
+msgstr "URL de la política de cancelación"
+
+#: apps/core/models.py:70 apps/core/models.py:71
 msgid "site settings"
 msgstr "configuración del sitio"
 
-#: apps/core/models.py:70
+#: apps/core/models.py:74
 msgid "Site settings"
 msgstr "Configuración del sitio"
 
-#: apps/core/models.py:83
+#: apps/core/models.py:87
 msgid "hero title"
 msgstr "título de portada"
 
-#: apps/core/models.py:84
+#: apps/core/models.py:88
 msgid "hero subtitle"
 msgstr "subtítulo de portada"
 
-#: apps/core/models.py:85
+#: apps/core/models.py:89
 msgid "hero image"
 msgstr "imagen de portada"
 
-#: apps/core/models.py:86
+#: apps/core/models.py:90
 msgid "destinations title"
 msgstr "título de destinos"
 
-#: apps/core/models.py:87
+#: apps/core/models.py:91
 msgid "featured properties title"
 msgstr "título de propiedades destacadas"
 
-#: apps/core/models.py:88
+#: apps/core/models.py:92
 msgid "featured properties text"
 msgstr "texto de propiedades destacadas"
 
-#: apps/core/models.py:91 apps/core/models.py:92
+#: apps/core/models.py:95 apps/core/models.py:96
 msgid "home page"
 msgstr "página de inicio"
 
-#: apps/core/models.py:95
+#: apps/core/models.py:99
 msgid "Home page"
 msgstr "Página de inicio"
 
-#: apps/core/models.py:100
+#: apps/core/models.py:104
 msgid "Image on the left"
 msgstr "Imagen a la izquierda"
 
-#: apps/core/models.py:101
+#: apps/core/models.py:105
 msgid "Image on the right"
 msgstr "Imagen a la derecha"
 
-#: apps/core/models.py:102
+#: apps/core/models.py:106
 msgid "Full-width background image"
 msgstr "Imagen de fondo a todo el ancho"
 
-#: apps/core/models.py:105
+#: apps/core/models.py:109
 msgid "Link"
 msgstr "Enlace"
 
-#: apps/core/models.py:106
+#: apps/core/models.py:110
 msgid "WhatsApp chat (site settings)"
 msgstr "Chat de WhatsApp (configuración del sitio)"
 
-#: apps/core/models.py:109 apps/core/models.py:151
+#: apps/core/models.py:113 apps/core/models.py:155
 msgid "key"
 msgstr "clave"
 
-#: apps/core/models.py:109
+#: apps/core/models.py:113
 msgid "Identifier used by the templates, e.g. long-stay."
 msgstr "Identificador que usan las plantillas, por ejemplo long-stay."
 
-#: apps/core/models.py:111 apps/core/models.py:152 apps/core/models.py:168
-#: apps/core/models.py:190 apps/properties/models.py:126
+#: apps/core/models.py:115 apps/core/models.py:156 apps/core/models.py:172
+#: apps/core/models.py:194 apps/properties/models.py:127
 msgid "title"
 msgstr "título"
 
-#: apps/core/models.py:112 apps/core/models.py:153
+#: apps/core/models.py:116 apps/core/models.py:157
 msgid "text"
 msgstr "texto"
 
-#: apps/core/models.py:114
+#: apps/core/models.py:118
 msgid "layout"
 msgstr "diseño"
 
-#: apps/core/models.py:115
+#: apps/core/models.py:119
 msgid "button label"
 msgstr "texto del botón"
 
-#: apps/core/models.py:117
+#: apps/core/models.py:121
 msgid "button action"
 msgstr "acción del botón"
 
-#: apps/core/models.py:120
+#: apps/core/models.py:124
 msgid "button URL"
 msgstr "URL del botón"
 
-#: apps/core/models.py:120
+#: apps/core/models.py:124
 msgid "Only for the 'Link' action."
 msgstr "Solo para la acción «Enlace»."
 
-#: apps/core/models.py:127
+#: apps/core/models.py:131
 msgid ""
 "Only for the WhatsApp action: text pre-filled in the chat. Empty uses the "
 "general message from the site settings."
@@ -651,114 +755,245 @@ msgstr ""
 "Solo para la acción WhatsApp: texto precargado en el chat. Si queda vacío, "
 "se usa el mensaje general de la configuración del sitio."
 
-#: apps/core/models.py:132 apps/core/models.py:154 apps/core/models.py:192
-#: apps/core/models.py:234 apps/core/models.py:269 apps/properties/models.py:29
-#: apps/properties/models.py:56 apps/properties/models.py:162
-#: apps/properties/models.py:243
+#: apps/core/models.py:136 apps/core/models.py:158 apps/core/models.py:196
+#: apps/core/models.py:238 apps/core/models.py:273 apps/properties/models.py:30
+#: apps/properties/models.py:57 apps/properties/models.py:163
+#: apps/properties/models.py:266
 msgid "active"
 msgstr "activo"
 
-#: apps/core/models.py:135
+#: apps/core/models.py:139
 msgid "banner"
 msgstr "banner"
 
-#: apps/core/models.py:136
+#: apps/core/models.py:140
 msgid "banners"
 msgstr "banners"
 
-#: apps/core/models.py:157
+#: apps/core/models.py:161
 msgid "feature section"
 msgstr "sección destacada"
 
-#: apps/core/models.py:158
+#: apps/core/models.py:162
 msgid "feature sections"
 msgstr "secciones destacadas"
 
-#: apps/core/models.py:166
+#: apps/core/models.py:170
 msgid "section"
 msgstr "sección"
 
-#: apps/core/models.py:169 apps/properties/models.py:128
+#: apps/core/models.py:173 apps/properties/models.py:129
 msgid "description"
 msgstr "descripción"
 
-#: apps/core/models.py:174
+#: apps/core/models.py:178
 msgid "feature item"
 msgstr "ítem de sección"
 
-#: apps/core/models.py:175
+#: apps/core/models.py:179
 msgid "feature items"
 msgstr "ítems de sección"
 
-#: apps/core/models.py:186
+#: apps/core/models.py:190
 msgid "Header"
 msgstr "Encabezado"
 
-#: apps/core/models.py:187
+#: apps/core/models.py:191
 msgid "Footer"
 msgstr "Pie de página"
 
-#: apps/core/models.py:189
+#: apps/core/models.py:193
 msgid "placement"
 msgstr "ubicación"
 
-#: apps/core/models.py:195 apps/core/models.py:205
+#: apps/core/models.py:199 apps/core/models.py:209
 msgid "menu"
 msgstr "menú"
 
-#: apps/core/models.py:196
+#: apps/core/models.py:200
 msgid "menus"
 msgstr "menús"
 
-#: apps/core/models.py:208 apps/core/models.py:267
+#: apps/core/models.py:212 apps/core/models.py:271
 msgid "URL"
 msgstr "URL"
 
-#: apps/core/models.py:209
+#: apps/core/models.py:213
 msgid "open in a new tab"
 msgstr "abrir en una pestaña nueva"
 
-#: apps/core/models.py:213
+#: apps/core/models.py:217
 msgid "link"
 msgstr "enlace"
 
-#: apps/core/models.py:214
+#: apps/core/models.py:218
 msgid "links"
 msgstr "enlaces"
 
-#: apps/core/models.py:224
+#: apps/core/models.py:228
 msgid "Phone"
 msgstr "Teléfono"
 
-#: apps/core/models.py:229
+#: apps/core/models.py:233
 msgid "value"
 msgstr "valor"
 
-#: apps/core/models.py:231
+#: apps/core/models.py:235
 msgid "country flag"
 msgstr "bandera"
 
-#: apps/core/models.py:237
+#: apps/core/models.py:241
 msgid "contact channel"
 msgstr "canal de contacto"
 
-#: apps/core/models.py:238
+#: apps/core/models.py:242
 msgid "contact channels"
 msgstr "canales de contacto"
 
-#: apps/core/models.py:266
+#: apps/core/models.py:270
 msgid "network"
 msgstr "red"
 
-#: apps/core/models.py:272
+#: apps/core/models.py:276
 msgid "social network"
 msgstr "red social"
 
-#: apps/core/models.py:273
+#: apps/core/models.py:277
 msgid "social networks"
 msgstr "redes sociales"
 
-#: apps/properties/admin.py:95 templates/pages/property_detail.html:77
+#: apps/payments/apps.py:7
+msgid "Payments"
+msgstr "Pagos"
+
+#: apps/payments/forms.py:32
+msgid "Card number"
+msgstr "Número de tarjeta"
+
+#: apps/payments/forms.py:34
+msgid "Enter the card number."
+msgstr "Ingresa el número de la tarjeta."
+
+#: apps/payments/forms.py:41 apps/payments/forms.py:79
+msgid "Enter the card number using digits only."
+msgstr "Ingresa el número de la tarjeta solo con dígitos."
+
+#: apps/payments/forms.py:46
+msgid "Expiry date"
+msgstr "Vencimiento"
+
+#: apps/payments/forms.py:48
+msgid "Enter the expiry date."
+msgstr "Ingresa la fecha de vencimiento."
+
+#: apps/payments/forms.py:53
+msgid "MM/YY"
+msgstr "MM/AA"
+
+#: apps/payments/forms.py:55 apps/payments/forms.py:97
+#: apps/payments/forms.py:103
+msgid "Use the format MM/YY, for example 08/29."
+msgstr "Usa el formato MM/AA, por ejemplo 08/29."
+
+#: apps/payments/forms.py:60
+msgid "Security code"
+msgstr "Código de seguridad"
+
+#: apps/payments/forms.py:62
+msgid "Enter the security code."
+msgstr "Ingresa el código de seguridad."
+
+#: apps/payments/forms.py:69
+msgid "The security code has 3 or 4 digits."
+msgstr "El código de seguridad tiene 3 o 4 dígitos."
+
+#: apps/payments/forms.py:84
+#, python-format
+msgid "We accept %(brands)s."
+msgstr "Aceptamos %(brands)s."
+
+#: apps/payments/forms.py:89
+msgid "The card number is not valid. Check it and try again."
+msgstr "El número de tarjeta no es válido. Revísalo e inténtalo de nuevo."
+
+#: apps/payments/forms.py:108
+msgid "This card has expired."
+msgstr "Esta tarjeta está vencida."
+
+#: apps/payments/forms.py:111
+msgid "Check the expiry date of the card."
+msgstr "Revisa la fecha de vencimiento de la tarjeta."
+
+#: apps/payments/forms.py:129
+#, python-format
+msgid "The security code of a %(brand)s card has %(digits)s digits."
+msgstr ""
+"El código de seguridad de una tarjeta %(brand)s tiene %(digits)s dígitos."
+
+#: apps/payments/models.py:18
+msgid "Processing"
+msgstr "Procesando"
+
+#: apps/payments/models.py:19
+msgid "Succeeded"
+msgstr "Aprobado"
+
+#: apps/payments/models.py:20
+msgid "Failed"
+msgstr "Fallido"
+
+#: apps/payments/models.py:29
+msgid "idempotency key"
+msgstr "clave de idempotencia"
+
+#: apps/payments/models.py:32
+msgid ""
+"Sent with the payment form: the same key never produces a second charge."
+msgstr ""
+"Se envía con el formulario de pago: la misma clave nunca genera un segundo "
+"cobro."
+
+#: apps/payments/models.py:37
+msgid "card brand"
+msgstr "marca de la tarjeta"
+
+#: apps/payments/models.py:38
+msgid "last 4 digits"
+msgstr "últimos 4 dígitos"
+
+#: apps/payments/models.py:39
+msgid "gateway reference"
+msgstr "referencia de la pasarela"
+
+#: apps/payments/models.py:40
+msgid "decline code"
+msgstr "código de rechazo"
+
+#: apps/payments/models.py:43
+msgid "payment"
+msgstr "pago"
+
+#: apps/payments/models.py:44
+msgid "payments"
+msgstr "pagos"
+
+#: apps/payments/services.py:21
+msgid "Your card was declined. Try another card."
+msgstr "Tu tarjeta fue rechazada. Prueba con otra tarjeta."
+
+#: apps/payments/services.py:22
+msgid "The card has insufficient funds. Try another card."
+msgstr "La tarjeta no tiene fondos suficientes. Prueba con otra tarjeta."
+
+#: apps/payments/services.py:24
+msgid ""
+"This is a demo and no real charges are made: use one of the test cards shown "
+"below."
+msgstr ""
+"Esto es una demo y no se realizan cobros reales: usa una de las tarjetas de "
+"prueba que aparecen abajo."
+
+#: apps/properties/admin.py:95 templates/pages/property_detail.html:71
 msgid "Location"
 msgstr "Ubicación"
 
@@ -770,7 +1005,7 @@ msgstr "Capacidad"
 msgid "Pricing"
 msgstr "Precios"
 
-#: apps/properties/admin.py:98 templates/pages/property_detail.html:62
+#: apps/properties/admin.py:98 templates/pages/property_detail.html:56
 msgid "Amenities"
 msgstr "Comodidades"
 
@@ -810,184 +1045,184 @@ msgstr "Este distrito no pertenece a la ciudad elegida."
 msgid "Choose both arrival and departure."
 msgstr "Elige la fecha de llegada y la de salida."
 
-#: apps/properties/models.py:20
+#: apps/properties/models.py:21
 #, python-format
 msgid "“%(value)s” is not a valid time zone."
 msgstr "«%(value)s» no es una zona horaria válida."
 
-#: apps/properties/models.py:24
+#: apps/properties/models.py:25
 msgid "ISO code"
 msgstr "código ISO"
 
-#: apps/properties/models.py:25 apps/properties/models.py:48
-#: apps/properties/models.py:75 apps/properties/models.py:108
-#: apps/properties/models.py:235
+#: apps/properties/models.py:26 apps/properties/models.py:49
+#: apps/properties/models.py:76 apps/properties/models.py:109
+#: apps/properties/models.py:258
 msgid "name"
 msgstr "nombre"
 
-#: apps/properties/models.py:26 apps/properties/models.py:49
-#: apps/properties/models.py:76 apps/properties/models.py:127
+#: apps/properties/models.py:27 apps/properties/models.py:50
+#: apps/properties/models.py:77 apps/properties/models.py:128
 msgid "slug"
 msgstr "slug"
 
-#: apps/properties/models.py:32 apps/properties/models.py:46
-#: apps/properties/models.py:233
+#: apps/properties/models.py:33 apps/properties/models.py:47
+#: apps/properties/models.py:256
 msgid "country"
 msgstr "país"
 
-#: apps/properties/models.py:33
+#: apps/properties/models.py:34
 msgid "countries"
 msgstr "países"
 
-#: apps/properties/models.py:51
+#: apps/properties/models.py:52
 msgid "time zone"
 msgstr "zona horaria"
 
-#: apps/properties/models.py:54
+#: apps/properties/models.py:55
 msgid "IANA name, e.g. America/Bogota. Decides which dates are in the past."
 msgstr "Nombre IANA, por ejemplo America/Bogota. Define qué fechas ya pasaron."
 
-#: apps/properties/models.py:59 apps/properties/models.py:73
+#: apps/properties/models.py:60 apps/properties/models.py:74
 msgid "city"
 msgstr "ciudad"
 
-#: apps/properties/models.py:60
+#: apps/properties/models.py:61
 msgid "cities"
 msgstr "ciudades"
 
-#: apps/properties/models.py:79 apps/properties/models.py:130
+#: apps/properties/models.py:80 apps/properties/models.py:131
 msgid "district"
 msgstr "distrito"
 
-#: apps/properties/models.py:80
+#: apps/properties/models.py:81
 msgid "districts"
 msgstr "distritos"
 
-#: apps/properties/models.py:96
+#: apps/properties/models.py:97
 msgid "Air conditioning"
 msgstr "Aire acondicionado"
 
-#: apps/properties/models.py:97
+#: apps/properties/models.py:98
 msgid "Kitchen"
 msgstr "Cocina"
 
-#: apps/properties/models.py:98
+#: apps/properties/models.py:99
 msgid "Workspace"
 msgstr "Zona de trabajo"
 
-#: apps/properties/models.py:99
+#: apps/properties/models.py:100
 msgid "Parking"
 msgstr "Estacionamiento"
 
-#: apps/properties/models.py:100
+#: apps/properties/models.py:101
 msgid "Elevator"
 msgstr "Ascensor"
 
-#: apps/properties/models.py:101
+#: apps/properties/models.py:102
 msgid "Security"
 msgstr "Seguridad"
 
-#: apps/properties/models.py:102
+#: apps/properties/models.py:103
 msgid "Terrace"
 msgstr "Terraza"
 
-#: apps/properties/models.py:103
+#: apps/properties/models.py:104
 msgid "Pool"
 msgstr "Piscina"
 
-#: apps/properties/models.py:104
+#: apps/properties/models.py:105
 msgid "Grill"
 msgstr "Parrilla"
 
-#: apps/properties/models.py:105
+#: apps/properties/models.py:106
 msgid "Gym"
 msgstr "Gimnasio"
 
-#: apps/properties/models.py:106
+#: apps/properties/models.py:107
 msgid "Self check-in"
 msgstr "Check-in autónomo"
 
-#: apps/properties/models.py:109
+#: apps/properties/models.py:110
 msgid "icon"
 msgstr "ícono"
 
-#: apps/properties/models.py:113
+#: apps/properties/models.py:114
 msgid "amenity"
 msgstr "comodidad"
 
-#: apps/properties/models.py:114 apps/properties/models.py:159
+#: apps/properties/models.py:115 apps/properties/models.py:160
 msgid "amenities"
 msgstr "comodidades"
 
-#: apps/properties/models.py:132
+#: apps/properties/models.py:133
 msgid "address"
 msgstr "dirección"
 
-#: apps/properties/models.py:134
+#: apps/properties/models.py:135
 msgid "latitude"
 msgstr "latitud"
 
-#: apps/properties/models.py:137
+#: apps/properties/models.py:138
 msgid "longitude"
 msgstr "longitud"
 
-#: apps/properties/models.py:140
+#: apps/properties/models.py:141
 msgid "maximum guests"
 msgstr "huéspedes máximos"
 
-#: apps/properties/models.py:142
+#: apps/properties/models.py:143
 msgid "bedrooms"
 msgstr "habitaciones"
 
-#: apps/properties/models.py:143
+#: apps/properties/models.py:144
 msgid "beds"
 msgstr "camas"
 
-#: apps/properties/models.py:144
+#: apps/properties/models.py:145
 msgid "bathrooms"
 msgstr "baños"
 
-#: apps/properties/models.py:146
+#: apps/properties/models.py:147
 msgid "price per night"
 msgstr "precio por noche"
 
-#: apps/properties/models.py:152
+#: apps/properties/models.py:153
 msgid "cleaning fee"
 msgstr "tarifa de limpieza"
 
-#: apps/properties/models.py:161
+#: apps/properties/models.py:162
 msgid "featured"
 msgstr "destacada"
 
-#: apps/properties/models.py:168
+#: apps/properties/models.py:169
 msgid "properties"
 msgstr "propiedades"
 
-#: apps/properties/models.py:214
+#: apps/properties/models.py:237
 msgid "alternative text"
 msgstr "texto alternativo"
 
-#: apps/properties/models.py:216
+#: apps/properties/models.py:239
 msgid "Describes the photo for screen readers and when it cannot load."
 msgstr "Describe la foto para lectores de pantalla y para cuando no carga."
 
-#: apps/properties/models.py:221
+#: apps/properties/models.py:244
 msgid "property image"
 msgstr "foto de propiedad"
 
-#: apps/properties/models.py:222
+#: apps/properties/models.py:245
 msgid "property images"
 msgstr "fotos de propiedad"
 
-#: apps/properties/models.py:237
+#: apps/properties/models.py:260
 msgid "rate (%)"
 msgstr "tasa (%)"
 
-#: apps/properties/models.py:246
+#: apps/properties/models.py:269
 msgid "tax"
 msgstr "impuesto"
 
-#: apps/properties/models.py:247
+#: apps/properties/models.py:270
 msgid "taxes"
 msgstr "impuestos"
 
@@ -998,11 +1233,11 @@ msgid_plural "%(count)d guests"
 msgstr[0] "%(count)d huésped"
 msgstr[1] "%(count)d huéspedes"
 
-#: config/settings.py:125
+#: config/settings.py:126
 msgid "English"
 msgstr "Inglés"
 
-#: config/settings.py:126
+#: config/settings.py:127
 msgid "Spanish"
 msgstr "Español"
 
@@ -1030,7 +1265,7 @@ msgstr "Cerrar sesión"
 #: templates/components/account_links.html:16
 #: templates/pages/accounts/login.html:4 templates/pages/accounts/login.html:13
 #: templates/pages/accounts/login.html:24
-#: templates/pages/accounts/signup.html:30
+#: templates/pages/accounts/signup.html:30 templates/pages/checkout.html:46
 msgid "Sign in"
 msgstr "Iniciar sesión"
 
@@ -1043,7 +1278,7 @@ msgid "Monthly"
 msgstr "Mensual"
 
 #: templates/components/booking_card.html:22
-#: templates/pages/property_detail.html:101
+#: templates/pages/property_detail.html:95
 msgid "per night"
 msgstr "por noche"
 
@@ -1070,7 +1305,8 @@ msgstr[1] "Hasta %(counter)s huéspedes"
 
 #: templates/components/booking_card.html:61
 #: templates/components/booking_card.html:67
-#: templates/components/booking_summary.html:26
+#: templates/components/booking_summary.html:50
+#: templates/pages/booking_confirmation.html:59
 msgid "Total"
 msgstr "Total"
 
@@ -1118,21 +1354,35 @@ msgstr "Hola, me interesa una estadía mensual en %(title)s."
 msgid "Contact us"
 msgstr "Contáctanos"
 
-#: templates/components/booking_summary.html:8
+#: templates/components/booking_summary.html:10
 msgid "Booking summary"
 msgstr "Resumen de la reserva"
 
-#: templates/components/booking_summary.html:18
+#: templates/components/booking_summary.html:21
 msgid "Dates"
 msgstr "Fechas"
 
-#: templates/components/booking_summary.html:19
-#: templates/pages/property_detail.html:47
+#: templates/components/booking_summary.html:27
+#: templates/pages/checkout.html:155
+msgid "Change dates"
+msgstr "Cambiar fechas"
+
+#: templates/components/booking_summary.html:35
+#: templates/pages/booking_confirmation.html:52
+#: templates/pages/property_detail.html:41
 #, python-format
 msgid "%(counter)s guest"
 msgid_plural "%(counter)s guests"
 msgstr[0] "%(counter)s huésped"
 msgstr[1] "%(counter)s huéspedes"
+
+#: templates/components/booking_summary.html:39
+msgid "Change guests"
+msgstr "Cambiar huéspedes"
+
+#: templates/components/breadcrumb.html:6
+msgid "Breadcrumb"
+msgstr "Ruta de navegación"
 
 #: templates/components/carousel_controls.html:4
 #: templates/components/pagination.html:9
@@ -1240,6 +1490,28 @@ msgstr "Destino"
 msgid "Search"
 msgstr "Buscar"
 
+#: templates/components/terms_notice.html:7
+#: templates/pages/booking_confirmation.html:89
+msgid "Cancellation policy"
+msgstr "Política de cancelación"
+
+#: templates/components/terms_notice.html:8
+msgid "Terms of service"
+msgstr "Términos de servicio"
+
+#: templates/components/terms_notice.html:9
+msgid "Privacy policy"
+msgstr "Política de privacidad"
+
+#: templates/components/terms_notice.html:14
+#, python-format
+msgid ""
+"By selecting %(button)s, you accept the %(cancellation)s, the %(terms)s and "
+"the %(privacy)s. You also agree to pay the total amount shown."
+msgstr ""
+"Al seleccionar %(button)s, aceptas la %(cancellation)s, los %(terms)s y la "
+"%(privacy)s. También aceptas pagar el importe total mostrado."
+
 #: templates/pages/accounts/login.html:14
 msgid "Welcome back. Sign in to continue with your booking."
 msgstr "Hola de nuevo. Inicia sesión para continuar con tu reserva."
@@ -1256,7 +1528,7 @@ msgstr "Crea una cuenta"
 msgid "Create your account"
 msgstr "Crea tu cuenta"
 
-#: templates/pages/accounts/signup.html:13
+#: templates/pages/accounts/signup.html:13 templates/pages/checkout.html:40
 msgid "Sign up"
 msgstr "Registro"
 
@@ -1270,100 +1542,224 @@ msgstr ""
 msgid "Create account"
 msgstr "Crear cuenta"
 
-#: templates/pages/accounts/signup.html:29
+#: templates/pages/accounts/signup.html:29 templates/pages/checkout.html:45
 msgid "Already have an account?"
 msgstr "¿Ya tienes una cuenta?"
 
-#: templates/pages/checkout.html:4 templates/pages/checkout.html:14
+#: templates/pages/booking_confirmation.html:4
+#: templates/pages/booking_confirmation.html:32
+#, python-format
+msgid "Booking %(reference)s confirmed"
+msgstr "Reserva %(reference)s confirmada"
+
+#: templates/pages/booking_confirmation.html:20
+#, python-format
+msgid "Hi, %(name)s!"
+msgstr "¡Hola, %(name)s!"
+
+#: templates/pages/booking_confirmation.html:22
+msgid "Thank you for choosing Wynwood House for your next stay"
+msgstr "Gracias por elegir Wynwood House para tu próxima estadía"
+
+#: templates/pages/booking_confirmation.html:34
+msgid "You're all set to start your Wynwood Experience!"
+msgstr "¡Todo listo para comenzar tu Wynwood Experience!"
+
+#: templates/pages/booking_confirmation.html:36
+#, python-format
+msgid ""
+"Your booking is confirmed and we look forward to welcoming you. Before your "
+"arrival you will receive all the check-in information at %(email)s."
+msgstr ""
+"Tu reserva está confirmada y esperamos recibirte muy pronto. Antes de tu "
+"llegada recibirás toda la información para el ingreso en %(email)s."
+
+#: templates/pages/booking_confirmation.html:41
+msgid "If you have any questions, do not hesitate to contact us."
+msgstr "Si tienes alguna inquietud, no dudes en comunicarte con nosotros."
+
+#: templates/pages/booking_confirmation.html:42
+#, python-format
+msgid "Hi, I have a question about my booking %(reference)s."
+msgstr "Hola, tengo una consulta sobre mi reserva %(reference)s."
+
+#: templates/pages/booking_confirmation.html:43
+msgid "Chat with us 24/7"
+msgstr "Conversa con nosotros 24/7"
+
+#: templates/pages/booking_confirmation.html:63
+#, python-format
+msgid "Paid with %(brand)s ending in %(last4)s"
+msgstr "Pagado con %(brand)s terminada en %(last4)s"
+
+#: templates/pages/booking_confirmation.html:71
+msgid "How to get there"
+msgstr "Cómo llegar"
+
+#: templates/pages/booking_confirmation.html:76
+#: templates/pages/property_detail.html:78
+msgid "Use Ctrl + scroll to zoom the map"
+msgstr "Usa Ctrl + rueda del mouse para acercar o alejar el mapa"
+
+#: templates/pages/booking_confirmation.html:77
+#: templates/pages/property_detail.html:79
+msgid "Use ⌘ + scroll to zoom the map"
+msgstr "Usa ⌘ + rueda del mouse para acercar o alejar el mapa"
+
+#: templates/pages/booking_confirmation.html:78
+#: templates/pages/property_detail.html:80
+msgid "Use two fingers to move the map"
+msgstr "Usa dos dedos para mover el mapa"
+
+#: templates/pages/booking_confirmation.html:79
+#, python-format
+msgid "Map with the exact location: %(address)s"
+msgstr "Mapa con la ubicación exacta: %(address)s"
+
+#: templates/pages/booking_confirmation.html:82
+msgid "Open in Google Maps"
+msgstr "Abrir en Google Maps"
+
+#: templates/pages/booking_confirmation.html:91 templates/pages/home.html:4
+#: templates/pages/home.html:21
+msgid "Home experience, hotel quality"
+msgstr "Experiencia de hogar, calidad de hotel"
+
+#: templates/pages/checkout.html:4
 msgid "Complete your booking"
 msgstr "Completa tu reserva"
 
+#: templates/pages/checkout.html:14
+msgid "Continue"
+msgstr "Continuar"
+
+#: templates/pages/checkout.html:15
+msgid "Complete booking"
+msgstr "Completar reserva"
+
 #: templates/pages/checkout.html:18
+msgid "Checkout"
+msgstr "Página de pago"
+
+#: templates/pages/checkout.html:25
 msgid "Your dates are held for"
 msgstr "Tus fechas están reservadas por"
 
-#: templates/pages/checkout.html:21
+#: templates/pages/checkout.html:28
 msgid "After that they are released for other guests."
 msgstr "Después se liberan para otros huéspedes."
 
-#: templates/pages/checkout.html:26
-msgid "Next steps"
-msgstr "Próximos pasos"
+#: templates/pages/checkout.html:41
+msgid "We will send the booking confirmation to your email."
+msgstr "Te enviaremos la confirmación de tu reserva por correo electrónico."
 
-#: templates/pages/checkout.html:27
+#: templates/pages/checkout.html:54 templates/pages/checkout.html:61
+msgid "Personal information"
+msgstr "Información personal"
+
+#: templates/pages/checkout.html:56
+#, python-format
+msgid "Hi %(name)s, complete your details to continue with the booking."
+msgstr "Hola, %(name)s. Completa tus datos para continuar con la reserva."
+
+#: templates/pages/checkout.html:80
+msgid "Optional. You can unsubscribe at any time from any email you receive."
+msgstr "Es opcional. Puedes darte de baja cuando quieras desde cualquier correo que recibas."
+
+#: templates/pages/checkout.html:94
+msgid "Review your booking and complete the payment to confirm it."
+msgstr "Revisa tu reserva y completa el pago para confirmarla."
+
+#: templates/pages/checkout.html:98
+msgid "Payment information"
+msgstr "Información de pago"
+
+#: templates/pages/checkout.html:101
 msgid ""
-"Create your account or sign in, then pay securely to confirm the booking."
+"Simulated payment: no real charge is made and card details are not stored."
 msgstr ""
-"Crea tu cuenta o inicia sesión y luego paga de forma segura para confirmar "
-"la reserva."
+"Pago simulado: no se realiza ningún cobro real y los datos de la tarjeta no "
+"se guardan."
 
-#: templates/pages/checkout.html:32
-msgid "Change dates"
-msgstr "Cambiar fechas"
+#: templates/pages/checkout.html:119
+msgid "This is a demo: use one of the test cards. Real cards are not accepted."
+msgstr "Esto es una demo: usa una de las tarjetas de prueba. No se aceptan tarjetas reales."
 
-#: templates/pages/home.html:4 templates/pages/home.html:21
-msgid "Home experience, hotel quality"
-msgstr "Experiencia de hogar, calidad de hotel"
+#: templates/pages/checkout.html:122
+msgid "Test cards"
+msgstr "Tarjetas de prueba"
+
+#: templates/pages/checkout.html:129
+msgid "Approved"
+msgstr "Aprobada"
+
+#: templates/pages/checkout.html:130
+msgid "Insufficient funds"
+msgstr "Fondos insuficientes"
+
+#: templates/pages/checkout.html:131
+msgid "Declined"
+msgstr "Rechazada"
+
+#: templates/pages/checkout.html:136
+msgid ""
+"Any future expiry date. Security code: any 3 digits (4 for American Express)."
+msgstr ""
+"Cualquier fecha de vencimiento futura. Código de seguridad: 3 dígitos "
+"cualesquiera (4 en American Express)."
+
+#: templates/pages/checkout.html:148
+#, python-format
+msgid "Hi, I need help completing my booking %(reference)s."
+msgstr "Hola, necesito ayuda para completar mi reserva %(reference)s."
+
+#: templates/pages/checkout.html:150
+msgid "Need help completing your booking?"
+msgstr "¿Necesitas ayuda para completar tu reserva?"
 
 #: templates/pages/home.html:31
 msgid "Discover our destinations"
 msgstr "Descubre nuestros destinos"
 
-#: templates/pages/property_detail.html:20
-msgid "Breadcrumb"
-msgstr "Ruta de navegación"
-
-#: templates/pages/property_detail.html:48
+#: templates/pages/property_detail.html:42
 #, python-format
 msgid "%(counter)s bedroom"
 msgid_plural "%(counter)s bedrooms"
 msgstr[0] "%(counter)s habitación"
 msgstr[1] "%(counter)s habitaciones"
 
-#: templates/pages/property_detail.html:49
+#: templates/pages/property_detail.html:43
 #, python-format
 msgid "%(counter)s bed"
 msgid_plural "%(counter)s beds"
 msgstr[0] "%(counter)s cama"
 msgstr[1] "%(counter)s camas"
 
-#: templates/pages/property_detail.html:50
+#: templates/pages/property_detail.html:44
 #, python-format
 msgid "%(counter)s bathroom"
 msgid_plural "%(counter)s bathrooms"
 msgstr[0] "%(counter)s baño"
 msgstr[1] "%(counter)s baños"
 
-#: templates/pages/property_detail.html:55
+#: templates/pages/property_detail.html:49
 msgid "Description"
 msgstr "Descripción"
 
-#: templates/pages/property_detail.html:80
+#: templates/pages/property_detail.html:74
 msgid "The exact address is shared after booking."
 msgstr "La dirección exacta se comparte después de reservar."
 
-#: templates/pages/property_detail.html:84
-msgid "Use Ctrl + scroll to zoom the map"
-msgstr "Usa Ctrl + rueda del mouse para acercar o alejar el mapa"
-
-#: templates/pages/property_detail.html:85
-msgid "Use ⌘ + scroll to zoom the map"
-msgstr "Usa ⌘ + rueda del mouse para acercar o alejar el mapa"
-
-#: templates/pages/property_detail.html:86
-msgid "Use two fingers to move the map"
-msgstr "Usa dos dedos para mover el mapa"
-
-#: templates/pages/property_detail.html:87
+#: templates/pages/property_detail.html:81
 #, python-format
 msgid "Map of the area around %(place)s"
 msgstr "Mapa de la zona de %(place)s"
 
-#: templates/pages/property_detail.html:92
+#: templates/pages/property_detail.html:86
 msgid "Book this property"
 msgstr "Reserva esta propiedad"
 
-#: templates/pages/property_detail.html:102
+#: templates/pages/property_detail.html:96
 msgid "Book"
 msgstr "Reservar"
 
@@ -1414,3 +1810,32 @@ msgstr "Mostrar mapa"
 #: templates/pages/search_results.html:69
 msgid "Show list"
 msgstr "Mostrar lista"
+
+#~ msgid "I do not want to subscribe to the Wynwood House newsletter"
+#~ msgstr "No deseo suscribirme al boletín de Wynwood House"
+
+#~ msgid ""
+#~ "Wynwood House will send you exclusive member offers, inspiring content, "
+#~ "marketing emails and push notifications. You can opt out at any time from "
+#~ "your account settings or directly from any notification you receive."
+#~ msgstr ""
+#~ "Wynwood House te enviará ofertas exclusivas para miembros, contenido "
+#~ "inspirador, correos electrónicos comerciales y notificaciones push. "
+#~ "Puedes dejar de recibirlos en cualquier momento desde la configuración de "
+#~ "tu cuenta o directamente desde cualquiera de las notificaciones que te "
+#~ "lleguen."
+
+#~ msgid "ISO 3166-1 alpha-2 country code."
+#~ msgstr "Código de país ISO 3166-1 alfa-2."
+
+#~ msgid "This booking is already confirmed."
+#~ msgstr "Esta reserva ya está confirmada."
+
+#~ msgid "Next steps"
+#~ msgstr "Próximos pasos"
+
+#~ msgid ""
+#~ "Create your account or sign in, then pay securely to confirm the booking."
+#~ msgstr ""
+#~ "Crea tu cuenta o inicia sesión y luego paga de forma segura para "
+#~ "confirmar la reserva."

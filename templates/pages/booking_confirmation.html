@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static i18n l10n content formatting %}
+
+{% block title %}{% blocktranslate with reference=booking.reference %}Booking {{ reference }} confirmed{% endblocktranslate %} | Wynwood House{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/leaflet-1.9.4/leaflet.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/leaflet-gesture-handling-1.2.2/leaflet-gesture-handling.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/map.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/booking-card.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages/confirmation.css' %}">
+{% endblock %}
+
+{% block content %}
+  {% with prop=booking.property cover=booking.property.cover_image location=booking.property.exact_coordinates %}
+  <article class="confirmation container-wh" aria-labelledby="confirmation-title">
+    {# Figma "Confirmación" #}
+    <header class="confirmation__hero">
+      <h1 class="confirmation__hello" id="confirmation-title">
+        {% blocktranslate with name=booking.guest.get_short_name %}Hi, {{ name }}!{% endblocktranslate %}
+      </h1>
+      <p class="wh-eyebrow confirmation__thanks">{% translate "Thank you for choosing Wynwood House for your next stay" %}</p>
+    </header>
+
+    {% if cover %}
+      <img class="confirmation__image" src="{{ cover.image.url }}" alt="{{ cover.alt_text|default:prop.title }}" width="1200" height="600">
+    {% endif %}
+
+    <div class="confirmation__message">
+      <p class="confirmation__status">
+        <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/check-circle.svg' %}" alt="" width="20" height="20">
+        {% blocktranslate with reference=booking.reference %}Booking {{ reference }} confirmed{% endblocktranslate %}
+      </p>
+      <p><strong>{% translate "You're all set to start your Wynwood Experience!" %}</strong></p>
+      <p>
+        {% blocktranslate trimmed with email=booking.guest.email %}
+          Your booking is confirmed and we look forward to welcoming you. Before your arrival you will
+          receive all the check-in information at {{ email }}.
+        {% endblocktranslate %}
+      </p>
+      <p>{% translate "If you have any questions, do not hesitate to contact us." %}</p>
+      {% blocktranslate with reference=booking.reference asvar chat_message %}Hi, I have a question about my booking {{ reference }}.{% endblocktranslate %}
+      <a class="btn btn-wh" href="{% whatsapp_link chat_message %}" target="_blank" rel="noopener">{% translate "Chat with us 24/7" %}</a>
+    </div>
+
+    <div class="confirmation__details">
+      <section class="confirmation__stay" aria-labelledby="stay-title">
+        <h2 class="confirmation__property" id="stay-title">{{ prop.title }}</h2>
+        <p class="confirmation__address">{{ prop.full_address }}</p>
+        <p class="confirmation__dates">
+          {{ booking.check_in|date:"j F Y" }} – {{ booking.check_out|date:"j F Y" }}
+          · {% blocktranslate count counter=booking.guests %}{{ counter }} guest{% plural %}{{ counter }} guests{% endblocktranslate %}
+        </p>
+
+        <dl class="price-lines">
+          {% for line in booking.lines.all %}
+            <div class="price-lines__row"><dt>{{ line.label }}</dt><dd>{{ line.amount|money:booking.currency }}</dd></div>
+          {% endfor %}
+          <div class="price-lines__row price-lines__row--total"><dt>{% translate "Total" %}</dt><dd>{{ booking.total|money:booking.currency }}</dd></div>
+        </dl>
+        {% if payment %}
+          <p class="confirmation__paid">
+            {% blocktranslate trimmed with brand=payment.card_brand last4=payment.card_last4 %}
+              Paid with {{ brand }} ending in {{ last4 }}
+            {% endblocktranslate %}
+          </p>
+        {% endif %}
+      </section>
+
+      <section class="confirmation__location" aria-labelledby="location-title">
+        <h2 class="confirmation__section-title" id="location-title">{% translate "How to get there" %}</h2>
+        {% if location %}
+          {# Exact point: only the guest who paid sees it (D27). #}
+          <div class="detail-map confirmation__map" id="property-map" data-exact
+               data-lat="{{ location.0|unlocalize }}" data-lng="{{ location.1|unlocalize }}"
+               data-hint-scroll="{% translate 'Use Ctrl + scroll to zoom the map' %}"
+               data-hint-scroll-mac="{% translate 'Use ⌘ + scroll to zoom the map' %}"
+               data-hint-touch="{% translate 'Use two fingers to move the map' %}"
+               role="img" aria-label="{% blocktranslate with address=prop.full_address %}Map with the exact location: {{ address }}{% endblocktranslate %}"></div>
+        {% endif %}
+        <a class="btn btn-wh btn-wh--outline confirmation__maps-link" href="{{ prop.google_maps_url }}" target="_blank" rel="noopener">
+          {% translate "Open in Google Maps" %}
+          <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/box-arrow-up-right.svg' %}" alt="" width="14" height="14">
+        </a>
+      </section>
+    </div>
+
+    <footer class="confirmation__footer">
+      {% translate "Cancellation policy" as cancellation_label %}
+      <p>{% optional_link site_settings.cancellation_policy_url cancellation_label %}</p>
+      <p class="wh-eyebrow">{% translate "Home experience, hotel quality" %}</p>
+    </footer>
+  </article>
+  {% endwith %}
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'vendor/leaflet-1.9.4/leaflet.js' %}" defer></script>
+  <script src="{% static 'vendor/leaflet-gesture-handling-1.2.2/leaflet-gesture-handling.min.js' %}" defer></script>
+  <script src="{% static 'js/detail-map.js' %}" defer></script>
+{% endblock %}

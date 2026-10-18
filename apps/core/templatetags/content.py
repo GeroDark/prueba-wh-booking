@@ -22,6 +22,14 @@ def whatsapp_link(context, message=""):
     return context["site_settings"].get_whatsapp_url(message)
 
 
+@register.simple_tag
+def optional_link(url, label):
+    """A link that opens in a new tab when the admin set its URL; plain text otherwise."""
+    if not url:
+        return label
+    return format_html('<a href="{}" target="_blank" rel="noopener">{}</a>', url, label)
+
+
 @register.filter
 def email_break(address):
     """Let long e-mail addresses wrap after the @ instead of overflowing narrow columns."""

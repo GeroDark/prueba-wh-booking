@@ -2,7 +2,9 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.functions import Lower
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django_countries.fields import CountryField
 
 from .managers import UserManager
 from .validators import validate_full_name
@@ -19,14 +21,17 @@ class User(AbstractUser):
     full_name = models.CharField(
         _("full name"), max_length=150, blank=True, validators=[validate_full_name]
     )
-    nationality = models.CharField(
-        _("nationality"),
-        max_length=2,
-        blank=True,
-        help_text=_("ISO 3166-1 alpha-2 country code."),
+    # ISO 3166-1 alpha-2 code; django-countries provides the translated names (D36).
+    nationality = CountryField(_("nationality"), blank=True)
+    phone_prefix = models.CharField(
+        _("phone prefix"), max_length=5, blank=True, help_text=_("Country calling code, e.g. +51.")
     )
-    phone_prefix = models.CharField(_("phone prefix"), max_length=5, blank=True)
-    phone_number = models.CharField(_("phone number"), max_length=20, blank=True)
+    phone_number = models.CharField(
+        _("phone number"),
+        max_length=20,
+        blank=True,
+        help_text=_("National number without the prefix, digits only."),
+    )
     birth_date = models.DateField(_("birth date"), null=True, blank=True)
     preferred_language = models.CharField(
         _("preferred language"),
@@ -35,6 +40,12 @@ class User(AbstractUser):
         default=settings.LANGUAGE_CODE,
     )
     marketing_opt_in = models.BooleanField(_("subscribed to the newsletter"), default=False)
+    marketing_consent_at = models.DateTimeField(
+        _("newsletter consent given at"),
+        null=True,
+        blank=True,
+        help_text=_("When the guest ticked the newsletter box (proof of consent)."),
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -61,6 +72,31 @@ class User(AbstractUser):
 
     def get_full_name(self):
         return self.full_name or self.email
+
+    def set_marketing_consent(self, accepted, now=None):
+        """Record the newsletter choice; the moment of a new consent is kept as proof."""
+        if accepted and not self.marketing_opt_in:
+            self.marketing_consent_at = now or timezone.now()
+        elif not accepted:
+            self.marketing_consent_at = None
+        self.marketing_opt_in = accepted
+
+    @property
+    def has_guest_details(self):
+        """The personal details the checkout asks for before paying (D12)."""
+        return all(
+            (
+                self.full_name,
+                self.nationality,
+                self.phone_prefix,
+                self.phone_number,
+                self.birth_date,
+            )
+        )
+
+    @property
+    def phone(self):
+        return f"{self.phone_prefix} {self.phone_number}" if self.phone_number else ""
 
     def get_short_name(self):
         return self.full_name.split()[0] if self.full_name else self.email

@@ -18,7 +18,8 @@ confirmación y correo, en español e inglés.
 | 4 | Resultados: filtros por ubicación, fechas y huéspedes; mapa con precios y agrupamiento | ✅ |
 | 5 | Detalle de la propiedad: galería, calendario de disponibilidad, precio en vivo y retención de fechas | ✅ |
 | 6 | Registro y login con email, contraseñas seguras con requisitos en vivo, logout seguro | ✅ |
-| 7–8 | Checkout con registro y pago simulado, confirmación y correo | ⏳ |
+| 7 | Checkout: registro con datos personales, pago simulado idempotente y confirmación con la ubicación exacta | ✅ |
+| 8 | Correo de confirmación | ⏳ |
 
 ## Stack
 
@@ -63,6 +64,7 @@ docker compose exec web python manage.py createsuperuser
 - **Sitio:** textos del home, "Servicios en Wynwood House", "¿Por qué viajar a España?", banners
   (larga estancia, eventos, real estate), menús, canales de contacto y redes sociales.
 - **Huésped de demo:** `demo@wynwoodhouse.test` / `Wynwood-Demo-2026` (inicia sesión en `/es/accounts/login/`).
+  Tiene el perfil completo, así que en el checkout pasa directo al pago.
 - **Reservas de demo:** 4 estadías confirmadas con fechas relativas al día en que se ejecuta el comando
   (por ejemplo, el dúplex de Parque Virrey queda ocupado de hoy + 3 a hoy + 8 días). Busca esas fechas y
   la propiedad desaparece de los resultados.
@@ -86,6 +88,24 @@ El origen y la licencia de cada imagen están en [seed/images/CREDITS.md](seed/i
 2. Elige fechas y huéspedes: el desglose (noches, limpieza, impuestos del país) se calcula en el servidor.
 3. "Reservar ahora" retiene las fechas durante `BOOKING_HOLD_MINUTES` minutos (15) y abre el checkout con una
    cuenta regresiva. Mientras tanto, nadie más puede reservarlas. "Cambiar fechas" las libera al instante.
+4. **Paso 1, registro:** correo, contraseña, nombre y apellido, nacionalidad, teléfono (validado para el país) y fecha
+   de nacimiento (mayor de 18). El boletín es opcional y se activa solo si se marca la casilla. Con sesión iniciada y el perfil completo, este paso se salta; "Iniciar sesión" vuelve
+   al mismo checkout.
+5. **Paso 2, pago simulado.** No se cobra nada ni se guardan datos de tarjeta (solo marca y últimos 4 dígitos).
+   Las tarjetas de prueba aparecen en la página y se completan con un clic:
+
+   | Tarjeta | Resultado |
+   |---|---|
+   | `4242 4242 4242 4242` (Visa), `5555 5555 5555 4444` (Mastercard), `3782 822463 10005` (Amex) | Aprobada |
+   | `4000 0000 0000 0002` | Rechazada |
+   | `4000 0000 0000 9995` | Fondos insuficientes |
+   | Cualquier otra tarjeta | No se envía: el navegador la detiene con un aviso de demo (sin JavaScript, la rechaza el servidor) |
+
+   Vencimiento: cualquier fecha futura. Código de seguridad: 3 dígitos (4 en American Express).
+6. **Confirmación** (`/es/bookings/<referencia>/`): solo la ve quien reservó. Muestra la dirección exacta, el mapa con
+   el punto preciso y "Abrir en Google Maps".
+
+Un doble clic, recargar la página o pagar desde dos pestañas a la vez nunca cobra dos veces (ver D11).
 
 Reglas que valida el servidor: llegada no pasada (según la zona horaria de la ciudad), salida posterior a la llegada,
 capacidad de la propiedad, hasta 30 noches en línea y sin solapamiento con otra reserva o retención vigente,
@@ -139,9 +159,13 @@ Toda la configuración se lee de variables de entorno. [.env.example](.env.examp
 ```
 config/          settings, urls, wsgi
 apps/core/       contenido del sitio (home, banners, menús, contacto), optimizador de imágenes, seed_data
-apps/accounts/   usuario con email como identificador, registro, login y validadores de contraseña
+apps/accounts/   usuario con email como identificador, registro, login, validadores de contraseña,
+                 nombre, teléfono (phones.py) y fecha de nacimiento
 apps/properties/ países, ciudades, distritos, comodidades, propiedades, fotos e impuestos; búsqueda
-apps/bookings/   reservas: estados, solapamiento, precios (pricing.py), reglas y retenciones (services.py)
+apps/bookings/   reservas: estados, solapamiento, precios (pricing.py), reglas y retenciones (services.py),
+                 checkout y confirmación
+apps/payments/   pagos: validación de tarjeta (cards.py), pasarela simulada (gateways.py), cobro
+                 idempotente (services.py)
 templates/       base.html, pages/ y components/ reutilizables: header, footer, search_bar,
                  property_card, feature_grid, banner, carousel_controls, language_switcher
 static/          css/ (tokens + un archivo por componente y por página), js/ (mejoras progresivas:

@@ -307,8 +307,8 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - Paso 2: tarjeta simulada (`4242…` aprueba, `4000 0000 0000 0002` rechaza), idempotencia, bloqueo del doble envío.
 - Confirmación protegida (solo el dueño), con la dirección exacta, su mapa y "Abrir en Google Maps"; aviso y vuelta
   al detalle si la retención venció.
-- [ ] El flujo completo funciona de punta a punta, como usuario nuevo y como usuario con sesión.
-- [ ] Tests: misma clave = un cobro; dos pestañas = un cobro; rechazo y reintento; pago vencido; otro usuario recibe 404.
+- [x] El flujo completo funciona de punta a punta, como usuario nuevo y como usuario con sesión.
+- [x] Tests: misma clave = un cobro; dos pestañas = un cobro; rechazo y reintento; pago vencido; otro usuario recibe 404.
 
 ### Fase 8 — Correo de confirmación
 - Plantilla HTML + texto según el frame del correo, en el idioma de la reserva, enviada con `on_commit`.
