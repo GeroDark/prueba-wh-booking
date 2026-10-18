@@ -1,0 +1,43 @@
+.pagination-wh {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: 3rem;
+  font-size: 0.9375rem;
+}
+
+.pagination-wh__pages {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagination-wh__page {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  text-decoration: none;
+}
+
+.pagination-wh__page:hover {
+  background: var(--wh-cream);
+}
+
+.pagination-wh__page.is-current {
+  background: var(--wh-black);
+  color: var(--wh-white);
+}
+
+.pagination-wh__link {
+  text-decoration: none;
+}
+
+.pagination-wh__link:hover {
+  text-decoration: underline;
+}

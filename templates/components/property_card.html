@@ -3,7 +3,8 @@
   Property card. variant: "overlay" (photo with the text on top, featured carousel)
   or "stacked" (photo above the text, search results).
 {% endcomment %}
-<article class="property-card property-card--{{ variant|default:'overlay' }}">
+{% with variant=variant|default:"overlay" icons="vendor/bootstrap-icons-1.13.2/icons/" %}
+<article class="property-card property-card--{{ variant }}">
   <a class="property-card__link" href="{% url 'properties:detail' property.slug %}">
     <div class="property-card__media">
       {% with image=property.cover_image %}
@@ -14,15 +15,31 @@
     </div>
     <div class="property-card__body">
       <h3 class="property-card__title">{{ property.title }}</h3>
-      <p class="property-card__guests">
-        <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/people.svg' %}" alt="" width="16" height="16">
-        <span class="visually-hidden">{% translate "Guests" %}:</span>
-        {{ property.max_guests }}
-      </p>
-      <p class="property-card__price">
-        <strong>{{ property.price_per_night|money }}</strong> {% translate "night" %}
-      </p>
-      <p class="property-card__location">{{ property.city.name }} - {{ property.city.country.name }}</p>
+      {% if variant == "stacked" %}
+        <p class="property-card__location">{{ property.district.name }}, {{ property.city.name }}, {{ property.city.country.name }}</p>
+        <p class="property-card__price">{{ property.price_per_night|money }} / {% translate "night" %}</p>
+        <p class="property-card__facts">
+          <span title="{% translate 'Guests' %}">
+            <img src="{% static icons|add:'people.svg' %}" alt="" width="16" height="16">
+            <span class="visually-hidden">{% translate "Guests" %}:</span> {{ property.max_guests }}
+          </span>
+          <span title="{% translate 'Bedrooms' %}">
+            <img src="{% static icons|add:'door-closed.svg' %}" alt="" width="16" height="16">
+            <span class="visually-hidden">{% translate "Bedrooms" %}:</span> {{ property.bedrooms }}
+          </span>
+        </p>
+      {% else %}
+        <p class="property-card__guests">
+          <img src="{% static icons|add:'people.svg' %}" alt="" width="16" height="16">
+          <span class="visually-hidden">{% translate "Guests" %}:</span>
+          {{ property.max_guests }}
+        </p>
+        <p class="property-card__price">
+          <strong>{{ property.price_per_night|money }}</strong> {% translate "night" %}
+        </p>
+        <p class="property-card__location">{{ property.city.name }} - {{ property.city.country.name }}</p>
+      {% endif %}
     </div>
   </a>
 </article>
+{% endwith %}

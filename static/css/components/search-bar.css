@@ -187,6 +187,63 @@ select.search-bar__control {
   }
 }
 
+/* Filters variant: underlined fields with visible labels (results page, Figma "Resultados") */
+
+.search-bar--filters {
+  gap: 0.75rem 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.search-bar--filters .search-bar__field {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid var(--wh-black);
+}
+
+.search-bar--filters .search-bar__label {
+  color: var(--wh-gray);
+  font-size: 0.8125rem;
+}
+
+.search-bar--filters .search-bar__label img {
+  width: 12px;
+  height: 12px;
+  opacity: 0.6;
+}
+
+.search-bar--filters .search-bar__control {
+  font-size: 0.875rem;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 576px) {
+  .search-bar--filters .search-bar__control {
+    font-size: 0.9375rem;
+  }
+}
+
+.search-bar--filters .search-bar__submit {
+  grid-column: 1 / -1;
+}
+
+.search-bar--filters .search-bar__submit .btn {
+  --bs-btn-padding-y: 0.45rem;
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .search-bar--filters {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    align-items: end;
+  }
+
+  .search-bar--filters .search-bar__submit {
+    grid-column: auto;
+  }
+}
+
 /* flatpickr theme */
 
 .flatpickr-calendar {
