@@ -1,18 +1,160 @@
-/* Provisional styles for the results and detail pages (replaced in phases 4 and 5). */
+/* Search results: filters on top, list and map side by side (Figma "Resultados de búsqueda"). */
 
-.search-page {
-  padding-block: 2.5rem 4rem;
+.search-toolbar {
+  border-bottom: 1px solid var(--wh-gray-light);
+  background: var(--wh-white);
 }
 
-.search-page__title {
-  margin-block: 2.5rem 1.5rem;
+.search-toolbar__inner {
+  padding: 1.25rem var(--search-gutter, 1rem);
 }
 
-.search-page__grid {
+.search-layout {
+  --search-gutter: clamp(1rem, 1.6vw, 1.5rem);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-  gap: 1.25rem;
+}
+
+.search-results {
+  min-width: 0;
+  padding: 1.75rem var(--search-gutter) 4rem;
+}
+
+.search-results__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-results__title {
+  margin: 0;
+  font-family: var(--wh-font-display);
+  font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
+  text-transform: uppercase;
+}
+
+.search-results__summary {
+  margin: 0.25rem 0 0;
+  color: var(--wh-gray);
+}
+
+.search-results__clear {
+  font-size: 0.875rem;
+}
+
+.search-results__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: 2.25rem 1.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.search-results__empty {
+  max-width: 34rem;
+  padding: 3rem 0;
+}
+
+.search-results__empty p {
+  margin: 1rem 0 0;
+}
+
+.search-results__empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Map column */
+
+.search-map {
+  display: none;
+}
+
+.search-map__canvas {
+  width: 100%;
+  height: 100%;
+  background: var(--wh-cream);
+}
+
+/* Mobile and tablet: the list by default, the map full screen on demand */
+
+.search-map-toggle {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  z-index: 1040;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border: 0;
+  border-radius: var(--wh-radius-pill);
+  background: var(--wh-black);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  color: var(--wh-white);
+  font-size: 0.875rem;
+  transform: translateX(-50%);
+}
+
+.search-map-toggle img {
+  filter: invert(1);
+}
+
+.is-map-open .search-map {
+  position: fixed;
+  inset: var(--wh-header-height) 0 0;
+  z-index: 1020;
+  display: block;
+}
+
+.is-map-open .search-results {
+  visibility: hidden;
+}
+
+/* Desktop: list and sticky map side by side */
+
+@media (min-width: 992px) {
+  .search-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(24rem, 42%);
+  }
+
+  .search-results__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search-map {
+    position: sticky;
+    top: var(--wh-header-height);
+    display: block;
+    height: calc(100vh - var(--wh-header-height));
+  }
+
+  .search-map-toggle {
+    display: none;
+  }
+
+  .is-map-open .search-map {
+    position: sticky;
+    inset: auto;
+  }
+
+  .is-map-open .search-results {
+    visibility: visible;
+  }
+}
+
+@media (min-width: 1600px) {
+  .search-results__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Provisional detail page (replaced in phase 5) */
+
+.search-page {
+  padding-block: 2.5rem 4rem;
 }

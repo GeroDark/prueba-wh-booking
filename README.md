@@ -15,7 +15,7 @@ confirmación y correo, en español e inglés.
 | 1 | Modelos de contenido y catálogo, admin bilingüe, imágenes WebP, `seed_data` | ✅ |
 | 2 | Home: buscador, destinos, destacadas, servicios, "¿Por qué viajar a España?", banners, header y footer | ✅ |
 | 3 | Despliegue | ⏳ |
-| 4 | Resultados de búsqueda con filtros y mapa | ⏳ |
+| 4 | Resultados: filtros por ubicación, fechas y huéspedes; mapa con precios y agrupamiento | ✅ |
 | 5 | Detalle de la propiedad y motor de reservas | ⏳ |
 | 6–8 | Cuentas, checkout con pago simulado, confirmación y correo | ⏳ |
 
@@ -62,13 +62,16 @@ docker compose exec web python manage.py createsuperuser
 - **Sitio:** textos del home, "Servicios en Wynwood House", "¿Por qué viajar a España?", banners
   (larga estancia, eventos, real estate), menús, canales de contacto y redes sociales.
 - **Huésped de demo:** `demo@wynwoodhouse.test` / `Wynwood-Demo-2026`.
+- **Reservas de demo:** 4 estadías confirmadas con fechas relativas al día en que se ejecuta el comando
+  (por ejemplo, el dúplex de Parque Virrey queda ocupado de hoy + 3 a hoy + 8 días). Busca esas fechas y
+  la propiedad desaparece de los resultados.
 
 Las fotos pasan por el mismo optimizador que el admin: se guardan como WebP de 1200 px o menos.
 El comando se puede ejecutar varias veces sin duplicar nada.
 
 | Opción | Efecto |
 |---|---|
-| `--flush` | Borra primero el contenido sembrado (no toca a los usuarios) |
+| `--flush` | Borra primero el contenido sembrado y las reservas de demo (no toca a los usuarios). Se niega a correr si hay reservas reales |
 | `--properties N` | Carga solo las primeras N propiedades |
 | `--skip-images` | No adjunta fotos (más rápido) |
 
@@ -123,12 +126,14 @@ Toda la configuración se lee de variables de entorno. [.env.example](.env.examp
 config/          settings, urls, wsgi
 apps/core/       contenido del sitio (home, banners, menús, contacto), optimizador de imágenes, seed_data
 apps/accounts/   usuario con email como identificador
-apps/properties/ países, ciudades, distritos, comodidades, propiedades, fotos e impuestos
+apps/properties/ países, ciudades, distritos, comodidades, propiedades, fotos e impuestos; búsqueda
+apps/bookings/   reservas: estados, solapamiento y retenciones que bloquean fechas
 templates/       base.html, pages/ y components/ reutilizables: header, footer, search_bar,
                  property_card, feature_grid, banner, carousel_controls, language_switcher
 static/          css/ (tokens + un archivo por componente y por página), js/ (mejoras progresivas:
                  rango de fechas, distritos por ciudad, carruseles, aparición al hacer scroll),
-                 fonts/, img/, vendor/ (Bootstrap, Bootstrap Icons, flag-icons, flatpickr)
+                 fonts/, img/, vendor/ (Bootstrap, Bootstrap Icons, flag-icons, flatpickr, Leaflet,
+                 Leaflet.markercluster)
 seed/images/     fotos de origen para los datos de prueba
 docs/            plan maestro y decisiones técnicas
 ```
@@ -138,4 +143,5 @@ docs/            plan maestro y decisiones técnicas
 El código está bajo licencia MIT (ver [LICENSE](LICENSE)). Las fuentes de `static/fonts/` (Acumin Pro y Helvetica Neue)
 y las imágenes del diseño son propiedad de sus autores. Wynwood House las proporcionó solo para evaluar esta prueba,
 y no están cubiertas por la licencia del repositorio. Bootstrap, Bootstrap Icons y flag-icons (MIT) conservan sus
-licencias en `static/vendor/`, igual que flatpickr (MIT).
+licencias en `static/vendor/`, igual que flatpickr y Leaflet.markercluster (MIT) y Leaflet (BSD-2).
+Los mapas usan teselas de [OpenStreetMap](https://www.openstreetmap.org/copyright) © sus colaboradores.

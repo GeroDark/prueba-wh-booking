@@ -76,3 +76,31 @@ def test_seed_images_go_through_the_optimizer():
         with Image.open(property_image.image.path) as image:
             assert image.format == "WEBP"
             assert max(image.size) <= 1200
+
+
+def test_seed_creates_demo_bookings_relative_to_today():
+    from django.utils import timezone
+
+    from apps.bookings.models import Booking
+
+    call_command("seed_data", skip_images=True)
+
+    demo = Booking.objects.filter(reference__startswith=data.DEMO_BOOKING_PREFIX)
+    assert demo.count() == len(data.DEMO_BOOKINGS)
+    assert all(booking.check_in > timezone.localdate() for booking in demo)
+    assert all(booking.status == Booking.Status.CONFIRMED for booking in demo)
+
+
+def test_flush_refuses_to_delete_real_bookings():
+    from apps.bookings.models import Booking
+
+    call_command("seed_data", skip_images=True)
+    demo = Booking.objects.first()
+    Booking.objects.create(
+        property=demo.property, check_in=demo.check_in, check_out=demo.check_out, guests=1
+    )
+
+    with pytest.raises(CommandError, match="real bookings"):
+        call_command("seed_data", skip_images=True, flush=True)
+
+    assert Property.objects.count() == len(data.PROPERTIES)

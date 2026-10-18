@@ -1,0 +1,29 @@
+{% load i18n %}
+{% comment %}
+  Pagination for ListView pages. {% querystring %} keeps the active filters in every link.
+{% endcomment %}
+{% if page_obj.has_other_pages %}
+  <nav class="pagination-wh" aria-label="{% translate 'Pages' %}">
+    {% if page_obj.has_previous %}
+      <a class="pagination-wh__link" href="{% querystring page=page_obj.previous_page_number %}" rel="prev">
+        <span aria-hidden="true">&larr;</span> {% translate "Previous" %}
+      </a>
+    {% endif %}
+    <ol class="pagination-wh__pages">
+      {% for number in page_obj.paginator.page_range %}
+        <li>
+          {% if number == page_obj.number %}
+            <span class="pagination-wh__page is-current" aria-current="page">{{ number }}</span>
+          {% else %}
+            <a class="pagination-wh__page" href="{% querystring page=number %}">{{ number }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+    {% if page_obj.has_next %}
+      <a class="pagination-wh__link" href="{% querystring page=page_obj.next_page_number %}" rel="next">
+        {% translate "Next" %} <span aria-hidden="true">&rarr;</span>
+      </a>
+    {% endif %}
+  </nav>
+{% endif %}

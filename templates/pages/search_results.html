@@ -2,25 +2,80 @@
 {% load static i18n %}
 
 {% block title %}{% translate "Search results" %} | Wynwood House{% endblock %}
+{% block body_class %}page-search{% endblock %}
 
 {% block extra_css %}
+  <link rel="stylesheet" href="{% static 'vendor/leaflet-1.9.4/leaflet.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/leaflet.markercluster-1.5.3/MarkerCluster.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/property-card.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/pagination.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/map.css' %}">
   <link rel="stylesheet" href="{% static 'css/pages/search.css' %}">
 {% endblock %}
 
 {% block content %}
-  {# Phase 2: lists every active property. Filters, pagination controls and the map arrive in phase 4. #}
-  <section class="search-page" aria-labelledby="results-title">
-    <div class="container-wh">
-      {% include "components/search_bar.html" with form=search_form variant="hero" %}
-      <h1 class="wh-display search-page__title" id="results-title">{% translate "Properties" %}</h1>
-      <ul class="search-page__grid">
-        {% for property in properties %}
-          <li>{% include "components/property_card.html" with property=property variant="overlay" %}</li>
-        {% empty %}
-          <li>{% translate "There are no properties available yet." %}</li>
-        {% endfor %}
-      </ul>
+  <div class="search-toolbar">
+    <div class="search-toolbar__inner">
+      {% include "components/search_bar.html" with form=search_form variant="filters" %}
     </div>
-  </section>
+  </div>
+
+  <div class="search-layout">
+    <section class="search-results" aria-labelledby="results-title">
+      <header class="search-results__header">
+        <div>
+          <h1 class="search-results__title" id="results-title" aria-live="polite">
+            {% blocktranslate count counter=paginator.count %}{{ counter }} property{% plural %}{{ counter }} properties{% endblocktranslate %}
+          </h1>
+          {% if summary %}
+            <p class="search-results__summary">{{ summary|join:" · " }}</p>
+          {% endif %}
+        </div>
+        {% if filters %}
+          <a class="search-results__clear" href="{% url 'properties:search' %}">{% translate "Clear filters" %}</a>
+        {% endif %}
+      </header>
+
+      {% if properties %}
+        <ul class="search-results__grid">
+          {% for property in properties %}
+            <li data-property-id="{{ property.pk }}">
+              {% include "components/property_card.html" with property=property variant="stacked" %}
+            </li>
+          {% endfor %}
+        </ul>
+        {% include "components/pagination.html" %}
+      {% else %}
+        <div class="search-results__empty">
+          <h2 class="wh-display">{% translate "No properties match your search" %}</h2>
+          <p>{% translate "Try other dates, fewer guests or another district. Long stays and groups? Write to us and we will find you a place." %}</p>
+          <p class="search-results__empty-actions">
+            <a class="btn btn-wh" href="{% url 'properties:search' %}">{% translate "See all properties" %}</a>
+            {% if site_settings.whatsapp_url %}
+              <a class="btn btn-wh btn-wh--outline" href="{{ site_settings.whatsapp_url }}" target="_blank" rel="noopener">{% translate "Contact us" %}</a>
+            {% endif %}
+          </p>
+        </div>
+      {% endif %}
+    </section>
+
+    <aside class="search-map" aria-label="{% translate 'Map of the results' %}">
+      <div class="search-map__canvas" id="results-map"
+           data-empty-label="{% translate 'No locations to show' %}"></div>
+    </aside>
+  </div>
+
+  <button type="button" class="search-map-toggle" data-map-toggle aria-controls="results-map" aria-pressed="false"
+          data-label-map="{% translate 'Show map' %}" data-label-list="{% translate 'Show list' %}">
+    <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/map.svg' %}" alt="" width="16" height="16">
+    <span>{% translate "Show map" %}</span>
+  </button>
+
+  {{ map_markers|json_script:"map-markers" }}
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'vendor/leaflet-1.9.4/leaflet.js' %}" defer></script>
+  <script src="{% static 'vendor/leaflet.markercluster-1.5.3/leaflet.markercluster.js' %}" defer></script>
+  <script src="{% static 'js/results-map.js' %}" defer></script>
 {% endblock %}

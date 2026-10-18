@@ -189,6 +189,16 @@ class Property(TimeStampedModel):
         return self.district.city
 
     @property
+    def public_coordinates(self):
+        """Location shown before booking, rounded to ~100 m (3 decimals) to protect the address.
+
+        The exact point is only revealed to the guest after payment (see D27).
+        """
+        if self.latitude is None or self.longitude is None:
+            return None
+        return round(float(self.latitude), 3), round(float(self.longitude), 3)
+
+    @property
     def cover_image(self):
         """First image by order. Uses the prefetched images when available."""
         images = list(self.images.all())

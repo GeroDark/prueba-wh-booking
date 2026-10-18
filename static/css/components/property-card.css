@@ -62,6 +62,51 @@
   text-align: right;
 }
 
+/* Stacked variant: photo above the text (search results, Figma "Resultados") */
+
+.property-card--stacked .property-card__media {
+  aspect-ratio: 373 / 241;
+  border-radius: 0.5rem;
+}
+
+.property-card--stacked .property-card__body {
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem 1rem;
+  padding-top: 0.85rem;
+}
+
+.property-card--stacked .property-card__title,
+.property-card--stacked .property-card__location {
+  grid-column: 1 / -1;
+}
+
+.property-card--stacked .property-card__location {
+  justify-self: start;
+  color: var(--wh-gray);
+  font-size: 0.828rem;
+  text-align: left;
+}
+
+.property-card--stacked .property-card__price {
+  margin-top: 0.35rem;
+  font-size: 0.844rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.property-card__facts {
+  display: inline-flex;
+  gap: 0.9rem;
+  align-self: end;
+  font-size: 0.844rem;
+}
+
+.property-card__facts > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
 /* Overlay variant: photo with the text on top (featured carousel) */
 
 .property-card--overlay .property-card__link {

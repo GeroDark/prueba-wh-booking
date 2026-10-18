@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 02:34-0500\n"
+"POT-Creation-Date: 2026-10-18 02:54-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -88,6 +88,98 @@ msgstr "usuarios"
 msgid "An account with this email already exists."
 msgstr "Ya existe una cuenta con este correo electrónico."
 
+#: apps/bookings/admin.py:18
+msgid "nights"
+msgstr "noches"
+
+#: apps/bookings/apps.py:7
+msgid "Bookings"
+msgstr "Reservas"
+
+#: apps/bookings/models.py:26
+msgid "Pending payment"
+msgstr "Pendiente de pago"
+
+#: apps/bookings/models.py:27
+msgid "Confirmed"
+msgstr "Confirmada"
+
+#: apps/bookings/models.py:28
+msgid "Expired"
+msgstr "Vencida"
+
+#: apps/bookings/models.py:29
+msgid "Cancelled"
+msgstr "Cancelada"
+
+#: apps/bookings/models.py:32
+msgid "reference"
+msgstr "referencia"
+
+#: apps/bookings/models.py:38 apps/properties/models.py:167
+#: apps/properties/models.py:210
+msgid "property"
+msgstr "propiedad"
+
+#: apps/bookings/models.py:46
+msgid "guest"
+msgstr "huésped"
+
+#: apps/bookings/models.py:47
+msgid "Empty while an anonymous visitor holds the dates during checkout."
+msgstr ""
+"Vacío mientras un visitante sin cuenta retiene las fechas durante el "
+"checkout."
+
+#: apps/bookings/models.py:50
+msgid "status"
+msgstr "estado"
+
+#: apps/bookings/models.py:52
+msgid "check-in"
+msgstr "llegada"
+
+#: apps/bookings/models.py:53
+msgid "check-out"
+msgstr "salida"
+
+#: apps/bookings/models.py:54
+msgid "guests"
+msgstr "huéspedes"
+
+#: apps/bookings/models.py:56
+msgid "hold expires at"
+msgstr "la retención vence"
+
+#: apps/bookings/models.py:59
+msgid "Pending bookings stop blocking their dates after this moment."
+msgstr ""
+"Las reservas pendientes dejan de bloquear sus fechas después de este momento."
+
+#: apps/bookings/models.py:61
+msgid "currency"
+msgstr "moneda"
+
+#: apps/bookings/models.py:63
+msgid "language"
+msgstr "idioma"
+
+#: apps/bookings/models.py:65
+msgid "confirmed at"
+msgstr "confirmada el"
+
+#: apps/bookings/models.py:70
+msgid "booking"
+msgstr "reserva"
+
+#: apps/bookings/models.py:71
+msgid "bookings"
+msgstr "reservas"
+
+#: apps/bookings/models.py:78
+msgid "Check-out must be after check-in."
+msgstr "La salida debe ser posterior a la llegada."
+
 #: apps/core/admin.py:25
 msgid "Wynwood House administration"
 msgstr "Administración de Wynwood House"
@@ -130,7 +222,7 @@ msgstr "Visibilidad"
 
 #: apps/core/admin.py:91 apps/core/models.py:113 apps/core/models.py:170
 #: apps/properties/admin.py:24 apps/properties/models.py:27
-#: apps/properties/models.py:202
+#: apps/properties/models.py:212
 msgid "image"
 msgstr "imagen"
 
@@ -201,7 +293,9 @@ msgstr "mensaje de WhatsApp"
 msgid ""
 "Text pre-filled in every WhatsApp chat opened from the site (footer numbers "
 "and buttons without their own message)."
-msgstr "Texto precargado en todos los chats de WhatsApp que se abren desde el sitio (números del footer y botones sin mensaje propio)."
+msgstr ""
+"Texto precargado en todos los chats de WhatsApp que se abren desde el sitio "
+"(números del footer y botones sin mensaje propio)."
 
 #: apps/core/models.py:62
 msgid "App Store URL"
@@ -312,19 +406,21 @@ msgstr "Solo para la acción «Enlace»."
 msgid ""
 "Only for the WhatsApp action: text pre-filled in the chat. Empty uses the "
 "general message from the site settings."
-msgstr "Solo para la acción WhatsApp: texto precargado en el chat. Si queda vacío, se usa el mensaje general de la configuración del sitio."
+msgstr ""
+"Solo para la acción WhatsApp: texto precargado en el chat. Si queda vacío, "
+"se usa el mensaje general de la configuración del sitio."
 
 #: apps/core/models.py:131 apps/core/models.py:171 apps/core/models.py:191
 #: apps/core/models.py:210 apps/core/models.py:233 apps/core/models.py:268
 #: apps/properties/models.py:28 apps/properties/models.py:110
-#: apps/properties/models.py:208 apps/properties/models.py:232
+#: apps/properties/models.py:218 apps/properties/models.py:242
 msgid "order"
 msgstr "orden"
 
 #: apps/core/models.py:132 apps/core/models.py:154 apps/core/models.py:192
 #: apps/core/models.py:234 apps/core/models.py:269 apps/properties/models.py:29
 #: apps/properties/models.py:56 apps/properties/models.py:162
-#: apps/properties/models.py:233
+#: apps/properties/models.py:243
 msgid "active"
 msgstr "activo"
 
@@ -460,7 +556,7 @@ msgstr "Comodidades"
 msgid "photos"
 msgstr "fotos"
 
-#: apps/properties/apps.py:7 templates/pages/search_results.html:16
+#: apps/properties/apps.py:7
 msgid "Properties"
 msgstr "Propiedades"
 
@@ -484,7 +580,9 @@ msgstr "Llegada"
 msgid "Check-out"
 msgstr "Salida"
 
-#: apps/properties/forms.py:61 templates/components/property_card.html:19
+#: apps/properties/forms.py:61 templates/components/property_card.html:22
+#: templates/components/property_card.html:24
+#: templates/components/property_card.html:34
 msgid "Guests"
 msgstr "Huéspedes"
 
@@ -519,7 +617,7 @@ msgstr "código ISO"
 
 #: apps/properties/models.py:25 apps/properties/models.py:48
 #: apps/properties/models.py:75 apps/properties/models.py:108
-#: apps/properties/models.py:225
+#: apps/properties/models.py:235
 msgid "name"
 msgstr "nombre"
 
@@ -529,7 +627,7 @@ msgid "slug"
 msgstr "slug"
 
 #: apps/properties/models.py:32 apps/properties/models.py:46
-#: apps/properties/models.py:223
+#: apps/properties/models.py:233
 msgid "country"
 msgstr "país"
 
@@ -657,47 +755,50 @@ msgstr "tarifa de limpieza"
 msgid "featured"
 msgstr "destacada"
 
-#: apps/properties/models.py:167 apps/properties/models.py:200
-msgid "property"
-msgstr "propiedad"
-
 #: apps/properties/models.py:168
 msgid "properties"
 msgstr "propiedades"
 
-#: apps/properties/models.py:204
+#: apps/properties/models.py:214
 msgid "alternative text"
 msgstr "texto alternativo"
 
-#: apps/properties/models.py:206
+#: apps/properties/models.py:216
 msgid "Describes the photo for screen readers and when it cannot load."
 msgstr "Describe la foto para lectores de pantalla y para cuando no carga."
 
-#: apps/properties/models.py:211
+#: apps/properties/models.py:221
 msgid "property image"
 msgstr "foto de propiedad"
 
-#: apps/properties/models.py:212
+#: apps/properties/models.py:222
 msgid "property images"
 msgstr "fotos de propiedad"
 
-#: apps/properties/models.py:227
+#: apps/properties/models.py:237
 msgid "rate (%)"
 msgstr "tasa (%)"
 
-#: apps/properties/models.py:236
+#: apps/properties/models.py:246
 msgid "tax"
 msgstr "impuesto"
 
-#: apps/properties/models.py:237
+#: apps/properties/models.py:247
 msgid "taxes"
 msgstr "impuestos"
 
-#: config/settings.py:117
+#: apps/properties/views.py:65
+#, python-format
+msgid "%(count)d guest"
+msgid_plural "%(count)d guests"
+msgstr[0] "%(count)d huésped"
+msgstr[1] "%(count)d huéspedes"
+
+#: config/settings.py:118
 msgid "English"
 msgstr "Inglés"
 
-#: config/settings.py:118
+#: config/settings.py:119
 msgid "Spanish"
 msgstr "Español"
 
@@ -714,14 +815,16 @@ msgid "Skip to content"
 msgstr "Saltar al contenido"
 
 #: templates/components/carousel_controls.html:4
+#: templates/components/pagination.html:9
 msgid "Previous"
 msgstr "Anterior"
 
 #: templates/components/carousel_controls.html:8
+#: templates/components/pagination.html:25
 msgid "Next"
 msgstr "Siguiente"
 
-#: templates/components/footer.html:36
+#: templates/components/footer.html:36 templates/pages/search_results.html:55
 msgid "Contact us"
 msgstr "Contáctanos"
 
@@ -757,10 +860,20 @@ msgstr "Cerrar"
 msgid "Language"
 msgstr "Idioma"
 
-#: templates/components/property_card.html:23
+#: templates/components/pagination.html:6
+msgid "Pages"
+msgstr "Páginas"
+
+#: templates/components/property_card.html:20
+#: templates/components/property_card.html:38
 #: templates/pages/property_detail.html:21
 msgid "night"
 msgstr "noche"
+
+#: templates/components/property_card.html:26
+#: templates/components/property_card.html:28
+msgid "Bedrooms"
+msgstr "Habitaciones"
 
 #: templates/components/search_bar.html:11
 msgid "Search properties"
@@ -794,6 +907,46 @@ msgstr "Descubre nuestros destinos"
 msgid "Search results"
 msgstr "Resultados de búsqueda"
 
-#: templates/pages/search_results.html:21
-msgid "There are no properties available yet."
-msgstr "Todavía no hay propiedades disponibles."
+#: templates/pages/search_results.html:28
+#, python-format
+msgid "%(counter)s property"
+msgid_plural "%(counter)s properties"
+msgstr[0] "%(counter)s propiedad"
+msgstr[1] "%(counter)s propiedades"
+
+#: templates/pages/search_results.html:35
+msgid "Clear filters"
+msgstr "Limpiar filtros"
+
+#: templates/pages/search_results.html:50
+msgid "No properties match your search"
+msgstr "Ninguna propiedad coincide con tu búsqueda"
+
+#: templates/pages/search_results.html:51
+msgid ""
+"Try other dates, fewer guests or another district. Long stays and groups? "
+"Write to us and we will find you a place."
+msgstr ""
+"Prueba otras fechas, menos huéspedes u otro distrito. ¿Estadías largas o "
+"grupos? Escríbenos y te encontramos un lugar."
+
+#: templates/pages/search_results.html:53
+msgid "See all properties"
+msgstr "Ver todas las propiedades"
+
+#: templates/pages/search_results.html:62
+msgid "Map of the results"
+msgstr "Mapa de los resultados"
+
+#: templates/pages/search_results.html:64
+msgid "No locations to show"
+msgstr "No hay ubicaciones para mostrar"
+
+#: templates/pages/search_results.html:69
+#: templates/pages/search_results.html:71
+msgid "Show map"
+msgstr "Mostrar mapa"
+
+#: templates/pages/search_results.html:69
+msgid "Show list"
+msgstr "Mostrar lista"

@@ -263,16 +263,21 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - [ ] `/health/` responde 200.
 
 ### Fase 4 — Búsqueda
-- `SearchForm` (validación de fechas, distrito perteneciente a la ciudad); `PropertyQuerySet.in_city().in_district().for_guests().available()`.
-- Cuadrícula de resultados con `property_card`, paginación y estado vacío; los filtros se mantienen en la barra.
-- **Mapa de resultados** (como en el Figma): lista a la izquierda y mapa a la derecha.
-  - Un marcador por propiedad con su precio; el mapa se ajusta a los resultados.
-  - Pasar el mouse sobre una tarjeta resalta su marcador; un clic en el marcador muestra una mini tarjeta.
-  - En móvil, botón "Mapa / Lista".
-- [ ] Una búsqueda desde el home lleva a resultados coherentes con los filtros.
-- [ ] El mapa muestra exactamente las propiedades de la página de resultados.
-- [ ] Una búsqueda sin coincidencias muestra un estado vacío útil.
-- [ ] Tests: cada filtro por separado y la exclusión de propiedades ocupadas.
+- `PropertyQuerySet.search()`: país, ciudad, distrito, huéspedes y disponibilidad (`available()` excluye propiedades
+  con una reserva confirmada o una retención vigente que se solape).
+- **Se adelanta el modelo `Booking`** (campos, estados, restricciones y consultas `blocking()` / `overlapping()`),
+  porque filtrar por fechas lo necesita. El servicio de reservas sigue en la Fase 5. El seed agrega 4 reservas de
+  demo con fechas relativas a hoy, y `--flush` se niega a correr si hay reservas reales.
+- Resultados con `property_card` (variante `stacked`), paginación que conserva los filtros (`{% querystring %}`),
+  resumen de filtros y estado vacío con salidas. Un filtro inválido muestra su error sin anular los demás.
+- **Mapa de resultados** (como en el Figma): lista a la izquierda y mapa fijo a la derecha.
+  - Un marcador por propiedad con su precio; los cercanos se agrupan con su cantidad (Leaflet.markercluster).
+  - Pasar el mouse sobre una tarjeta resalta su marcador (o su grupo); un clic muestra una mini tarjeta.
+  - En móvil y tablet, botón "Mostrar mapa / Mostrar lista".
+- [x] Una búsqueda desde el home lleva a resultados coherentes con los filtros.
+- [x] El mapa muestra exactamente las propiedades de la página de resultados.
+- [x] Una búsqueda sin coincidencias muestra un estado vacío útil.
+- [x] Tests: cada filtro por separado y la exclusión de propiedades ocupadas.
 
 ### Fase 5 — Detalle y motor de reservas
 - Galería, información, comodidades, sección "Ubicación" con mapa de la zona aproximada (como Airbnb), formulario de

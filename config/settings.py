@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.accounts",
     "apps.properties",
+    "apps.bookings",
 ]
 
 MIDDLEWARE = [
@@ -139,6 +140,11 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# WhiteNoise serves static files in development and production; its built-in table has no
+# .otf type, so fonts would go out as application/octet-stream and browsers might not match
+# them with their <link rel="preload" type="font/otf">.
+WHITENOISE_MIMETYPES = {".otf": "font/otf", ".woff2": "font/woff2"}
 
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
