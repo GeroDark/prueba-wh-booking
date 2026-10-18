@@ -672,3 +672,37 @@ DEMO_USER = {
     "full_name": "Huésped Demo",
     "password": "Wynwood-Demo-2026",
 }
+
+# Confirmed stays for the demo guest, `starts_in` days from the day the seed runs.
+# Search those dates to see the property disappear from the results.
+DEMO_BOOKING_PREFIX = "WH-DEMO"
+DEMO_BOOKINGS = [
+    {
+        "reference": "WH-DEMO01",
+        "property": "modern-duplex-parque-virrey",
+        "starts_in": 3,
+        "nights": 5,
+        "guests": 2,
+    },
+    {
+        "reference": "WH-DEMO02",
+        "property": "awesome-2br-panoramic-view-miraflores",
+        "starts_in": 10,
+        "nights": 5,
+        "guests": 3,
+    },
+    {
+        "reference": "WH-DEMO03",
+        "property": "designer-apartment-malasana",
+        "starts_in": 5,
+        "nights": 15,
+        "guests": 2,
+    },
+    {
+        "reference": "WH-DEMO04",
+        "property": "dazzling-2br-condesa",
+        "starts_in": 7,
+        "nights": 4,
+        "guests": 4,
+    },
+]

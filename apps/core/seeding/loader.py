@@ -5,13 +5,16 @@ the command twice updates the content instead of duplicating it. Images are only
 the record has none, and they go through the model's OptimizedImageField (WebP, max 1200px).
 """
 
+from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files import File
+from django.utils import timezone
 
+from apps.bookings.models import Booking
 from apps.core.models import (
     Banner,
     ContactChannel,
@@ -57,7 +60,8 @@ class Seeder:
         districts = self.seed_locations(countries)
         amenities = self.seed_amenities()
         self.seed_properties(districts, amenities)
-        self.seed_demo_user()
+        guest = self.seed_demo_user()
+        self.seed_demo_bookings(guest)
 
     # Helpers
 
@@ -267,10 +271,45 @@ class Seeder:
             user.set_password(data.DEMO_USER["password"])
             user.save(update_fields=["password"])
         self.log(f"Demo guest: {data.DEMO_USER['email']} / {data.DEMO_USER['password']}")
+        return user
+
+    def seed_demo_bookings(self, guest):
+        """Confirmed stays relative to today, so date searches exclude those properties."""
+        today = timezone.localdate()
+        created = 0
+        for item in data.DEMO_BOOKINGS:
+            prop = Property.objects.filter(slug=item["property"]).first()
+            if prop is None:  # not loaded because of --properties N
+                continue
+            Booking.objects.update_or_create(
+                reference=item["reference"],
+                defaults={
+                    "property": prop,
+                    "guest": guest,
+                    "status": Booking.Status.CONFIRMED,
+                    "check_in": today + timedelta(days=item["starts_in"]),
+                    "check_out": today + timedelta(days=item["starts_in"] + item["nights"]),
+                    "guests": item["guests"],
+                    "confirmed_at": timezone.now(),
+                },
+            )
+            created += 1
+        self.log(f"Demo bookings: {created} (dates relative to today).")
+
+
+class FlushError(Exception):
+    pass
 
 
 def flush_content():
-    """Remove the seeded catalog and site content. Users are kept."""
+    """Remove the seeded catalog and site content. Users are kept.
+
+    Refuses to run when real bookings exist: only demo bookings may be deleted.
+    """
+    real = Booking.objects.exclude(reference__startswith=data.DEMO_BOOKING_PREFIX)
+    if real.exists():
+        raise FlushError(f"There are {real.count()} real bookings; refusing to delete the catalog.")
+    Booking.objects.all().delete()
     PropertyImage.objects.all().delete()
     Property.objects.all().delete()
     District.objects.all().delete()
