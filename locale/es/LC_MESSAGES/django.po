@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 01:50-0500\n"
+"POT-Creation-Date: 2026-10-18 02:15-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -88,53 +88,53 @@ msgstr "usuarios"
 msgid "An account with this email already exists."
 msgstr "Ya existe una cuenta con este correo electrónico."
 
-#: apps/core/admin.py:26
+#: apps/core/admin.py:25
 msgid "Wynwood House administration"
 msgstr "Administración de Wynwood House"
 
-#: apps/core/admin.py:28
+#: apps/core/admin.py:27
 msgid "Content and bookings"
 msgstr "Contenido y reservas"
 
-#: apps/core/admin.py:62
+#: apps/core/admin.py:61
 msgid "Contact"
 msgstr "Contacto"
 
-#: apps/core/admin.py:63
+#: apps/core/admin.py:62
 msgid "Mobile app"
 msgstr "App móvil"
 
-#: apps/core/admin.py:71
+#: apps/core/admin.py:70
 msgid "Hero"
 msgstr "Portada"
 
-#: apps/core/admin.py:72
+#: apps/core/admin.py:71 templates/components/footer.html:25
 msgid "Destinations"
 msgstr "Destinos"
 
-#: apps/core/admin.py:73
+#: apps/core/admin.py:72 templates/pages/home.html:51
 msgid "Featured properties"
 msgstr "Propiedades destacadas"
 
-#: apps/core/admin.py:76 apps/core/admin.py:103 apps/properties/admin.py:69
+#: apps/core/admin.py:75 apps/core/admin.py:102 apps/properties/admin.py:69
 msgid "preview"
 msgstr "vista previa"
 
-#: apps/core/admin.py:88
+#: apps/core/admin.py:87
 msgid "Button"
 msgstr "Botón"
 
-#: apps/core/admin.py:89 apps/properties/admin.py:99
+#: apps/core/admin.py:88 apps/properties/admin.py:99
 msgid "Visibility"
 msgstr "Visibilidad"
 
-#: apps/core/admin.py:92 apps/core/models.py:109 apps/core/models.py:157
+#: apps/core/admin.py:91 apps/core/models.py:109 apps/core/models.py:157
 #: apps/properties/admin.py:24 apps/properties/models.py:27
 #: apps/properties/models.py:202
 msgid "image"
 msgstr "imagen"
 
-#: apps/core/admin.py:113
+#: apps/core/admin.py:112
 msgid "items"
 msgstr "ítems"
 
@@ -452,9 +452,53 @@ msgstr "Comodidades"
 msgid "photos"
 msgstr "fotos"
 
-#: apps/properties/apps.py:7
+#: apps/properties/apps.py:7 templates/pages/search_results.html:16
 msgid "Properties"
 msgstr "Propiedades"
+
+#: apps/properties/forms.py:41 apps/properties/forms.py:45
+msgid "City or destination"
+msgstr "Ciudad o destino"
+
+#: apps/properties/forms.py:48
+msgid "District"
+msgstr "Distrito"
+
+#: apps/properties/forms.py:52
+msgid "All districts"
+msgstr "Todos los distritos"
+
+#: apps/properties/forms.py:55
+msgid "Check-in"
+msgstr "Llegada"
+
+#: apps/properties/forms.py:58
+msgid "Check-out"
+msgstr "Salida"
+
+#: apps/properties/forms.py:61 templates/components/property_card.html:19
+msgid "Guests"
+msgstr "Huéspedes"
+
+#: apps/properties/forms.py:65
+msgid "Number of guests"
+msgstr "Número de huéspedes"
+
+#: apps/properties/forms.py:97
+msgid "This district is not in the selected city."
+msgstr "Este distrito no pertenece a la ciudad elegida."
+
+#: apps/properties/forms.py:103
+msgid "Choose both arrival and departure."
+msgstr "Elige la fecha de llegada y la de salida."
+
+#: apps/properties/forms.py:107
+msgid "Arrival cannot be in the past."
+msgstr "La llegada no puede ser una fecha pasada."
+
+#: apps/properties/forms.py:109
+msgid "Departure must be after arrival."
+msgstr "La salida debe ser posterior a la llegada."
 
 #: apps/properties/models.py:20
 #, python-format
@@ -641,15 +685,15 @@ msgstr "impuesto"
 msgid "taxes"
 msgstr "impuestos"
 
-#: config/settings.py:116
+#: config/settings.py:117
 msgid "English"
 msgstr "Inglés"
 
-#: config/settings.py:117
+#: config/settings.py:118
 msgid "Spanish"
 msgstr "Español"
 
-#: templates/base.html:7
+#: templates/base.html:8
 msgid ""
 "Furnished apartments for short and long stays: the comfort of a home with "
 "the quality of a hotel."
@@ -657,22 +701,91 @@ msgstr ""
 "Departamentos amoblados para estadías cortas y largas: la comodidad de un "
 "hogar con la calidad de un hotel."
 
-#: templates/base.html:20
+#: templates/base.html:23
 msgid "Skip to content"
 msgstr "Saltar al contenido"
 
-#: templates/components/footer.html:8
+#: templates/components/carousel_controls.html:4
+msgid "Previous"
+msgstr "Anterior"
+
+#: templates/components/carousel_controls.html:8
+msgid "Next"
+msgstr "Siguiente"
+
+#: templates/components/footer.html:36
+msgid "Contact us"
+msgstr "Contáctanos"
+
+#: templates/components/footer.html:77
+msgid "Follow us"
+msgstr "Síguenos"
+
+#: templates/components/footer.html:88
+msgid "Download our app for free"
+msgstr "Descarga nuestra app gratis"
+
+#: templates/components/footer.html:99
 msgid "All rights reserved."
 msgstr "Todos los derechos reservados."
+
+#: templates/components/header.html:7
+msgid "Open menu"
+msgstr "Abrir menú"
+
+#: templates/components/header.html:16 templates/components/header.html:37
+msgid "Main menu"
+msgstr "Menú principal"
+
+#: templates/components/header.html:33
+msgid "Menu"
+msgstr "Menú"
+
+#: templates/components/header.html:34
+msgid "Close"
+msgstr "Cerrar"
 
 #: templates/components/language_switcher.html:3
 msgid "Language"
 msgstr "Idioma"
 
-#: templates/pages/home.html:4 templates/pages/home.html:10
+#: templates/components/property_card.html:23
+#: templates/pages/property_detail.html:21
+msgid "night"
+msgstr "noche"
+
+#: templates/components/search_bar.html:11
+msgid "Search properties"
+msgstr "Buscar propiedades"
+
+#: templates/components/search_bar.html:17
+msgid "Destination"
+msgstr "Destino"
+
+#: templates/components/search_bar.html:33
+msgid "Add dates"
+msgstr "Agregar fechas"
+
+#: templates/components/search_bar.html:36
+msgid "Check-in - Check-out"
+msgstr "Llegada - Salida"
+
+#: templates/components/search_bar.html:55
+msgid "Search"
+msgstr "Buscar"
+
+#: templates/pages/home.html:4 templates/pages/home.html:20
 msgid "Home experience, hotel quality"
 msgstr "Experiencia de hogar, calidad de hotel"
 
-#: templates/pages/home.html:11
-msgid "Best of both worlds"
-msgstr "Lo mejor de ambos mundos"
+#: templates/pages/home.html:30
+msgid "Discover our destinations"
+msgstr "Descubre nuestros destinos"
+
+#: templates/pages/search_results.html:4
+msgid "Search results"
+msgstr "Resultados de búsqueda"
+
+#: templates/pages/search_results.html:21
+msgid "There are no properties available yet."
+msgstr "Todavía no hay propiedades disponibles."
