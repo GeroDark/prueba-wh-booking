@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 from django.contrib.auth import authenticate, get_user_model
 from django.core.exceptions import ValidationError
@@ -71,3 +73,21 @@ def test_display_names_fall_back_to_email(full_name, expected_full, expected_sho
 
     assert user.get_full_name() == expected_full
     assert user.get_short_name() == expected_short
+
+
+def test_admin_edits_get_the_same_phone_and_birth_date_rules():
+    user = User(email="ana@mail.com", full_name="Ana Torres", phone_prefix="+5151")
+    user.phone_number, user.birth_date = "abc", date(2099, 1, 1)
+
+    with pytest.raises(ValidationError) as error:
+        user.full_clean(exclude=["password"])
+
+    assert {"phone_number", "birth_date"} <= error.value.message_dict.keys()
+
+
+def test_admin_phone_is_stored_normalized():
+    user = User(email="ana@mail.com", phone_prefix="+51", phone_number="987 654-321")
+
+    user.full_clean(exclude=["password"])
+
+    assert (user.phone_prefix, user.phone_number) == ("+51", "987654321")

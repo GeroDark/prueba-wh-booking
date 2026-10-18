@@ -219,3 +219,35 @@ def test_invalid_filters_say_which_field_is_wrong_in_the_site_tone(client):
     assert "Huéspedes: Ingresa un número menor o igual a 16." in html
     assert "Elige una de las opciones disponibles." in html
     assert "Introduzca" not in html and "Asegúrese" not in html and "Escoja" not in html
+
+
+@pytest.mark.parametrize(
+    ("check_in", "check_out", "message"),
+    [
+        (400, 403, "hasta 365 días de anticipación"),
+        (10, 50, "máximo de 30 noches"),
+    ],
+)
+def test_search_applies_the_same_date_rules_as_booking(client, check_in, check_out, message):
+    """No results that could not be booked afterwards."""
+    today = timezone.localdate()
+    url = (
+        f"/es/search/?check_in={today + timedelta(days=check_in)}"
+        f"&check_out={today + timedelta(days=check_out)}"
+    )
+
+    response = client.get(url)
+
+    assert message in response.text
+    # The invalid date is dropped and a single date does not filter (both are needed).
+    assert not {"check_in", "check_out"} <= response.context["view"].filters.keys()
+
+
+@pytest.mark.parametrize(("page", "expected"), [("abc", 1), ("9999", 2)])
+def test_invalid_or_too_high_pages_open_the_first_or_last_page(client, page, expected):
+    PropertyFactory.create_batch(11)
+
+    response = client.get(f"/es/search/?page={page}")
+
+    assert response.status_code == 200
+    assert response.context["page_obj"].number == expected

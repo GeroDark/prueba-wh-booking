@@ -4,6 +4,7 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from apps.bookings.services import date_errors
 from apps.core.forms import FriendlyErrorsMixin
 
 from .models import City, Country, District
@@ -106,10 +107,10 @@ class SearchForm(FriendlyErrorsMixin, forms.Form):
                 "check_out" if check_in else "check_in", _("Choose both arrival and departure.")
             )
         elif check_in and check_out:
-            if check_in < timezone.localdate():
-                self.add_error("check_in", _("Arrival cannot be in the past."))
-            if check_out <= check_in:
-                self.add_error("check_out", _("Departure must be after arrival."))
+            # Same rules as booking (past, 365 days ahead, 1 to 30 nights), so the results never
+            # list stays that cannot be booked afterwards.
+            for field, error in date_errors(check_in, check_out, timezone.localdate()).items():
+                self.add_error(field, error)
         return cleaned
 
     @property

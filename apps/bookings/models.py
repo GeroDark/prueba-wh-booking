@@ -3,10 +3,12 @@ import secrets
 from decimal import Decimal
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
 
 from apps.core.models import TimeStampedModel
 
@@ -99,6 +101,41 @@ class Booking(TimeStampedModel):
 
     def __str__(self):
         return f"{self.reference} · {self.property} ({self.check_in} → {self.check_out})"
+
+    def clean(self):
+        """Bookings created or edited in the admin: capacity and overlaps, with a clear message
+        instead of the database error (the exclusion constraint still guards everything)."""
+        super().clean()
+        if not (self.property_id and self.check_in and self.check_out and self.guests):
+            return
+        errors = {}
+        if self.guests > self.property.max_guests:
+            errors["guests"] = ngettext(
+                "This property hosts up to %(count)d guest.",
+                "This property hosts up to %(count)d guests.",
+                self.property.max_guests,
+            ) % {"count": self.property.max_guests}
+        is_blocking = self.status == self.Status.CONFIRMED or (
+            self.status == self.Status.PENDING and self.is_hold_active()
+        )
+        if is_blocking and self.check_out > self.check_in:
+            clash = (
+                Booking.objects.filter(property=self.property)
+                .blocking()
+                .overlapping(self.check_in, self.check_out)
+                .exclude(pk=self.pk)
+                .first()
+            )
+            if clash:
+                errors["check_in"] = _(
+                    "These dates overlap booking %(reference)s (%(check_in)s – %(check_out)s)."
+                ) % {
+                    "reference": clash.reference,
+                    "check_in": clash.check_in,
+                    "check_out": clash.check_out,
+                }
+        if errors:
+            raise ValidationError(errors)
 
     # In this class body `property` is the foreign key above: use the builtin decorator explicitly.
     @builtins.property

@@ -550,6 +550,16 @@ aceptado y mensajes de Django en "usted" ("Introduzca una fecha válida").
 
 **Límite.** No se puede distinguir un nombre real de letras al azar sin verificar un documento.
 
+**Auditoría de todas las entradas (Fase 8).** Se atacaron todos los formularios y parámetros (búsqueda, detalle,
+cotización, reserva, registro, login, checkout, pago, cambio de idioma, `next`) con fechas imposibles, números
+negativos o no numéricos, textos enormes, HTML, caracteres nulos, redirecciones externas y campos extra
+(`is_staff`). Huecos encontrados y cerrados:
+- La búsqueda aplica ahora las mismas reglas de fechas que la reserva (`date_errors`: no pasadas, hasta 365 días,
+  1 a 30 noches): no muestra estadías que luego no se pueden reservar.
+- `?page=abc` o una página inexistente abren la primera o la última página en vez de un 404.
+- El modelo `User` valida teléfono (y lo normaliza) y fecha de nacimiento, también al editar desde el admin.
+- `Booking.clean()` valida capacidad y solapamiento en el admin con un mensaje claro, en vez del error de la base.
+
 ---
 
 ## D36 · Datos personales del checkout
