@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{% static 'vendor/leaflet-1.9.4/leaflet.css' %}">
   <link rel="stylesheet" href="{% static 'vendor/leaflet-gesture-handling-1.2.2/leaflet-gesture-handling.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/map.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/breadcrumb.css' %}">
   <link rel="stylesheet" href="{% static 'css/components/booking-card.css' %}">
   <link rel="stylesheet" href="{% static 'css/pages/detail.css' %}">
 {% endblock %}
@@ -17,14 +18,7 @@
 {% block content %}
   {% with images=property.images.all %}
   <article class="property-detail container-wh" aria-labelledby="property-title">
-    <nav class="breadcrumb-wh" aria-label="{% translate 'Breadcrumb' %}">
-      <img src="{% static 'img/brand/favicon.svg' %}" alt="" width="18" height="18">
-      <ol>
-        <li><a href="{% url 'properties:search' %}?country={{ property.city.country.slug }}">{{ property.city.country.name }}</a></li>
-        <li><a href="{% url 'properties:search' %}?city={{ property.city.slug }}">{{ property.city.name }}</a></li>
-        <li aria-current="page">{{ property.title }}</li>
-      </ol>
-    </nav>
+    {% include "components/breadcrumb.html" with prop=property %}
 
     {% include "components/messages.html" %}
 

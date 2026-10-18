@@ -19,6 +19,9 @@
     if (validity.typeMismatch || validity.patternMismatch) {
       return input.dataset.errorInvalid || input.validationMessage;
     }
+    if (validity.rangeUnderflow) return input.dataset.errorMin || input.validationMessage;
+    if (validity.rangeOverflow) return input.dataset.errorMax || input.validationMessage;
+    if (validity.badInput) return input.dataset.errorInvalid || input.validationMessage;
     if (validity.customError) return input.validationMessage;
     return "";
   }

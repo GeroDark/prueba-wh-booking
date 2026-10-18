@@ -1,0 +1,118 @@
+/* Booking confirmation (Figma "Confirmación"): centred greeting, photo, stay and location. */
+
+.confirmation {
+  max-width: 60rem;
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) 5rem;
+}
+
+.confirmation__hero {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.confirmation__hello {
+  margin-bottom: 1.5rem;
+  font-family: var(--wh-font-body);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 400;
+}
+
+.confirmation__thanks {
+  max-width: 28rem;
+  margin-inline: auto;
+  line-height: 1.8;
+}
+
+.confirmation__image {
+  display: block;
+  width: 100%;
+  max-width: 50rem;
+  height: auto;
+  max-height: 25rem;
+  margin: 0 auto 2.5rem;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.confirmation__message {
+  max-width: 36rem;
+  margin: 0 auto 3rem;
+  text-align: center;
+}
+
+.confirmation__status {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--wh-radius-pill);
+  background: #e3f3ea;
+  color: #1e7d4f;
+  font-weight: 700;
+}
+
+.confirmation__message .btn {
+  margin-top: 0.5rem;
+}
+
+.confirmation__details {
+  display: grid;
+  gap: 2.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--wh-gray-light);
+}
+
+.confirmation__property {
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.confirmation__address,
+.confirmation__dates {
+  margin-bottom: 0.4rem;
+  color: var(--wh-gray);
+}
+
+.confirmation__stay .price-lines {
+  margin-top: 1.5rem;
+}
+
+.confirmation__paid {
+  margin-top: 1rem;
+  color: var(--wh-gray);
+  font-size: 0.875rem;
+}
+
+.confirmation__section-title {
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+}
+
+.confirmation__map {
+  margin-bottom: 1rem;
+}
+
+.confirmation__maps-link {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.confirmation__footer {
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--wh-gray-light);
+  text-align: center;
+}
+
+.confirmation__footer a {
+  color: inherit;
+}
+
+@media (min-width: 992px) {
+  .confirmation__details {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+}

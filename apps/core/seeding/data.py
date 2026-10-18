@@ -5,9 +5,13 @@ plausible demo data. Translated values are (Spanish, English) tuples. Image path
 to `seed/images/` (see seed/images/CREDITS.md). Tax rates are illustrative.
 """
 
+from datetime import date
+
 SITE_SETTINGS = {
     "contact_email": "sales@wynwoodhouse.com",
     "whatsapp_number": "+51 947 022 549",
+    # The real policies live on the Wynwood House site.
+    "legal_url": "https://wynwoodhouse.com/",
     "whatsapp_message": (
         "Hola, me gustaría recibir información sobre una estadía con Wynwood House.",
         "Hi, I'd like to know more about staying with Wynwood House.",
@@ -671,6 +675,13 @@ DEMO_USER = {
     "email": "demo@wynwoodhouse.test",
     "full_name": "Huésped Demo",
     "password": "Wynwood-Demo-2026",
+    # Complete profile: signed in, the checkout goes straight to the payment step.
+    "details": {
+        "nationality": "PE",
+        "phone_prefix": "+51",
+        "phone_number": "987654321",
+        "birth_date": date(1990, 5, 14),
+    },
 }
 
 # Confirmed stays for the demo guest, `starts_in` days from the day the seed runs.

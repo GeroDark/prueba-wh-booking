@@ -43,11 +43,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
+    # Third-party apps
+    "django_countries",
     # Local apps
     "apps.core",
     "apps.accounts",
     "apps.properties",
     "apps.bookings",
+    "apps.payments",
 ]
 
 MIDDLEWARE = [
@@ -202,6 +205,16 @@ BOOKING_HOLD_MINUTES = env.int("BOOKING_HOLD_MINUTES", default=15)
 BOOKING_MAX_NIGHTS = env.int("BOOKING_MAX_NIGHTS", default=30)
 # How far ahead the calendar accepts check-ins.
 BOOKING_MAX_DAYS_AHEAD = env.int("BOOKING_MAX_DAYS_AHEAD", default=365)
+# The person who books and pays must be an adult (D36).
+BOOKING_MIN_GUEST_AGE = 18
+
+# Countries where Wynwood House operates are listed first in the nationality and phone selects.
+COUNTRIES_FIRST = ["PE", "CO", "MX", "PA", "ES"]
+COUNTRIES_FIRST_BREAK = "──────────"
+
+# Payments (D11): the simulated gateway accepts only test cards. A real provider (dLocal, Stripe)
+# is another class with the same interface.
+PAYMENT_GATEWAY = env("PAYMENT_GATEWAY", default="apps.payments.gateways.SimulatedGateway")
 
 
 # Logging: everything to stdout, collected by Docker or the hosting provider.

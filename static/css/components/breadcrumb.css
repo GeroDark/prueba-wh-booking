@@ -1,0 +1,33 @@
+/* Breadcrumb (Figma: asterisk + Country | City | Property | current page). */
+
+.breadcrumb-wh {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb-wh ol {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  list-style: none;
+}
+
+.breadcrumb-wh li + li::before {
+  margin-inline: 0.5rem;
+  color: var(--wh-gray);
+  content: "|";
+}
+
+.breadcrumb-wh a {
+  color: var(--wh-gray);
+  text-decoration: none;
+}
+
+.breadcrumb-wh a:hover {
+  color: var(--wh-black);
+  text-decoration: underline;
+}

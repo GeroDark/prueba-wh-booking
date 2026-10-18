@@ -6,6 +6,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.http import urlencode
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.constants import FLAG_CHOICES, flag_path, icon_path
@@ -197,6 +198,28 @@ class Property(TimeStampedModel):
         if self.latitude is None or self.longitude is None:
             return None
         return round(float(self.latitude), 3), round(float(self.longitude), 3)
+
+    @property
+    def exact_coordinates(self):
+        """Exact point, for the confirmation page and e-mail only (D27)."""
+        if self.latitude is None or self.longitude is None:
+            return None
+        return float(self.latitude), float(self.longitude)
+
+    @property
+    def full_address(self):
+        return ", ".join(
+            part
+            for part in (self.address, self.district.name, self.city.name, self.city.country.name)
+            if part
+        )
+
+    @property
+    def google_maps_url(self):
+        """ "Open in Google Maps": the exact point if known, otherwise the address."""
+        coordinates = self.exact_coordinates
+        query = f"{coordinates[0]},{coordinates[1]}" if coordinates else self.full_address
+        return "https://www.google.com/maps/search/?" + urlencode({"api": 1, "query": query})
 
     @property
     def cover_image(self):

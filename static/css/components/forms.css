@@ -145,3 +145,30 @@
 .password-rules__strength::before {
   content: "●" !important;
 }
+
+/* Checkbox with its label on the right */
+
+.form-check-wh {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.form-check-wh input {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.15rem;
+  accent-color: var(--wh-black);
+}
+
+/* Text accepted with the step's button */
+
+.terms-notice {
+  margin: 1.5rem 0 0;
+  font-size: 0.875rem;
+}
+
+.terms-notice a {
+  color: inherit;
+}

@@ -146,6 +146,15 @@ def hold_dates(*, prop, check_in, check_out, guests, guest=None, released_holds=
     return booking
 
 
+def assign_guest(booking, user):
+    """The visitor signed up or signed in during checkout: the hold becomes their booking.
+
+    Only a hold without a guest can be claimed, so nobody can take over someone else's booking.
+    """
+    if Booking.objects.filter(pk=booking.pk, guest__isnull=True).update(guest=user):
+        booking.guest = user
+
+
 def release_hold(booking):
     """The visitor gave up: free the dates immediately instead of waiting for the expiry."""
     return Booking.objects.filter(pk=booking.pk, status=Booking.Status.PENDING).update(

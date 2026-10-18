@@ -10,8 +10,10 @@ import string
 import unicodedata
 from functools import cache
 
+from django.conf import settings
 from django.contrib.auth.password_validation import CommonPasswordValidator
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.utils.translation import gettext as _
 
 # One name word: letters (any alphabet) joined by an apostrophe, hyphen or period, as in
@@ -37,6 +39,41 @@ def validate_full_name(value):
         )
     if len(words) < 2:
         raise ValidationError(_("Enter your first and last name."), code="name_single_word")
+
+
+MAX_AGE = 120
+
+
+def years_ago(today, years):
+    """Same day `years` earlier; 29 February becomes 28 February in common years."""
+    try:
+        return today.replace(year=today.year - years)
+    except ValueError:
+        return today.replace(year=today.year - years, day=28)
+
+
+def age_on(birth_date, today):
+    return (
+        today.year
+        - birth_date.year
+        - ((today.month, today.day) < (birth_date.month, birth_date.day))
+    )
+
+
+def validate_birth_date(value, today=None):
+    """Adult guests only (BOOKING_MIN_GUEST_AGE, D36) and a date that can be real."""
+    today = today or timezone.localdate()
+    if value >= today:
+        raise ValidationError(_("The birth date must be in the past."), code="birth_future")
+    age = age_on(value, today)
+    if age > MAX_AGE:
+        raise ValidationError(_("Check the year of your birth date."), code="birth_too_old")
+    if age < settings.BOOKING_MIN_GUEST_AGE:
+        raise ValidationError(
+            _("You must be at least %(age)s years old to book."),
+            code="birth_underage",
+            params={"age": settings.BOOKING_MIN_GUEST_AGE},
+        )
 
 
 def strip_accents(value):

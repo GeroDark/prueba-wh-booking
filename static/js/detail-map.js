@@ -1,6 +1,8 @@
 /*
- * "Location" map of the property page: a ~300 m circle over the approximate area.
- * The exact point is not in the page; it is shown only after the booking is paid (D27).
+ * Map of one property.
+ * - Property page: a ~300 m circle over the approximate area. The exact point is not in the
+ *   page; it is shown only after the booking is paid (D27).
+ * - Confirmation page ([data-exact]): a pin on the exact point.
  */
 (function () {
   "use strict";
@@ -27,12 +29,24 @@
       },
     };
   }
-  var map = L.map(canvas, options).setView(center, 15);
+  var exact = "exact" in canvas.dataset;
+  var map = L.map(canvas, options).setView(center, exact ? 16 : 15);
 
   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
+
+  if (exact) {
+    L.circleMarker(center, {
+      radius: 9,
+      color: "#ffffff",
+      weight: 3,
+      fillColor: "#232324",
+      fillOpacity: 1,
+    }).addTo(map);
+    return;
+  }
 
   L.circle(center, {
     radius: 300,

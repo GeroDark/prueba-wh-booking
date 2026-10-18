@@ -1,19 +1,31 @@
+from django.conf import settings
 from django.contrib import messages
-from django.http import Http404, JsonResponse
+from django.contrib.auth import login
+from django.http import Http404, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.http import urlencode
+from django.utils.module_loading import import_string
+from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views import View
-from django.views.generic import DetailView
+from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.generic import DetailView, FormView
 from django.views.generic.detail import SingleObjectMixin
 
+from apps.accounts.forms import CheckoutSignUpForm, GuestDetailsForm
 from apps.core.templatetags.formatting import money
+from apps.payments.forms import CardForm
+from apps.payments.gateways import SimulatedGateway
+from apps.payments.models import Payment
+from apps.payments.services import HoldExpired, KeyReused, decline_message, pay_booking
 from apps.properties.models import Property
 
 from .forms import BookingRequestForm
 from .models import Booking
-from .services import release_hold
+from .services import assign_guest, release_hold
 from .session import forget_hold, owns_booking
 
 
@@ -66,30 +78,125 @@ def property_url_with_dates(booking):
     return f"{reverse('properties:detail', args=[booking.property.slug])}?{query}"
 
 
-class CheckoutView(OwnedBookingMixin, DetailView):
-    """Checkout of a held booking.
+CHECKOUT_FORMS = {
+    "signup": CheckoutSignUpForm,
+    "details": GuestDetailsForm,
+    "payment": CardForm,
+}
 
-    Phase 5: summary and countdown. Phase 7 adds sign-up, payment and the confirmation.
+
+@method_decorator(
+    # Never cached (it shows personal data) and, if an error is reported, Django hides these
+    # fields in the report.
+    [never_cache, sensitive_post_parameters("password", "card_number", "expiry", "cvc")],
+    name="dispatch",
+)
+class CheckoutView(OwnedBookingMixin, FormView):
+    """Checkout of a held booking: two steps on one URL, each POST redirects back (D12).
+
+    1. "signup": a new visitor creates the account with their personal details, or
+       "details": a signed-in guest completes the details missing from their profile.
+    2. "payment": the card. Paid -> confirmation page; declined -> the reason and a new form.
     """
 
     template_name = "pages/checkout.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.booking = self.get_object()
+        if self.booking.status == Booking.Status.CONFIRMED:
+            return redirect("bookings:confirmation", self.booking.reference)
+        if not self.booking.is_hold_active():
+            return self.hold_expired()
+        if request.user.is_authenticated:
+            assign_guest(self.booking, request.user)
+        self.step = self.get_step()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_step(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            return "signup"
+        return "payment" if user.has_guest_details else "details"
+
+    def hold_expired(self):
+        messages.warning(
+            self.request,
+            _(
+                "Your time to complete the booking ran out and the dates were released. "
+                "Check if they are still available and try again."
+            ),
+        )
+        return redirect(property_url_with_dates(self.booking))
+
+    def get_form_class(self):
+        return CHECKOUT_FORMS[self.step]
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.step == "details":
+            kwargs["instance"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        return getattr(self, f"{self.step}_valid")(form)
+
+    def signup_valid(self, form):
+        form.instance.preferred_language = get_language()
+        user = form.save()
+        # Logging in keeps the session data, so the hold stays with this visitor (D34).
+        login(self.request, user, backend="django.contrib.auth.backends.ModelBackend")
+        assign_guest(self.booking, user)
+        return redirect(self.request.path)
+
+    def details_valid(self, form):
+        form.save()
+        return redirect(self.request.path)
+
+    def payment_valid(self, form):
+        try:
+            payment = pay_booking(
+                booking=self.booking,
+                card=form.cleaned_data["card"],
+                idempotency_key=form.cleaned_data["idempotency_key"],
+            )
+        except HoldExpired:
+            return self.hold_expired()
+        except KeyReused:
+            return HttpResponseBadRequest()
+        if payment.status == Payment.Status.SUCCEEDED:
+            return redirect("bookings:confirmation", self.booking.reference)
+        # Declined: the reason and a fresh form (new key, card fields empty) to try again.
+        context = self.get_context_data(form=CardForm(), payment_error=decline_message(payment))
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        gateway = import_string(settings.PAYMENT_GATEWAY)
+        context.update(
+            booking=self.booking,
+            step=self.step,
+            test_cards=gateway.test_cards() if issubclass(gateway, SimulatedGateway) else None,
+        )
+        return context
+
+
+@method_decorator(never_cache, name="dispatch")
+class BookingConfirmationView(OwnedBookingMixin, DetailView):
+    """After paying (Figma "Confirmación"). Only the guest sees it, with the exact address."""
+
+    template_name = "pages/booking_confirmation.html"
     context_object_name = "booking"
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.object.is_hold_active():
-            if self.object.status == Booking.Status.CONFIRMED:
-                messages.info(request, _("This booking is already confirmed."))
-            else:
-                messages.warning(
-                    request,
-                    _(
-                        "Your time to complete the booking ran out and the dates were released. "
-                        "Check if they are still available and try again."
-                    ),
-                )
-            return redirect(property_url_with_dates(self.object))
+        if self.object.status != Booking.Status.CONFIRMED:
+            return redirect("bookings:checkout", self.object.reference)
         return self.render_to_response(self.get_context_data(object=self.object))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["payment"] = self.object.payments.filter(status=Payment.Status.SUCCEEDED).first()
+        return context
 
 
 class ReleaseHoldView(OwnedBookingMixin, View):

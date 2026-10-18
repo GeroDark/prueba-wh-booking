@@ -112,3 +112,11 @@
 .map-card__price {
   font-size: 0.875rem;
 }
+
+/* Single-property map (detail page: approximate area; confirmation: exact point) */
+
+.detail-map {
+  height: clamp(16rem, 28vw, 23rem);
+  overflow: hidden;
+  border-radius: 0.5rem;
+}

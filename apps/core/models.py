@@ -61,6 +61,10 @@ class SiteSettings(SingletonModel):
     )
     app_store_url = models.URLField(_("App Store URL"), blank=True)
     play_store_url = models.URLField(_("Google Play URL"), blank=True)
+    # Linked from the text the guest accepts before paying (Figma "Página de pago").
+    terms_url = models.URLField(_("terms of service URL"), blank=True)
+    privacy_url = models.URLField(_("privacy policy URL"), blank=True)
+    cancellation_policy_url = models.URLField(_("cancellation policy URL"), blank=True)
 
     class Meta:
         verbose_name = _("site settings")

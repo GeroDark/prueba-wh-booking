@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.admin import TranslationTabularInline
 
+from apps.payments.admin import PaymentInline
+
 from .models import Booking, BookingLine
 
 
@@ -37,7 +39,7 @@ class BookingAdmin(admin.ModelAdmin):
     readonly_fields = ("reference", "total", "created_at", "updated_at", "confirmed_at")
     autocomplete_fields = ("guest",)
     raw_id_fields = ("property",)
-    inlines = [BookingLineInline]
+    inlines = [BookingLineInline, PaymentInline]
 
     @admin.display(description=_("nights"))
     def nights(self, obj):

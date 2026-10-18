@@ -1,7 +1,9 @@
-{% load i18n formatting %}
+{% load static i18n formatting %}
 {% comment %}
   Booking summary card (Figma "Resumen"): property, dates, guests and the frozen price lines.
-  Used by the checkout and, in phase 7, the confirmation page.
+  Used by the checkout and the confirmation page.
+  edit_form: id of a form that releases the hold; adds the design's pencil buttons to change
+  the dates or the guests (back to the property with the same values).
 {% endcomment %}
 {% with prop=booking.property cover=booking.property.cover_image %}
 <section class="booking-summary" aria-labelledby="summary-title">
@@ -15,8 +17,30 @@
   </div>
 
   <dl class="booking-summary__facts">
-    <div><dt>{% translate "Dates" %}</dt><dd>{{ booking.check_in|date:"j M Y" }} – {{ booking.check_out|date:"j M Y" }}</dd></div>
-    <div><dt>{% translate "Guests" %}</dt><dd>{% blocktranslate count counter=booking.guests %}{{ counter }} guest{% plural %}{{ counter }} guests{% endblocktranslate %}</dd></div>
+    <div>
+      <dt>{% translate "Dates" %}</dt>
+      <dd>
+        {{ booking.check_in|date:"j M Y" }} – {{ booking.check_out|date:"j M Y" }}
+        {% if edit_form %}
+          <button type="submit" form="{{ edit_form }}" class="booking-summary__edit">
+            <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/pencil.svg' %}" alt="" width="14" height="14">
+            <span class="visually-hidden">{% translate "Change dates" %}</span>
+          </button>
+        {% endif %}
+      </dd>
+    </div>
+    <div>
+      <dt>{% translate "Guests" %}</dt>
+      <dd>
+        {% blocktranslate count counter=booking.guests %}{{ counter }} guest{% plural %}{{ counter }} guests{% endblocktranslate %}
+        {% if edit_form %}
+          <button type="submit" form="{{ edit_form }}" class="booking-summary__edit">
+            <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/pencil.svg' %}" alt="" width="14" height="14">
+            <span class="visually-hidden">{% translate "Change guests" %}</span>
+          </button>
+        {% endif %}
+      </dd>
+    </div>
   </dl>
 
   <dl class="price-lines">
