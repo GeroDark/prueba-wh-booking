@@ -80,8 +80,10 @@ apps/
   core/                    contenido del sitio: SiteSettings, HomePage, Banner, FeatureSection/Item,
                            ContactChannel, SocialLink, FooterLinkGroup/Link; context processor; /health/
   accounts/                User (email como login), formularios, vistas de auth, validadores
+  core/ (además)           fields.py (OptimizedImageField) · images.py (optimizador WebP) · constants.py (íconos y banderas)
+                           seeding/ (datos y cargador de seed_data) · management/commands/seed_data.py
   properties/              Country, City, District, Amenity, Property, PropertyImage, Tax
-                           querysets.py · images.py (optimizador) · pricing.py · management/commands/seed_data.py
+                           querysets.py · pricing.py
   bookings/                Booking, BookingLine, Payment
                            services.py (hold_dates, release_hold, pay_booking, expire_holds)
                            payments.py (PaymentGateway, SimulatedGateway) · emails.py
@@ -94,11 +96,13 @@ docs/                      PLAN_MAESTRO.md, DECISIONS.md
 ### 3.2 Modelos (`*` = campo traducido ES/EN)
 
 **core**
-- `SiteSettings` (singleton): email de contacto, número de WhatsApp para el CTA, mensaje del CTA*.
-- `HomePage` (singleton): título* y subtítulo* del hero, imagen del hero, título* y texto* de destacadas.
-- `Banner`: `key` (por ejemplo `long_stay`), título*, texto*, imagen, texto del botón*, URL, `layout` (imagen a la izquierda, a la derecha, ancho completo), orden, activo.
+- `SiteSettings` (singleton): email de contacto, número de WhatsApp para el CTA, mensaje del CTA*, enlaces a las tiendas de apps.
+- `HomePage` (singleton): título* y subtítulo* del hero, imagen del hero, título* de destinos, título* y texto* de destacadas.
+- `Banner`: `key` (por ejemplo `long-stay`), título*, texto*, imagen, `layout` (imagen a la izquierda, a la derecha o de fondo),
+  texto del botón*, acción del botón (enlace o WhatsApp de `SiteSettings`), URL, orden, activo.
 - `FeatureSection` + `FeatureItem`: secciones con cuadrícula de ítems con imagen. Se usa para "Servicios en WH" y para "Por qué viajar a España".
-- `ContactChannel` (WhatsApp, teléfono, email; país; orden) · `SocialLink` · `FooterLinkGroup` + `FooterLink`.
+- `MenuGroup` + `MenuLink`: el menú del header y las columnas del footer (un solo par de modelos con `placement`).
+- `ContactChannel` (WhatsApp, teléfono, email; bandera; orden; genera su enlace `wa.me` / `tel:` / `mailto:`) · `SocialLink`.
 
 **properties**
 - `Country` (nombre*, código ISO, imagen) → `City` (nombre*, slug, **zona horaria**, imagen) → `District` (nombre*, slug).
@@ -108,7 +112,7 @@ docs/                      PLAN_MAESTRO.md, DECISIONS.md
 - `PropertyImage`: propiedad, imagen (se optimiza al guardar), texto alternativo*, orden.
 - `Tax`: país, nombre*, porcentaje, activo.
 
-**bookings**
+**bookings** (se crean en la Fase 5, junto con el servicio de reservas y sus tests)
 - `Booking`: `reference` (código aleatorio, no secuencial), propiedad (PROTECT), `guest` (nulo hasta el checkout),
   `hold_token`, `status` (`PENDING`, `CONFIRMED`, `EXPIRED`, `CANCELLED`), `check_in`, `check_out`, `guests`, `expires_at`,
   `subtotal`, `total`, moneda, idioma, fechas de creación y confirmación.
@@ -229,12 +233,14 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - [ ] CI en verde (ruff + pytest + `makemigrations --check` + `check --deploy`).
 
 ### Fase 1 — Datos
-- Todos los modelos con traducciones y su admin (inlines, filtros, búsqueda).
+- Modelos de contenido (`core`) y de catálogo (`properties`) con traducciones y su admin (inlines, filtros, búsqueda).
+  Los modelos de reservas y pagos pasan a la Fase 5, donde se construyen junto con su servicio y sus tests.
 - Optimizador WebP; imágenes exportadas del Figma a `seed/images/`.
-- `seed_data` (repetible sin duplicar; con opciones `--flush` y de cantidad); usuario de demo y reservas existentes.
-- [ ] El admin muestra propiedades, ciudades, distritos y contenido del home en ES y EN.
-- [ ] Las imágenes guardadas son `.webp` y miden 1200 px o menos.
-- [ ] Tests: optimizador, seed repetible, restricciones de modelos y email único.
+- `seed_data` (repetible sin duplicar; con `--flush`, `--properties N` y `--skip-images`) y usuario de demo.
+  Las reservas de ejemplo se agregan al seed en la Fase 5.
+- [x] El admin muestra propiedades, ciudades, distritos y contenido del home en ES y EN.
+- [x] Las imágenes guardadas son `.webp` y miden 1200 px o menos.
+- [x] Tests: optimizador, seed repetible, restricciones de modelos y email único.
 
 ### Fase 2 — Home
 - Header (logo, navegación, ES/EN, acceso), hero con buscador, destacadas, "Por qué viajar a España" (`feature_grid`),
