@@ -1,14 +1,76 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load static i18n %}
 
-{% block title %}Wynwood House | {% translate "Home experience, hotel quality" %}{% endblock %}
+{% block title %}Wynwood House | {{ home.hero_title|default:_("Home experience, hotel quality") }}{% endblock %}
+
+{% block extra_css %}
+  {# Components first, page last: page rules may refine component defaults. #}
+  <link rel="stylesheet" href="{% static 'css/components/carousel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/property-card.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/feature-grid.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/banner.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages/home.css' %}">
+{% endblock %}
 
 {% block content %}
-  {# Temporary hero: replaced in phase 2 by the model-driven home sections. #}
-  <section class="hero-placeholder">
-    <div class="container-wh">
-      <h1 class="wh-hero-title">{% translate "Home experience, hotel quality" %}</h1>
-      <p class="wh-eyebrow">{% translate "Best of both worlds" %}</p>
+  <section class="hero" aria-labelledby="hero-title">
+    {% if home.hero_image %}
+      <img class="hero__image" src="{{ home.hero_image.url }}" alt="" fetchpriority="high">
+    {% endif %}
+    <div class="container-wh hero__content">
+      <h1 class="wh-hero-title" id="hero-title">{{ home.hero_title|default:_("Home experience, hotel quality") }}</h1>
+      {% if home.hero_subtitle %}<p class="wh-eyebrow hero__subtitle">{{ home.hero_subtitle }}</p>{% endif %}
+      {% include "components/search_bar.html" with form=search_form variant="hero" %}
     </div>
   </section>
+
+  {% if destinations %}
+    <section class="destinations" aria-labelledby="destinations-title" data-carousel>
+      <div class="container-wh">
+        <div class="section-heading">
+          <h2 class="wh-display" id="destinations-title">{{ home.destinations_title|default:_("Discover our destinations") }}</h2>
+          {% include "components/carousel_controls.html" with target="destinations-track" %}
+        </div>
+      </div>
+      <ul class="carousel-track destinations__track" id="destinations-track" data-carousel-track>
+        {% for country in destinations %}
+          <li class="destination-card">
+            <a href="{% url 'properties:search' %}?country={{ country.slug }}">
+              <img src="{{ country.image.url }}" alt="" loading="lazy">
+              <span class="destination-card__name">{{ country.name }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+
+  {% if featured_properties %}
+    <section class="featured" id="featured" aria-labelledby="featured-title" data-carousel>
+      <div class="container-wh featured__inner">
+        <div class="featured__intro" data-reveal>
+          <h2 class="wh-display" id="featured-title">{{ home.featured_title|default:_("Featured properties") }}</h2>
+          {% if home.featured_text %}<p>{{ home.featured_text }}</p>{% endif %}
+          {% include "components/carousel_controls.html" with target="featured-track" %}
+        </div>
+        <ul class="carousel-track featured__track" id="featured-track" data-carousel-track>
+          {% for property in featured_properties %}
+            <li>{% include "components/property_card.html" with property=property variant="overlay" %}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+  {% endif %}
+
+  {% if sections.services %}
+    {% include "components/feature_grid.html" with section=sections.services variant="tiles" %}
+  {% endif %}
+
+  {% if sections.why_spain %}
+    {% include "components/feature_grid.html" with section=sections.why_spain variant="cards" %}
+  {% endif %}
+
+  {% for banner in banners %}
+    {% include "components/banner.html" with banner=banner %}
+  {% endfor %}
 {% endblock %}

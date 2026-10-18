@@ -6,6 +6,9 @@ from django.db import DatabaseError
 
 from apps.core import views
 
+# Pages read their content (home, menus, footer) from the database.
+pytestmark = pytest.mark.django_db
+
 
 def test_root_redirects_to_default_language(client):
     response = client.get("/")

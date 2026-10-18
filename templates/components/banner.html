@@ -1,0 +1,28 @@
+{% load content %}
+{% comment %}
+  Banner with image, text and a call to action (Banner model).
+  layout: image_left / image_right (two columns) or background (full-width photo).
+{% endcomment %}
+{% banner_cta_url banner as cta_url %}
+<section class="banner banner--{{ banner.layout }}" id="{{ banner.key }}" aria-labelledby="{{ banner.key }}-title">
+  {% if banner.layout == "background" and banner.image %}
+    <img class="banner__background" src="{{ banner.image.url }}" alt="" loading="lazy">
+  {% endif %}
+  <div class="container-wh banner__inner">
+    {% if banner.layout != "background" and banner.image %}
+      <div class="banner__media" data-reveal>
+        <img src="{{ banner.image.url }}" alt="" loading="lazy">
+      </div>
+    {% endif %}
+    <div class="banner__content" data-reveal>
+      <h2 class="wh-display banner__title" id="{{ banner.key }}-title">{{ banner.title }}</h2>
+      {% if banner.text %}<p class="banner__text">{{ banner.text }}</p>{% endif %}
+      {% if banner.cta_label and cta_url %}
+        <a class="btn btn-wh{% if banner.layout == 'background' %} btn-wh--light{% endif %}" href="{{ cta_url }}"
+           {% if banner.cta_target == "whatsapp" or "://" in cta_url %}target="_blank" rel="noopener"{% endif %}>
+          {{ banner.cta_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,28 @@
+{% load static i18n formatting %}
+{% comment %}
+  Property card. variant: "overlay" (photo with the text on top, featured carousel)
+  or "stacked" (photo above the text, search results).
+{% endcomment %}
+<article class="property-card property-card--{{ variant|default:'overlay' }}">
+  <a class="property-card__link" href="{% url 'properties:detail' property.slug %}">
+    <div class="property-card__media">
+      {% with image=property.cover_image %}
+        {% if image %}
+          <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" loading="lazy">
+        {% endif %}
+      {% endwith %}
+    </div>
+    <div class="property-card__body">
+      <h3 class="property-card__title">{{ property.title }}</h3>
+      <p class="property-card__guests">
+        <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/people.svg' %}" alt="" width="16" height="16">
+        <span class="visually-hidden">{% translate "Guests" %}:</span>
+        {{ property.max_guests }}
+      </p>
+      <p class="property-card__price">
+        <strong>{{ property.price_per_night|money }}</strong> {% translate "night" %}
+      </p>
+      <p class="property-card__location">{{ property.city.name }} - {{ property.city.country.name }}</p>
+    </div>
+  </a>
+</article>

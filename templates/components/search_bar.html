@@ -1,0 +1,65 @@
+{% load static i18n %}
+{% comment %}
+  Search bar shared by the home hero, the footer and the results page.
+  variant: "hero" (pill with icons, as in the design) or "footer" (underlined fields
+  with visible labels and no district, as in the design's footer).
+  Without JavaScript it works with native selects and date inputs; date-range.js and
+  district-select.js enhance it.
+{% endcomment %}
+{% with variant=variant|default:"hero" icons="vendor/bootstrap-icons-1.13.2/icons/" %}
+<form class="search-bar search-bar--{{ variant }}" action="{% url 'properties:search' %}" method="get" role="search"
+      aria-label="{% translate 'Search properties' %}">
+  {{ form.country }}
+
+  <div class="search-bar__field">
+    <label class="search-bar__label" for="{{ form.city.id_for_label }}">
+      <img src="{% static icons|add:'search.svg' %}" alt="" width="16" height="16">
+      <span{% if variant == "hero" %} class="visually-hidden"{% endif %}>{% translate "Destination" %}</span>
+    </label>
+    {{ form.city }}
+  </div>
+
+  {% if variant != "footer" %}
+  <div class="search-bar__field">
+    <label class="search-bar__label" for="{{ form.district.id_for_label }}">
+      <img src="{% static icons|add:'flag.svg' %}" alt="" width="16" height="16">
+      <span{% if variant == "hero" %} class="visually-hidden"{% endif %}>{{ form.district.label }}</span>
+    </label>
+    {{ form.district }}
+  </div>
+  {% endif %}
+
+  <div class="search-bar__field search-bar__field--dates" data-date-range
+       data-placeholder="{% translate 'Add dates' %}">
+    <label class="search-bar__label" for="{{ form.check_in.id_for_label }}">
+      <img src="{% static icons|add:'calendar3.svg' %}" alt="" width="16" height="16">
+      <span{% if variant == "hero" %} class="visually-hidden"{% endif %}>{% translate "Check-in - Check-out" %}</span>
+    </label>
+    <span class="search-bar__dates">
+      {{ form.check_in }}
+      <span class="search-bar__dates-separator" aria-hidden="true">/</span>
+      <label class="visually-hidden" for="{{ form.check_out.id_for_label }}">{{ form.check_out.label }}</label>
+      {{ form.check_out }}
+    </span>
+  </div>
+
+  <div class="search-bar__field">
+    <label class="search-bar__label" for="{{ form.guests.id_for_label }}">
+      <img src="{% static icons|add:'person.svg' %}" alt="" width="16" height="16">
+      <span{% if variant == "hero" %} class="visually-hidden"{% endif %}>{{ form.guests.label }}</span>
+    </label>
+    {{ form.guests }}
+  </div>
+
+  <div class="search-bar__submit">
+    <button type="submit" class="btn btn-wh{% if variant == 'footer' %} btn-wh--outline{% endif %}">{% translate "Search" %}</button>
+  </div>
+
+  {% if form.errors %}
+    <ul class="search-bar__errors" role="alert">
+      {% for field in form %}{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
+      {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+</form>
+{% endwith %}

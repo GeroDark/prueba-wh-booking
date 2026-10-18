@@ -1,0 +1,27 @@
+{% comment %}
+  Section with a title, a text and a grid of illustrated items (FeatureSection).
+  Used by "Services at Wynwood House" and "Why travel to Spain?".
+  variant: "tiles" (square photos with a short label) or "cards" (photos with a description).
+{% endcomment %}
+<section class="feature-section feature-section--{{ variant|default:'tiles' }}" id="{{ section.key }}"
+         aria-labelledby="{{ section.key }}-title">
+  <div class="container-wh feature-section__inner">
+    <div class="feature-section__intro" data-reveal>
+      <h2 class="wh-display" id="{{ section.key }}-title">{{ section.title }}</h2>
+      {% if section.text %}<p class="feature-section__text">{{ section.text }}</p>{% endif %}
+    </div>
+    <ul class="feature-section__grid">
+      {% for item in section.items.all %}
+        <li class="feature-item" data-reveal>
+          {% if item.image %}
+            <div class="feature-item__media">
+              <img src="{{ item.image.url }}" alt="" loading="lazy">
+            </div>
+          {% endif %}
+          <h3 class="feature-item__title">{{ item.title }}</h3>
+          {% if item.description %}<p class="feature-item__text">{{ item.description }}</p>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>

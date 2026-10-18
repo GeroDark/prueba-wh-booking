@@ -538,7 +538,7 @@ BANNERS = [
         "cta_label": ("Contáctanos", "Contact us"),
         "cta_target": "whatsapp",
         "cta_url": "",
-        "order": 1,
+        "order": 2,
     },
     {
         "key": "events",
@@ -550,11 +550,11 @@ BANNERS = [
             "events. Enjoy art, culture and inspiration like never before.",
         ),
         "image": "banners/events-2.jpg",
-        "layout": "image_left",
+        "layout": "image_right",
         "cta_label": ("Ver todos los eventos", "See all events"),
         "cta_target": "link",
         "cta_url": "https://wynwoodhouse.com/",
-        "order": 2,
+        "order": 1,
     },
     {
         "key": "real-estate",

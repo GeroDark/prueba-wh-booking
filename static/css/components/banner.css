@@ -1,0 +1,109 @@
+.banner {
+  position: relative;
+  padding-block: clamp(3rem, 7vw, 6.5rem);
+}
+
+.banner__inner {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.banner__media {
+  overflow: hidden;
+  aspect-ratio: 456 / 603;
+  max-height: 37.7rem;
+}
+
+.banner__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner__title {
+  margin-bottom: 1.25rem;
+  font-size: var(--wh-fs-h2);
+}
+
+.banner__text {
+  max-width: 38rem;
+  margin-bottom: 2rem;
+  font-size: 0.984rem;
+}
+
+@media (min-width: 768px) {
+  .banner--image_left .banner__inner {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(2.5rem, 5.3vw, 4.75rem);
+  }
+
+  .banner--image_right .banner__inner {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: clamp(2.5rem, 5.3vw, 4.75rem);
+  }
+
+  .banner--image_right .banner__media {
+    order: 2;
+  }
+}
+
+/* Background layout: full-width photo with the text on top (real estate) */
+
+.banner--background {
+  display: flex;
+  align-items: flex-end;
+  min-height: clamp(26rem, 38vw, 34rem);
+  padding-block: 2.5rem;
+  color: var(--wh-white);
+}
+
+.banner--background::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Strong enough for white text over light photos (WCAG contrast), especially on mobile. */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0.1));
+  content: "";
+}
+
+.banner__background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner--background .banner__inner {
+  position: relative;
+  z-index: 2;
+}
+
+.banner--background .banner__text {
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .banner--background .banner__content {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    column-gap: 2rem;
+  }
+
+  .banner--background .banner__title,
+  .banner--background .banner__text {
+    grid-column: 1;
+  }
+
+  .banner--background .banner__text {
+    margin-bottom: 0;
+  }
+
+  .banner--background .btn {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+  }
+}

@@ -1,0 +1,212 @@
+/*
+ * Search bar. Variants:
+ * - hero: translucent pill split in segments (Figma "Barra búsqueda"), stacked card on mobile.
+ * - footer: underlined fields with visible labels, on the footer's blue background.
+ */
+
+.search-bar {
+  display: grid;
+  gap: 0;
+  width: 100%;
+  margin: 0;
+  color: var(--wh-black);
+  text-align: left;
+}
+
+.search-bar__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.search-bar__label {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+}
+
+.search-bar__control {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 0.984rem;
+  appearance: none;
+  outline-offset: 4px;
+}
+
+select.search-bar__control {
+  padding-right: 1.25rem;
+  background: url("../../vendor/bootstrap-icons-1.13.2/icons/chevron-down.svg") right center / 12px no-repeat;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+
+.search-bar__control::placeholder {
+  color: var(--wh-black);
+  opacity: 1;
+}
+
+.search-bar__dates {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.search-bar__dates input[type="date"] {
+  flex: 1;
+}
+
+.search-bar__range {
+  cursor: pointer;
+}
+
+/* Once date-range.js replaces the two inputs with one range field, the separator is redundant. */
+.is-enhanced .search-bar__dates-separator {
+  display: none;
+}
+
+.search-bar__submit {
+  display: flex;
+  align-items: center;
+}
+
+.search-bar__errors {
+  grid-column: 1 / -1;
+  margin: 0.75rem 0 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--wh-white);
+  color: var(--wh-danger);
+  font-size: 0.875rem;
+  list-style: none;
+}
+
+/* Hero variant */
+
+.search-bar--hero {
+  overflow: hidden;
+  border: 1px solid var(--wh-search-border);
+  border-radius: 1.5rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--wh-shadow);
+}
+
+.search-bar--hero .search-bar__field {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--wh-search-border);
+}
+
+.search-bar--hero .search-bar__submit {
+  padding: 1rem 1.5rem;
+}
+
+.search-bar--hero .search-bar__submit .btn {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .search-bar--hero {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .search-bar--hero .search-bar__field:nth-of-type(odd) {
+    border-right: 1px solid var(--wh-search-border);
+  }
+
+  .search-bar--hero .search-bar__submit {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1200px) {
+  .search-bar--hero {
+    grid-template-columns: 1fr 1fr 1.25fr 1.1fr auto;
+    border-radius: var(--wh-radius-pill);
+    background: rgba(255, 255, 255, 0.77);
+    backdrop-filter: blur(6px);
+  }
+
+  .search-bar--hero .search-bar__field {
+    min-height: 4.25rem;
+    border-bottom: 0;
+    border-right: 1px solid var(--wh-search-border);
+  }
+
+  .search-bar--hero .search-bar__submit {
+    grid-column: auto;
+    padding: 0 1.4rem;
+  }
+
+  .search-bar--hero .search-bar__submit .btn {
+    min-width: 11.9rem;
+  }
+}
+
+/* Footer variant */
+
+.search-bar--footer {
+  gap: 1.25rem;
+}
+
+.search-bar--footer .search-bar__field {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--wh-black);
+}
+
+.search-bar--footer .search-bar__label {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.search-bar--footer .search-bar__label img {
+  width: 13px;
+  height: 13px;
+}
+
+.search-bar--footer .search-bar__control {
+  font-size: 0.9375rem;
+}
+
+@media (min-width: 768px) {
+  .search-bar--footer {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    align-items: end;
+    gap: 2rem;
+  }
+}
+
+/* flatpickr theme */
+
+.flatpickr-calendar {
+  border-radius: 1rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  font-family: var(--wh-font-body);
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover {
+  border-color: var(--wh-black);
+  background: var(--wh-black);
+}
+
+.flatpickr-day.inRange {
+  border-color: var(--wh-cream);
+  background: var(--wh-cream);
+  box-shadow: -5px 0 0 var(--wh-cream), 5px 0 0 var(--wh-cream);
+}

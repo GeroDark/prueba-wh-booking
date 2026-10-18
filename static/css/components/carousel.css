@@ -1,0 +1,53 @@
+.carousel-track {
+  display: grid;
+  grid-auto-columns: var(--carousel-item-width, 18rem);
+  grid-auto-flow: column;
+  gap: var(--carousel-gap, 1.2rem);
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-track > li {
+  scroll-snap-align: start;
+}
+
+.carousel-controls {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+.carousel-controls__button {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--wh-black);
+  border-radius: 50%;
+  background: var(--wh-white);
+  transition: background-color var(--wh-transition), opacity var(--wh-transition);
+}
+
+.carousel-controls__button:hover:not(:disabled) {
+  background: var(--wh-cream);
+}
+
+.carousel-controls__button:disabled {
+  border-color: var(--wh-gray-light);
+  opacity: 0.45;
+  cursor: default;
+}
+
+[data-carousel].is-static .carousel-controls {
+  visibility: hidden;
+}
