@@ -16,6 +16,12 @@ def contact_href(context, channel):
     return channel.get_href(whatsapp_message=context["site_settings"].whatsapp_message)
 
 
+@register.simple_tag(takes_context=True)
+def whatsapp_link(context, message=""):
+    """Chat link to the site's WhatsApp number with a specific pre-filled message."""
+    return context["site_settings"].get_whatsapp_url(message)
+
+
 @register.filter
 def email_break(address):
     """Let long e-mail addresses wrap after the @ instead of overflowing narrow columns."""

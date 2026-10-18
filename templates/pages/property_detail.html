@@ -1,24 +1,112 @@
 {% extends "base.html" %}
-{% load static i18n formatting %}
+{% load static i18n l10n formatting %}
 
 {% block title %}{{ property.title }} | Wynwood House{% endblock %}
 {% block meta_description %}{{ property.description|truncatechars:155 }}{% endblock %}
+{% block body_class %}page-detail{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/pages/search.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/leaflet-1.9.4/leaflet.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/leaflet-gesture-handling-1.2.2/leaflet-gesture-handling.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/map.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components/booking-card.css' %}">
+  <link rel="stylesheet" href="{% static 'css/pages/detail.css' %}">
 {% endblock %}
 
 {% block content %}
-  {# Phase 2: essentials only. Gallery, booking form, availability and map arrive in phase 5. #}
-  <article class="search-page">
-    <div class="container-wh">
-      <p class="wh-eyebrow">{{ property.district.name }}, {{ property.city.name }}, {{ property.city.country.name }}</p>
-      <h1 class="wh-display">{{ property.title }}</h1>
-      {% with image=property.cover_image %}
-        {% if image %}<img class="img-fluid my-4" src="{{ image.image.url }}" alt="{{ image.alt_text }}">{% endif %}
-      {% endwith %}
-      <p>{{ property.description }}</p>
-      <p><strong>{{ property.price_per_night|money }}</strong> {% translate "night" %}</p>
+  {% with images=property.images.all %}
+  <article class="property-detail container-wh" aria-labelledby="property-title">
+    <nav class="breadcrumb-wh" aria-label="{% translate 'Breadcrumb' %}">
+      <img src="{% static 'img/brand/favicon.svg' %}" alt="" width="18" height="18">
+      <ol>
+        <li><a href="{% url 'properties:search' %}?country={{ property.city.country.slug }}">{{ property.city.country.name }}</a></li>
+        <li><a href="{% url 'properties:search' %}?city={{ property.city.slug }}">{{ property.city.name }}</a></li>
+        <li aria-current="page">{{ property.title }}</li>
+      </ol>
+    </nav>
+
+    {% include "components/messages.html" %}
+
+    {% if images %}
+      <div class="gallery {% if images|length >= 3 %}gallery--3{% elif images|length == 2 %}gallery--2{% else %}gallery--1{% endif %}">
+        {% for image in images|slice:":3" %}
+          <figure class="gallery__item{% if forloop.first %} gallery__item--main{% endif %}">
+            <img src="{{ image.image.url }}" alt="{{ image.alt_text }}"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
+          </figure>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="property-detail__layout">
+      <div class="property-detail__main">
+        <header class="property-detail__header">
+          <h1 class="wh-display property-detail__title" id="property-title">{{ property.title }}</h1>
+          <p class="property-detail__place">{{ property.district.name }}, {{ property.city.name }}, {{ property.city.country.name }}</p>
+          <p class="property-detail__facts">
+            <span>{% blocktranslate count counter=property.max_guests %}{{ counter }} guest{% plural %}{{ counter }} guests{% endblocktranslate %}</span>
+            <span>{% blocktranslate count counter=property.bedrooms %}{{ counter }} bedroom{% plural %}{{ counter }} bedrooms{% endblocktranslate %}</span>
+            <span>{% blocktranslate count counter=property.beds %}{{ counter }} bed{% plural %}{{ counter }} beds{% endblocktranslate %}</span>
+            <span>{% blocktranslate count counter=property.bathrooms %}{{ counter }} bathroom{% plural %}{{ counter }} bathrooms{% endblocktranslate %}</span>
+          </p>
+        </header>
+
+        <section class="property-detail__section">
+          <h2 class="visually-hidden">{% translate "Description" %}</h2>
+          <p class="property-detail__description">{{ property.description|linebreaksbr }}</p>
+        </section>
+
+        {% with amenities=property.amenities.all %}
+          {% if amenities %}
+            <section class="property-detail__section" aria-labelledby="amenities-title">
+              <h2 class="wh-display property-detail__subtitle" id="amenities-title">{% translate "Amenities" %}</h2>
+              <ul class="amenities">
+                {% for amenity in amenities %}
+                  <li class="amenities__item">
+                    <img src="{% static amenity.icon_static_path %}" alt="" width="28" height="28">
+                    <span>{{ amenity.name }}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            </section>
+          {% endif %}
+        {% endwith %}
+
+        {% if location %}
+          <section class="property-detail__section" aria-labelledby="location-title">
+            <h2 class="wh-display property-detail__subtitle" id="location-title">{% translate "Location" %}</h2>
+            <p class="property-detail__location-note">
+              {{ property.district.name }}, {{ property.city.name }}.
+              {% translate "The exact address is shared after booking." %}
+            </p>
+            {# unlocalize: in Spanish Django would print "-12,125", which JavaScript cannot parse. #}
+            <div class="detail-map" id="property-map" data-lat="{{ location.0|unlocalize }}" data-lng="{{ location.1|unlocalize }}"
+                 data-hint-scroll="{% translate 'Use Ctrl + scroll to zoom the map' %}"
+                 data-hint-scroll-mac="{% translate 'Use ⌘ + scroll to zoom the map' %}"
+                 data-hint-touch="{% translate 'Use two fingers to move the map' %}"
+                 role="img" aria-label="{% blocktranslate with place=property.district.name %}Map of the area around {{ place }}{% endblocktranslate %}"></div>
+          </section>
+        {% endif %}
+      </div>
+
+      <aside class="property-detail__aside" id="booking" aria-label="{% translate 'Book this property' %}">
+        {% include "components/booking_card.html" %}
+      </aside>
     </div>
   </article>
+  {% endwith %}
+
+  {# Phones and tablets: the card sits below the content, so a fixed bar keeps "Book" one tap away. #}
+  <div class="mobile-book-bar">
+    <p class="mobile-book-bar__price"><strong>{{ property.price_per_night|money }}</strong> {% translate "per night" %}</p>
+    <a class="btn btn-wh" href="#booking">{% translate "Book" %}</a>
+  </div>
+
+  {{ unavailable_dates|json_script:"unavailable-dates" }}
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'vendor/leaflet-1.9.4/leaflet.js' %}" defer></script>
+  <script src="{% static 'vendor/leaflet-gesture-handling-1.2.2/leaflet-gesture-handling.min.js' %}" defer></script>
+  <script src="{% static 'js/detail-map.js' %}" defer></script>
+  <script src="{% static 'js/booking-card.js' %}" defer></script>
 {% endblock %}

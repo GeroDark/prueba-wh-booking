@@ -14,7 +14,8 @@ from django.contrib.auth import get_user_model
 from django.core.files import File
 from django.utils import timezone
 
-from apps.bookings.models import Booking
+from apps.bookings.models import Booking, BookingLine
+from apps.bookings.pricing import quote_stay
 from apps.core.models import (
     Banner,
     ContactChannel,
@@ -281,17 +282,32 @@ class Seeder:
             prop = Property.objects.filter(slug=item["property"]).first()
             if prop is None:  # not loaded because of --properties N
                 continue
-            Booking.objects.update_or_create(
+            check_in = today + timedelta(days=item["starts_in"])
+            check_out = check_in + timedelta(days=item["nights"])
+            quote = quote_stay(prop, check_in, check_out)
+            booking, _ = Booking.objects.update_or_create(
                 reference=item["reference"],
                 defaults={
                     "property": prop,
                     "guest": guest,
                     "status": Booking.Status.CONFIRMED,
-                    "check_in": today + timedelta(days=item["starts_in"]),
-                    "check_out": today + timedelta(days=item["starts_in"] + item["nights"]),
+                    "check_in": check_in,
+                    "check_out": check_out,
                     "guests": item["guests"],
+                    "total": quote.total,
                     "confirmed_at": timezone.now(),
                 },
+            )
+            booking.lines.all().delete()
+            BookingLine.objects.bulk_create(
+                BookingLine(
+                    booking=booking,
+                    kind=line.kind,
+                    amount=line.amount,
+                    order=order,
+                    **{f"label_{code}": text for code, text in line.labels.items()},
+                )
+                for order, line in enumerate(quote.lines)
             )
             created += 1
         self.log(f"Demo bookings: {created} (dates relative to today).")

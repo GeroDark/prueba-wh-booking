@@ -1,8 +1,18 @@
+from datetime import timedelta
+
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.translation import ngettext
 from django.views.generic import DetailView, ListView
+from django.views.generic.edit import FormMixin
 
+from apps.bookings.forms import BookingRequestForm
+from apps.bookings.models import Booking
+from apps.bookings.services import hold_dates
+from apps.bookings.session import remember_hold, session_holds
 from apps.core.templatetags.formatting import money
 
 from .forms import SearchForm
@@ -80,14 +90,78 @@ class PropertySearchView(ListView):
         return context
 
 
-class PropertyDetailView(DetailView):
-    """Property page.
+class PropertyDetailView(FormMixin, DetailView):
+    """Property page with the booking card.
 
-    Phase 2 shows the essentials; gallery, booking form and map arrive in phase 5.
+    GET shows the property; POST ("Book now") holds the dates and sends the visitor to the
+    checkout. This is Django's documented FormMixin + DetailView pattern: on errors the same
+    page is rendered again with the messages next to the fields.
     """
 
     template_name = "pages/property_detail.html"
     context_object_name = "property"
+    form_class = BookingRequestForm
 
     def get_queryset(self):
         return Property.objects.active().with_card_data().prefetch_related("amenities")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["prop"] = self.object
+        # Dates coming from the search (or from an expired checkout) arrive in the URL:
+        # bind them so the page shows availability and the price right away.
+        if self.request.method == "GET" and {"check_in", "check_out"} <= self.request.GET.keys():
+            kwargs["data"] = {
+                "check_in": self.request.GET["check_in"],
+                "check_out": self.request.GET["check_out"],
+                "guests": self.request.GET.get("guests") or 1,
+            }
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        prop = self.object
+        today = prop.district.city.local_today()
+        taken = (
+            Booking.objects.filter(property=prop, check_out__gt=today)
+            .blocking()
+            .order_by("check_in")
+        )
+        context.update(
+            # Nights that are taken: from check-in to the day before check-out.
+            unavailable_dates=[
+                {
+                    "from": booking.check_in.isoformat(),
+                    "to": (booking.check_out - timedelta(days=1)).isoformat(),
+                }
+                for booking in taken
+            ],
+            calendar={
+                "min_date": today.isoformat(),
+                "max_date": (today + timedelta(days=settings.BOOKING_MAX_DAYS_AHEAD)).isoformat(),
+                "max_nights": settings.BOOKING_MAX_NIGHTS,
+            },
+            location=prop.public_coordinates,
+            hold_minutes=settings.BOOKING_HOLD_MINUTES,
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if not form.is_valid():
+            return self.form_invalid(form)
+        try:
+            booking = hold_dates(
+                prop=self.object,
+                check_in=form.cleaned_data["check_in"],
+                check_out=form.cleaned_data["check_out"],
+                guests=form.cleaned_data["guests"],
+                guest=request.user if request.user.is_authenticated else None,
+                released_holds=session_holds(request),
+            )
+        except ValidationError as error:
+            form.add_error(None, error)
+            return self.form_invalid(form)
+        remember_hold(request, booking.reference)
+        return redirect("bookings:checkout", reference=booking.reference)

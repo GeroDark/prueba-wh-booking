@@ -280,13 +280,17 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - [x] Tests: cada filtro por separado y la exclusión de propiedades ocupadas.
 
 ### Fase 5 — Detalle y motor de reservas
-- Galería, información, comodidades, sección "Ubicación" con mapa de la zona aproximada (como Airbnb), formulario de
-  reserva (fechas + huéspedes) con flatpickr y fechas ocupadas deshabilitadas.
-- Desglose de precio calculado en el servidor.
-- `hold_dates()` con bloqueo de la propiedad, `ExclusionConstraint` y expiración perezosa.
-- [ ] El calendario no deja elegir fechas ocupadas ni pasadas.
-- [ ] "Reservar" crea la retención y muestra el contador.
-- [ ] Tests: los 6 casos de solapamiento, fechas pasadas según la zona horaria, capacidad, expiración, una retención por sesión y **concurrencia real con dos hilos**.
+- Galería, información, comodidades, sección "Ubicación" con mapa de la zona aproximada (como Airbnb), tarjeta de
+  reserva con pestañas Diario y Mensual (estadías largas por WhatsApp), calendario con fechas ocupadas deshabilitadas
+  y barra fija "Reservar" en móvil.
+- Desglose de precio calculado en el servidor (`pricing.quote_stay`), en vivo por `GET /properties/<slug>/quote/`.
+- `services.hold_dates()` con bloqueo de la propiedad, expiración perezosa y una retención por visitante;
+  `ExclusionConstraint` en PostgreSQL; `BookingLine` congela el desglose en ES y EN.
+- Checkout provisional con resumen, cuenta regresiva y "Cambiar fechas" (libera la retención). El registro y el pago
+  llegan en la Fase 7.
+- [x] El calendario no deja elegir fechas ocupadas ni pasadas.
+- [x] "Reservar" crea la retención y muestra el contador.
+- [x] Tests: los 6 casos de solapamiento, fechas pasadas según la zona horaria, capacidad, expiración, una retención por sesión y **concurrencia real con dos hilos**.
 
 ### Fase 6 — Cuentas
 - Registro, login y logout (POST); validadores de contraseña; lista de requisitos en vivo como en el Figma.

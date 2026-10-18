@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
@@ -96,8 +98,12 @@ def test_flush_refuses_to_delete_real_bookings():
 
     call_command("seed_data", skip_images=True)
     demo = Booking.objects.first()
+    # A real booking on free dates (overlapping ones are rejected by the database).
     Booking.objects.create(
-        property=demo.property, check_in=demo.check_in, check_out=demo.check_out, guests=1
+        property=demo.property,
+        check_in=demo.check_out + timedelta(days=100),
+        check_out=demo.check_out + timedelta(days=103),
+        guests=1,
     )
 
     with pytest.raises(CommandError, match="real bookings"):

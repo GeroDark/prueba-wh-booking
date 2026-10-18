@@ -191,6 +191,13 @@ CURRENCY = env("CURRENCY", default="USD")
 IMAGE_MAX_DIMENSION = 1200
 IMAGE_WEBP_QUALITY = 80
 
+# Bookings (see D08): "Book now" holds the dates for this many minutes while the guest pays.
+BOOKING_HOLD_MINUTES = env.int("BOOKING_HOLD_MINUTES", default=15)
+# Online bookings up to this many nights; longer stays go through the long-stay contact (D32).
+BOOKING_MAX_NIGHTS = env.int("BOOKING_MAX_NIGHTS", default=30)
+# How far ahead the calendar accepts check-ins.
+BOOKING_MAX_DAYS_AHEAD = env.int("BOOKING_MAX_DAYS_AHEAD", default=365)
+
 
 # Logging: everything to stdout, collected by Docker or the hosting provider.
 

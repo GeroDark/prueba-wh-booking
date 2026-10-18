@@ -1,9 +1,11 @@
 import builtins
 import secrets
+from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
 from django.db.models import F, Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.core.models import TimeStampedModel
@@ -59,6 +61,13 @@ class Booking(TimeStampedModel):
         help_text=_("Pending bookings stop blocking their dates after this moment."),
     )
     currency = models.CharField(_("currency"), max_length=3, default=settings.CURRENCY)
+    total = models.DecimalField(
+        _("total"),
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0"),
+        help_text=_("Snapshot at booking time: later price changes do not affect it."),
+    )
     language = models.CharField(
         _("language"), max_length=7, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE
     )
@@ -89,3 +98,37 @@ class Booking(TimeStampedModel):
     @builtins.property
     def nights(self):
         return (self.check_out - self.check_in).days
+
+    def is_hold_active(self, now=None):
+        """A pending booking whose hold has not expired yet."""
+        now = now or timezone.now()
+        return (
+            self.status == self.Status.PENDING
+            and self.expires_at is not None
+            and self.expires_at > now
+        )
+
+
+class BookingLine(models.Model):
+    """One line of the price breakdown, frozen when the dates are held (see D10)."""
+
+    class Kind(models.TextChoices):
+        LODGING = "lodging", _("Nights")
+        CLEANING = "cleaning", _("Cleaning")
+        TAX = "tax", _("Tax")
+
+    booking = models.ForeignKey(
+        Booking, on_delete=models.CASCADE, related_name="lines", verbose_name=_("booking")
+    )
+    kind = models.CharField(_("type"), max_length=10, choices=Kind)
+    label = models.CharField(_("label"), max_length=120)
+    amount = models.DecimalField(_("amount"), max_digits=10, decimal_places=2)
+    order = models.PositiveSmallIntegerField(_("order"), default=0)
+
+    class Meta:
+        verbose_name = _("price line")
+        verbose_name_plural = _("price lines")
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return f"{self.label}: {self.amount}"
