@@ -14,6 +14,7 @@ urlpatterns = [
 # Every public page lives under a language prefix: /es/... and /en/...
 urlpatterns += i18n_patterns(
     path(settings.ADMIN_URL, admin.site.urls),
+    path("", include("apps.properties.urls")),
     path("", include("apps.core.urls")),
 )
 

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static i18n formatting %}
+
+{% block title %}{{ property.title }} | Wynwood House{% endblock %}
+{% block meta_description %}{{ property.description|truncatechars:155 }}{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/pages/search.css' %}">
+{% endblock %}
+
+{% block content %}
+  {# Phase 2: essentials only. Gallery, booking form, availability and map arrive in phase 5. #}
+  <article class="search-page">
+    <div class="container-wh">
+      <p class="wh-eyebrow">{{ property.district.name }}, {{ property.city.name }}, {{ property.city.country.name }}</p>
+      <h1 class="wh-display">{{ property.title }}</h1>
+      {% with image=property.cover_image %}
+        {% if image %}<img class="img-fluid my-4" src="{{ image.image.url }}" alt="{{ image.alt_text }}">{% endif %}
+      {% endwith %}
+      <p>{{ property.description }}</p>
+      <p><strong>{{ property.price_per_night|money }}</strong> {% translate "night" %}</p>
+    </div>
+  </article>
+{% endblock %}
