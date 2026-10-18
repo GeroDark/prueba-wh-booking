@@ -91,7 +91,7 @@ Estos seis casos forman un test parametrizado.
 | Navegador | flatpickr con fecha mínima y fechas ocupadas deshabilitadas | Experiencia de usuario (no da seguridad) |
 | Formulario | Fechas pasadas, orden de las fechas, capacidad | Mensajes claros junto a cada campo |
 | Servicio | `transaction.atomic()` + `select_for_update()` sobre la propiedad + consulta de solapamiento | Serializa las reservas de una misma propiedad |
-| Base de datos | `CheckConstraint(check_out > check_in)` y `ExclusionConstraint` (PostgreSQL) sobre el rango de fechas en `PENDING`/`CONFIRMED` | Garantía final, aunque fallara el código |
+| Base de datos | `CheckConstraint(check_out > check_in)` y una restricción de exclusión de PostgreSQL (`EXCLUDE USING gist`, con `btree_gist`) sobre `daterange(check_in, check_out, '[)')` en `PENDING`/`CONFIRMED`, creada en una migración que en SQLite no hace nada | Garantía final, aunque fallara el código |
 
 "No en el pasado" no puede ser una restricción de la base de datos: depende de la fecha actual y volvería inválidas
 las reservas históricas. Por eso se valida solo al crear la reserva.
@@ -440,3 +440,38 @@ campos con error, así que la vista usa solo lo que pasó la validación.
 
 **Por qué.** Es mejor que mostrar cero resultados o ignorar el error en silencio: el usuario ve qué corregir y
 mientras tanto sigue viendo propiedades relevantes.
+
+---
+
+## D32 · Reservas en línea de hasta 30 noches; las más largas, por contacto
+
+**Contexto.** El Figma muestra en la tarjeta de reserva dos pestañas, "Diario" y "Mensual", y el home tiene un banner
+de "Alquileres a largo plazo" con "Contáctanos". El PDF no fija límites de duración.
+
+**Decisión (suposición documentada).** La pestaña "Diario" reserva en línea hasta `BOOKING_MAX_NIGHTS` noches
+(30 por defecto). "Mensual" explica las tarifas especiales y abre WhatsApp con un mensaje que nombra la propiedad.
+Las reservas se aceptan hasta `BOOKING_MAX_DAYS_AHEAD` días de anticipación (365). Ambos valores son configurables
+por variable de entorno.
+
+**Por qué.** Separa el flujo automático (estadías cortas, precio por noche) del comercial (estadías largas con
+tarifa negociada), como sugiere el diseño, y evita retener un calendario durante meses desde un formulario anónimo.
+
+---
+
+## D33 · Detalle con `FormMixin` + `DetailView` y precio en vivo desde el servidor
+
+**Decisión.**
+- La misma URL de la propiedad muestra la página (GET) y crea la retención (POST). Es el patrón que documenta Django
+  para combinar un formulario con un `DetailView`: si hay errores, la página se vuelve a mostrar con los mensajes
+  junto a los campos, sin perder la galería ni el contexto.
+- El desglose se recalcula en el servidor (`GET .../quote/`, JSON) cada vez que cambian las fechas o los huéspedes.
+  El navegador nunca calcula precios: muestra lo que devuelve el servidor, con `textContent`.
+- Si la URL trae fechas (desde la búsqueda, o al volver de un checkout vencido), el formulario se completa con ellas
+  y la página muestra disponibilidad y precio sin JavaScript.
+- Las fechas ocupadas viajan al calendario como rangos de noches (`check_in` a `check_out - 1`): el día de salida de
+  una estadía queda libre para la siguiente llegada. flatpickr deshabilita días sueltos pero permite marcar un rango
+  por encima de ellos, así que el JS rechaza los rangos que cruzan una noche ocupada; el servidor valida igual.
+
+**Limitación conocida.** Como el calendario deshabilita las noches ocupadas, no permite elegir como salida el día
+en que empieza otra reserva, aunque el servidor lo acepta (intervalo semiabierto). Para la demo es aceptable;
+resolverlo requiere un componente de calendario propio.

@@ -16,7 +16,7 @@ confirmación y correo, en español e inglés.
 | 2 | Home: buscador, destinos, destacadas, servicios, "¿Por qué viajar a España?", banners, header y footer | ✅ |
 | 3 | Despliegue | ⏳ |
 | 4 | Resultados: filtros por ubicación, fechas y huéspedes; mapa con precios y agrupamiento | ✅ |
-| 5 | Detalle de la propiedad y motor de reservas | ⏳ |
+| 5 | Detalle de la propiedad: galería, calendario de disponibilidad, precio en vivo y retención de fechas | ✅ |
 | 6–8 | Cuentas, checkout con pago simulado, confirmación y correo | ⏳ |
 
 ## Stack
@@ -78,10 +78,23 @@ El comando se puede ejecutar varias veces sin duplicar nada.
 Los textos y las fotos salen del diseño de Figma de la prueba. Los datos de contacto y los impuestos son ilustrativos.
 El origen y la licencia de cada imagen están en [seed/images/CREDITS.md](seed/images/CREDITS.md).
 
+## Probar una reserva
+
+1. Abre una propiedad (por ejemplo http://localhost:8000/es/properties/modern-duplex-parque-virrey/).
+   En el calendario, las noches ocupadas por las reservas de demo y los días pasados están deshabilitados.
+2. Elige fechas y huéspedes: el desglose (noches, limpieza, impuestos del país) se calcula en el servidor.
+3. "Reservar ahora" retiene las fechas durante `BOOKING_HOLD_MINUTES` minutos (15) y abre el checkout con una
+   cuenta regresiva. Mientras tanto, nadie más puede reservarlas. "Cambiar fechas" las libera al instante.
+
+Reglas que valida el servidor: llegada no pasada (según la zona horaria de la ciudad), salida posterior a la llegada,
+capacidad de la propiedad, hasta 30 noches en línea y sin solapamiento con otra reserva o retención vigente,
+también ante dos reservas simultáneas (ver D06 a D09 en [docs/DECISIONS.md](docs/DECISIONS.md)).
+
 ## Comandos útiles
 
 ```bash
 docker compose exec web pytest                       # tests
+docker compose exec web python manage.py expire_holds # marca como vencidas las retenciones caducadas (opcional, p. ej. con cron)
 docker compose exec web ruff check . && docker compose exec web ruff format .
 docker compose exec web python manage.py makemigrations
 docker compose exec web python manage.py makemessages -l es --ignore=.venv --ignore=staticfiles --no-obsolete
@@ -127,7 +140,7 @@ config/          settings, urls, wsgi
 apps/core/       contenido del sitio (home, banners, menús, contacto), optimizador de imágenes, seed_data
 apps/accounts/   usuario con email como identificador
 apps/properties/ países, ciudades, distritos, comodidades, propiedades, fotos e impuestos; búsqueda
-apps/bookings/   reservas: estados, solapamiento y retenciones que bloquean fechas
+apps/bookings/   reservas: estados, solapamiento, precios (pricing.py), reglas y retenciones (services.py)
 templates/       base.html, pages/ y components/ reutilizables: header, footer, search_bar,
                  property_card, feature_grid, banner, carousel_controls, language_switcher
 static/          css/ (tokens + un archivo por componente y por página), js/ (mejoras progresivas:
