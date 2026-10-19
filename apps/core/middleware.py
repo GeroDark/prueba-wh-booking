@@ -1,21 +1,24 @@
-from .views import HealthView
+from .views import DatabaseHealthView, HealthView
 
-HEALTH_PATH = "/health/"
+HEALTH_PATHS = {
+    "/health/": HealthView.as_view(),
+    "/health/db/": DatabaseHealthView.as_view(),
+}
 
 
 class HealthCheckMiddleware:
-    """Answer the hosting provider's health probe before any other middleware.
+    """Answer the health checks before any other middleware.
 
-    The probe can arrive with an internal Host header (e.g. `localhost:10000` on Render) and over
-    plain HTTP. Answering first means neither ALLOWED_HOSTS nor the HTTPS redirect can make a
-    healthy service look broken. It still checks the database (HealthView).
+    The hosting provider's probe can arrive with an internal Host header (e.g. `localhost:10000`
+    on Render) and over plain HTTP. Answering first means neither ALLOWED_HOSTS nor the HTTPS
+    redirect can make a healthy service look broken.
     """
 
     def __init__(self, get_response):
         self.get_response = get_response
-        self.health = HealthView.as_view()
 
     def __call__(self, request):
-        if request.path == HEALTH_PATH:
-            return self.health(request)
+        view = HEALTH_PATHS.get(request.path)
+        if view is not None:
+            return view(request)
         return self.get_response(request)

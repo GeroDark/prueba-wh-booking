@@ -98,7 +98,9 @@ TEMPLATES = [
 # Database: PostgreSQL by default, SQLite supported through DATABASE_URL.
 
 DATABASES = {"default": env.db("DATABASE_URL", default="postgres://wh:wh@localhost:5432/wh")}
-DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
+# In production each request closes its connection, so a serverless database (Neon, free plan)
+# can scale to zero between visits instead of being held awake by idle connections (D39).
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60 if DEBUG else 0)
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
