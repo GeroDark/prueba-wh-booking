@@ -36,6 +36,10 @@ def remove_constraint(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    reviewed_data_safety = (
+        "Only creates the btree_gist extension and an exclusion constraint; no rows are changed."
+    )
+
     dependencies = [
         ("bookings", "0002_booking_total_and_lines"),
     ]

@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.core.safety import add_confirmation_argument, refuse_in_production
 from apps.core.seeding import data
 from apps.core.seeding.loader import FlushError, Seeder, flush_content
 
@@ -31,10 +32,13 @@ class Command(BaseCommand):
             action="store_true",
             help="Do not attach photos (faster, e.g. for quick checks).",
         )
+        add_confirmation_argument(parser)
 
     def handle(self, *args, flush, properties, skip_images, **options):
         if properties is not None and not 1 <= properties <= len(data.PROPERTIES):
             raise CommandError(f"--properties must be between 1 and {len(data.PROPERTIES)}.")
+        if flush:
+            refuse_in_production(options, "seed_data --flush")
 
         with transaction.atomic():
             if flush:
