@@ -45,9 +45,11 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
 
-Calidad: **424 tests** (pytest, cobertura ~99 %), CI en GitHub Actions con PostgreSQL, ruff y `check --deploy`;
-accesibilidad WCAG 2.1 AA verificada con axe-core; decisiones técnicas con ejemplos en
-[docs/DECISIONS.md](docs/DECISIONS.md) y el plan por fases en [docs/PLAN_MAESTRO.md](docs/PLAN_MAESTRO.md).
+Calidad: **451 tests** (pytest), CI en GitHub Actions con PostgreSQL y SQLite, ruff y `check --deploy`; pruebas de
+concurrencia con hilos reales; accesibilidad WCAG 2.1 AA verificada con axe-core. Las decisiones técnicas, con
+ejemplos, están en [docs/DECISIONS.md](docs/DECISIONS.md), incluidas las correcciones de una revisión externa y los
+límites reconocidos antes de operar con dinero real (D40). El plan por fases está en
+[docs/PLAN_MAESTRO.md](docs/PLAN_MAESTRO.md).
 
 ## Estado
 
@@ -148,9 +150,11 @@ El origen y la licencia de cada imagen están en [seed/images/CREDITS.md](seed/i
 6. **Confirmación** (`/es/bookings/<referencia>/`): solo la ve quien reservó. Muestra la dirección exacta, el mapa con
    el punto preciso y "Abrir en Google Maps".
 
-Un doble clic, recargar la página o pagar desde dos pestañas a la vez nunca cobra dos veces (ver D11).
+Un doble clic, recargar la página o pagar desde dos pestañas a la vez no genera un segundo cobro: clave de
+idempotencia, bloqueo de la reserva y una restricción en la base, probados con dos hilos simultáneos. El límite
+conocido, que es qué pasa si una pasarela real cobra y su respuesta se pierde, está explicado en D11.
 
-7. **Correo de confirmación:** se envía una sola vez al confirmarse el pago, en el idioma en que se reservó.
+7. **Correo de confirmación:** se envía al confirmarse el pago, en el idioma en que se reservó.
    En local llega a Mailpit (http://localhost:8025), que también muestra la versión de texto y un chequeo de
    compatibilidad con clientes de correo.
 
@@ -164,8 +168,10 @@ Un doble clic, recargar la página o pagar desde dos pestañas a la vez nunca co
 
 Se usa la API y no SMTP porque los planes gratuitos de hosting suelen bloquear los puertos SMTP. Si el proveedor
 falla, el pago no se ve afectado y el correo queda pendiente:
-`python manage.py send_booking_confirmations` envía los pendientes (nunca dos veces), y en el admin la acción
-"Reenviar el correo de confirmación" lo vuelve a mandar a pedido del huésped.
+`python manage.py send_booking_confirmations` envía los pendientes y retoma los que quedaron a medias si el proceso
+murió, y en el admin la acción "Reenviar el correo de confirmación" lo vuelve a mandar a pedido del huésped. La
+entrega es "al menos una vez": si el proceso muere justo después de que el proveedor aceptó el correo, puede llegar
+una copia repetida, lo que es preferible a que el huésped no reciba la confirmación (D37).
 
 Reglas que valida el servidor: llegada no pasada (según la zona horaria de la ciudad), salida posterior a la llegada,
 capacidad de la propiedad, hasta 30 noches en línea y sin solapamiento con otra reserva o retención vigente,
@@ -208,8 +214,9 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-Con SQLite, la protección contra reservas simultáneas queda en la capa de aplicación;
-la restricción de exclusión de fechas es exclusiva de PostgreSQL (ver D02 y D07 en las decisiones).
+SQLite no tiene bloqueo de filas: el proyecto lo configura con transacciones `IMMEDIATE`, que hacen esperar a la
+segunda de dos reservas simultáneas (probado con hilos). La restricción de exclusión de fechas en la base es
+exclusiva de PostgreSQL (ver D02 y D07 en las decisiones). CI corre toda la suite con las dos bases.
 
 ## Configuración
 

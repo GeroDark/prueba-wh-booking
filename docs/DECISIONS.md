@@ -189,6 +189,30 @@ Otras medidas:
 - **En producción** el número no debería pasar por nuestro servidor: la pasarela (Stripe Elements, dLocal Smart Fields)
   lo captura en un iframe propio y devuelve un *token*. Así el sitio queda fuera de casi todo el alcance de PCI DSS
   (SAQ A). Es el siguiente paso al integrar una pasarela real.
+
+**Límite conocido: la pasarela cobra y la respuesta se pierde.** Las protecciones de arriba evitan un segundo cobro
+mientras la aplicación sabe lo que pasó. El caso que no resuelven es una pasarela real que cobra y cuya respuesta no
+llega (corte de red, *timeout*, el proceso muere):
+
+- **Hoy:** el registro `Payment` y la llamada a la pasarela están en la misma transacción. Si la llamada falla
+  después de cobrar, la transacción se revierte: no queda rastro del intento y la reserva sigue pendiente.
+  - Si el huésped reintenta **con el mismo formulario** (misma clave), una pasarela real con idempotencia devuelve el
+    cobro original: un solo cobro y la reserva se confirma.
+  - Si no reintenta, o recarga la página (clave nueva), puede quedar **dinero cobrado sin reserva confirmada**.
+  - Con la pasarela simulada no ocurre, porque no tiene red, pero con una real sí.
+- **Diseño para una pasarela real:**
+  1. Guardar el `Payment` como `PROCESSING` **en su propia transacción, antes** de llamar a la pasarela, con su clave
+     de idempotencia: el intento existe aunque todo lo demás falle.
+  2. Una restricción parcial única: como mucho un pago `PROCESSING` o `SUCCEEDED` por reserva, así otra pestaña no
+     puede iniciar un segundo cobro mientras hay uno en curso.
+  3. Llamar a la pasarela con esa clave y actualizar el estado con la respuesta.
+  4. Si la respuesta se pierde, el pago queda `PROCESSING`. Se resuelve con los **webhooks** de la pasarela (la señal
+     principal) y un comando de **conciliación** de respaldo, que consulta el estado real por la clave:
+     - cobrado y las fechas siguen libres → se confirma;
+     - cobrado pero la retención venció y otro reservó → **reembolso automático** y aviso al huésped;
+     - no cobrado → se marca fallido.
+- No se implementó porque la pasarela simulada no puede perder respuestas y no habría forma honesta de probarlo. Es
+  el primer trabajo al integrar dLocal o Stripe.
 - El monto sale de la reserva.
 - Se registra cada intento, también los fallidos.
 - Solo el dueño puede pagar o ver su reserva.
@@ -594,10 +618,16 @@ Apple Pay/Google Pay (requieren una pasarela real).
 **Decisión.**
 - **Cuándo:** con `transaction.on_commit`, solo cuando el pago aprobado ya está guardado. Si algo falla y la
   transacción se revierte, no sale ningún correo.
-- **Una sola vez:** antes de enviar se "reclama" la reserva con un `UPDATE` condicional
-  (`confirmation_sent_at IS NULL`); dos llamadas simultáneas no pueden enviar ambas.
-- **Si el proveedor falla:** el pago sigue confirmado, se deshace la marca, se registra el error y el comando
-  `send_booking_confirmations` lo reintenta. En el admin hay una acción para reenviarlo a pedido.
+- **Tres estados:** pendiente → enviándose (`confirmation_claimed_at`) → enviado (`confirmation_sent_at`).
+  - **Reclamar:** un `UPDATE` condicional sobre las reservas pendientes; dos procesos no pueden enviar el mismo correo
+    a la vez.
+  - **Marcar como enviado:** **solo después** de que el proveedor aceptó el mensaje. Cualquier fallo posterior al
+    reclamo (leer la reserva, armar el correo, llamar al proveedor) libera el reclamo y la reserva vuelve a pendiente.
+  - *Corrección tras una revisión externa:* antes la marca de enviado se escribía primero y la lectura de la reserva
+    quedaba fuera del manejo de errores, así que un fallo ahí dejaba un correo "enviado" que nunca salió.
+- **Si el proceso muere mientras envía:** el reclamo queda "viejo". Después de 10 minutos, `send_booking_confirmations`
+  lo retoma. La entrega es **al menos una vez**: un corte justo después de que el proveedor aceptó puede producir una
+  copia repetida, que es preferible a una reserva sin confirmación. En el admin hay una acción para reenviarlo a pedido.
 - **Idioma:** el de la reserva (`Booking.language`), con `translation.override`: asunto, textos, montos, fechas y
   enlaces (`/es/` o `/en/`). Se fija **al pagar**, no al retener las fechas: si el huésped cambia de idioma en el
   checkout, todo sigue al idioma en que terminó (también su idioma preferido).
@@ -661,3 +691,28 @@ una persona después de un respaldo.
 - **Límites aceptados del plan gratuito:** el servicio se duerme tras 15 minutos sin visitas. UptimeRobot lo evita y lo
   mantiene encendido 24/7, unas 744 de las 750 horas mensuales del espacio de trabajo: alcanza solo si es el único
   servicio gratuito. No hay tareas programadas (las retenciones vencidas ya no bloquean fechas por sí solas, D08).
+
+---
+
+## D40 · Revisión externa: correcciones y límites reconocidos
+
+**Contexto.** Una revisión externa del commit `bf35b71` (con pruebas y reproducciones en una copia local) señaló
+problemas reales. Se comprobó cada uno antes de actuar.
+
+**Corregido:**
+
+| Hallazgo | Corrección |
+|---|---|
+| **XSS almacenado:** `MenuLink.url` y `Banner.cta_url` aceptaban `javascript:alert(1)` y las plantillas lo ponían en `href`. El escape de HTML no lo evita | Lista blanca en el modelo (`apps/core/links.py`): `https://` y `http://` con host, rutas internas (`/…`, no `//…`), anclas, `mailto:` y `tel:`. Filtro `safe_link` en las plantillas como segunda barrera. Tests con trucos de navegador (`java\tscript:`, espacios delante, `//host`, `/\host`, `data:`) |
+| **Correo marcado "enviado" sin enviarse** | Estados reales y recuperación de envíos interrumpidos (D37) |
+| **Prueba de concurrencia que pasaba aunque un hilo fallara** | Los hilos recogen sus excepciones y la prueba exige los dos resultados |
+| **Fallos con SQLite** (3 fallidas y 2 errores) | El bloqueo de `flush` (D38) no reconocía la base de pruebas de SQLite. Además, SQLite no tiene bloqueo de filas: ahora usa transacciones `IMMEDIATE` (serializan las escrituras) y CI corre toda la suite también con SQLite |
+| **Garantías demasiado absolutas** en la documentación ("nunca cobra dos veces") | Redactadas con sus límites; el caso "la pasarela cobra y la respuesta se pierde" está explicado en D11 |
+
+**Reconocido y pendiente (antes de operar con dinero y usuarios reales):**
+- **Límite de intentos de login** por cuenta e IP, vigilancia de intentos y MFA para el admin (D34).
+- **Acaparamiento de fechas** con muchas sesiones anónimas: el límite es de una retención por sesión. Hacen falta
+  límites por IP en la creación de retenciones y un desafío anti-bots (por ejemplo, Cloudflare Turnstile).
+- **Verificación del correo** al registrarse y **recuperación de contraseña**: hoy cualquiera puede registrar un correo
+  ajeno y hacer que reciba la confirmación de una reserva.
+- **Content-Security-Policy** como protección adicional contra XSS.
