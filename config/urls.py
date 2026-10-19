@@ -4,10 +4,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from apps.core.views import HealthView
+from apps.core.views import DatabaseHealthView, HealthView
 
 urlpatterns = [
     path("health/", HealthView.as_view(), name="health"),
+    path("health/db/", DatabaseHealthView.as_view(), name="health-db"),
     path("i18n/", include("django.conf.urls.i18n")),
 ]
 

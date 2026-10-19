@@ -649,8 +649,15 @@ una persona después de un respaldo.
 - **Fotos en Cloudinary** (`CloudinaryMediaStorage`, un adaptador corto sobre el SDK oficial): el disco de Render se
   borra en cada despliegue y reinicio. `django-cloudinary-storage` se descartó por no actualizarse desde 2020.
 - **Host automático:** `RENDER_EXTERNAL_HOSTNAME` alimenta `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` y `SITE_URL`.
-- **Sonda de salud primero:** `HealthCheckMiddleware` responde `/health/` antes de validar el host y de redirigir a
-  HTTPS, porque la sonda del proveedor puede llegar con un host interno (`localhost:10000`) y por HTTP. Sigue
-  comprobando la base de datos.
-- **Límites aceptados del plan gratuito:** el servicio se duerme tras 15 minutos sin visitas (UptimeRobot lo evita) y
-  no hay tareas programadas (las retenciones vencidas ya no bloquean fechas por sí solas, D08).
+- **Sonda de salud primero:** `HealthCheckMiddleware` responde las rutas de salud antes de validar el host y de
+  redirigir a HTTPS, porque la sonda del proveedor puede llegar con un host interno (`localhost:10000`) y por HTTP.
+- **`/health/` no consulta la base; `/health/db/` sí.** Render llama a `/health/` cada 5 segundos y UptimeRobot cada 5
+  minutos. Si esa ruta consultara la base, Neon (gratis: se duerme tras 5 minutos sin actividad, unas 100 horas de
+  cómputo al mes) nunca se dormiría y agotaría su cuota a mitad de mes, lo que suspendería la base y el sitio. Que la
+  comprobación de "la app está viva" no dependa de servicios externos es además la práctica habitual. `/health/db/`
+  queda para revisiones manuales.
+- **Conexiones no persistentes en producción** (`CONN_MAX_AGE=0`): cada petición cierra su conexión para que Neon
+  pueda dormirse entre visitas. Cuesta unos milisegundos de conexión por petición.
+- **Límites aceptados del plan gratuito:** el servicio se duerme tras 15 minutos sin visitas. UptimeRobot lo evita y lo
+  mantiene encendido 24/7, unas 744 de las 750 horas mensuales del espacio de trabajo: alcanza solo si es el único
+  servicio gratuito. No hay tareas programadas (las retenciones vencidas ya no bloquean fechas por sí solas, D08).

@@ -36,7 +36,19 @@ class HomeView(TemplateView):
 
 
 class HealthView(View):
-    """Liveness/readiness probe for the hosting provider: checks that the database answers."""
+    """`/health/`: the app is up (liveness). No database query on purpose (D39).
+
+    The host calls it every few seconds and the uptime monitor every few minutes. Querying the
+    database here would keep the free Neon database awake all the time and use up its monthly
+    compute, which would take the whole site down.
+    """
+
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({"status": "ok"})
+
+
+class DatabaseHealthView(View):
+    """`/health/db/`: the database answers too. For manual checks, not for frequent probes."""
 
     def get(self, request, *args, **kwargs):
         try:

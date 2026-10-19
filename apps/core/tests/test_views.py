@@ -72,21 +72,31 @@ def test_language_switcher_marks_the_active_language(client):
 
 
 @pytest.mark.django_db
-def test_health_check_reports_ok(client):
-    response = client.get("/health/")
+def test_health_check_reports_ok_without_touching_the_database(client, django_assert_num_queries):
+    """Called every few seconds: a query here would keep the free database awake (D39)."""
+    with django_assert_num_queries(0):
+        response = client.get("/health/")
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
 
-def test_health_check_reports_database_failure(client, monkeypatch):
+@pytest.mark.django_db
+def test_database_health_check_reports_ok(client):
+    response = client.get("/health/db/")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+def test_database_health_check_reports_database_failure(client, monkeypatch):
     class BrokenConnection:
         def cursor(self):
             raise DatabaseError("connection refused")
 
     monkeypatch.setattr(views, "connection", BrokenConnection())
 
-    response = client.get("/health/")
+    response = client.get("/health/db/")
 
     assert response.status_code == 503
     assert response.json()["status"] == "error"
