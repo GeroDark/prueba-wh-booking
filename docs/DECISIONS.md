@@ -750,6 +750,12 @@ independientes reteniendo fechas a la vez.
   - La IP se guarda como **hash con clave** (HMAC con `SECRET_KEY`), nunca en claro, y se borra al pagar la reserva.
   - Las retenciones vencidas o pagadas no cuentan.
 
+**Verificación en producción** (después del despliegue, con un correo inexistente):
+- 5 fallos → el 5.º devuelve 429 con la página de pausa.
+- Falsificar `X-Forwarded-For`, `True-Client-IP` o `X-Real-IP` no la salta (siguen 429).
+- Enviar `CF-Connecting-IP` desde el cliente lo rechaza Cloudflare en su borde (403, error 1000) antes de llegar a la
+  aplicación: la única cabecera en la que se confía no se puede falsificar desde fuera.
+
 **Límites.** Frena a una persona con un script, no a una red de bots con muchas IPs: para eso hace falta un desafío
 anti-bots. Dos peticiones simultáneas de la misma red podrían superar el límite por una retención; para limitar abuso
 es aceptable y no justifica otro bloqueo.

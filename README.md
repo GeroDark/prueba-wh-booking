@@ -298,6 +298,12 @@ docs/            plan maestro y decisiones técnicas
 | Enlaces editables en el admin | Solo `https://`, `http://`, rutas del sitio, anclas, `mailto:` y `tel:` (contra XSS con `javascript:`) |
 | Formularios, sesiones y cabeceras | CSRF, validación en el servidor, cookies seguras, HSTS, `X-Frame-Options`, redirecciones `next` solo al propio sitio |
 
+**Verificado en producción** (19 de octubre de 2026), con un correo inventado:
+- 5 intentos fallidos → el 5.º activa la pausa (HTTP 429).
+- Intentos de saltarla falsificando la IP:
+  - `X-Forwarded-For`, `True-Client-IP` y `X-Real-IP` → la pausa se mantiene;
+  - `CF-Connecting-IP` → Cloudflare rechaza la petición antes de que llegue a la aplicación (403).
+
 Límites reconocidos antes de operar con usuarios reales (D40, D41): verificación del correo al registrarse,
 recuperación de contraseña, desafío anti-bots para redes de muchas IPs, MFA para el admin y Content-Security-Policy.
 
