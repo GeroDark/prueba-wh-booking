@@ -262,9 +262,10 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - [x] Preparado y probado en local con la imagen de producción sobre una base vacía: migra, crea el admin, carga el
   seed una sola vez (un reinicio conserva las ediciones), sirve estáticos con hash y bloquea comandos destructivos.
 - [x] Protección de datos (D38): CI frena migraciones que pueden perder datos; `flush` bloqueado en producción.
-- [ ] El home funciona en la URL pública con HTTPS, en ES y EN.
-- [ ] `/health/` responde 200.
-- [ ] Un correo de confirmación llega a una bandeja real y una foto subida desde el admin sobrevive a un redeploy.
+- [x] El home funciona en la URL pública con HTTPS, en ES y EN (https://wh-booking.onrender.com).
+- [x] `/health/` responde 200 (sin consultar la base, para no agotar la cuota de Neon: D39).
+- [x] Un correo de confirmación llega a una bandeja real (Gmail) y el pago se ve en el admin.
+- [x] Las fotos se sirven desde Cloudinary (27 en el home, 0 rotas), así que sobreviven a los redeploys.
 
 ### Fase 4 — Búsqueda
 - `PropertyQuerySet.search()`: país, ciudad, distrito, huéspedes y disponibilidad (`available()` excluye propiedades
@@ -324,8 +325,13 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 - Repaso de traducciones (`makemessages` / `compilemessages`), accesibilidad (etiquetas, foco, contraste, `alt`), diseño adaptable en todos los anchos.
 - Páginas 404 y 500 bilingües; configuración de seguridad de producción.
 - README completo (Docker, PostgreSQL, SQLite, seed, tests, despliegue, cuentas de demo, tarjetas de prueba) y `DECISIONS.md` final.
-- [ ] Recorrido completo en producción, en ES y EN, en escritorio y móvil.
-- [ ] Toda la suite en verde.
+- [x] Traducciones: 0 cadenas sin traducir ni aproximadas; ninguna página en inglés con texto en español ni al revés.
+- [x] Accesibilidad: axe-core sin violaciones WCAG 2.1 AA en 17 combinaciones de página y ancho (inicio, búsqueda,
+  detalle, login, registro con y sin errores, checkout, pago, confirmación; 1366 y 375 px); foco visible al navegar
+  con teclado y enlace para saltar al contenido.
+- [x] Recorrido en producción, en ES y EN, escritorio y móvil: fuentes, imágenes y mapa sin errores; entradas
+  maliciosas rechazadas sin crear datos (CSRF, fechas imposibles, HTML, registro inválido, reservas ajenas).
+- [x] Toda la suite en verde (424 tests).
 
 ### Fase 10 — Extras
 Lista 🟨 en orden. Cada extra se cierra con la misma revisión visual y su propio test.
