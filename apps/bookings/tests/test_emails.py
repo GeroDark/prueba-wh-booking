@@ -7,7 +7,7 @@ from decimal import Decimal
 import pytest
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.db import transaction
+from django.db import DatabaseError, transaction
 from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -171,6 +171,69 @@ def test_a_failed_send_does_not_undo_the_payment_and_is_retried(
     booking.refresh_from_db()
     assert len(mailoutbox) == 1
     assert booking.confirmation_sent_at is not None
+
+
+def confirmed(booking):
+    Booking.objects.filter(pk=booking.pk).update(
+        status=Booking.Status.CONFIRMED, confirmed_at=timezone.now()
+    )
+    booking.refresh_from_db()
+    return booking
+
+
+def test_a_failure_reading_the_booking_does_not_leave_it_marked_as_sent(
+    booking, mailoutbox, monkeypatch
+):
+    """The reviewer's case: the read after the claim used to be outside the error handling."""
+    confirmed(booking)
+
+    def broken_read(booking_id):
+        raise DatabaseError("connection lost")
+
+    monkeypatch.setattr("apps.bookings.emails.load_booking", broken_read)
+    assert send_booking_confirmation(booking.pk) is False
+
+    booking.refresh_from_db()
+    assert booking.confirmation_sent_at is None
+    assert booking.confirmation_claimed_at is None  # pending again, not "sent"
+    monkeypatch.undo()
+    assert send_booking_confirmation(booking.pk) is True
+    assert len(mailoutbox) == 1
+
+
+def test_a_process_that_died_while_sending_is_taken_over_after_a_while(booking, mailoutbox):
+    confirmed(booking)
+    now = timezone.now()
+    Booking.objects.filter(pk=booking.pk).update(confirmation_claimed_at=now)
+
+    # Another process is sending it right now: nobody else touches it.
+    call_command("send_booking_confirmations")
+    assert mailoutbox == []
+
+    # Ten minutes later the claim is stale: that process died, the retry takes over.
+    Booking.objects.filter(pk=booking.pk).update(
+        confirmation_claimed_at=now - timedelta(minutes=11)
+    )
+    call_command("send_booking_confirmations")
+
+    booking.refresh_from_db()
+    assert len(mailoutbox) == 1
+    assert booking.confirmation_sent_at is not None
+    assert booking.confirmation_claimed_at is None
+
+
+def test_sent_is_written_only_after_the_provider_accepted(booking, monkeypatch):
+    confirmed(booking)
+    states = []
+
+    def recording_send(self, fail_silently=False):
+        states.append(Booking.objects.values_list("confirmation_sent_at", flat=True).get())
+        return 1
+
+    monkeypatch.setattr("django.core.mail.EmailMultiAlternatives.send", recording_send)
+    send_booking_confirmation(booking.pk)
+
+    assert states == [None]  # while the provider is called, it is not marked as sent yet
 
 
 def test_pending_bookings_are_never_emailed(booking, mailoutbox):

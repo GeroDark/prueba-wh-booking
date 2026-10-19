@@ -1,13 +1,22 @@
 from django import template
 from django.utils.html import format_html
 
+from apps.core.links import is_safe_link
+
 register = template.Library()
+
+
+@register.filter
+def safe_link(url):
+    """Second barrier for links edited in the admin (D40): the models already reject unsafe
+    URLs, and a value that slipped in another way (an import, old data) renders as "#"."""
+    return url if is_safe_link(url) else "#"
 
 
 @register.simple_tag(takes_context=True)
 def banner_cta_url(context, banner):
     """Button URL of a banner; WhatsApp buttons use the number from the site settings."""
-    return banner.get_cta_url(context["site_settings"])
+    return safe_link(banner.get_cta_url(context["site_settings"]))
 
 
 @register.simple_tag(takes_context=True)
