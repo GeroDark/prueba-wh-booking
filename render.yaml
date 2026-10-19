@@ -1,0 +1,33 @@
+# Render Blueprint (https://render.com/docs/blueprint-spec): New -> Blueprint -> this repository.
+# Values marked `sync: false` are secrets: Render asks for them in a form when the Blueprint is
+# created, and they live only in Render's environment variables (never in Git). See D38-D39.
+services:
+  - type: web
+    name: wh-booking
+    runtime: docker # the same Dockerfile as local development and CI
+    plan: free
+    region: virginia # next to the Neon database (AWS us-east-1)
+    branch: main
+    autoDeploy: true # every merge to main is deployed (after CI on the pull request)
+    healthCheckPath: /health/
+    envVars:
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY # gunicorn workers; the free instance has 512 MB of RAM
+        value: "2"
+      - key: SEED_DEMO_DATA # loads the demo catalog on the first start only (--if-empty)
+        value: "true"
+      - key: DATABASE_URL # Neon, direct connection (postgresql://...sslmode=require)
+        sync: false
+      - key: CLOUDINARY_URL # cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: DEFAULT_FROM_EMAIL # e.g. Wynwood House <the-sender-verified-in-brevo@gmail.com>
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false

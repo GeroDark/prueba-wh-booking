@@ -259,8 +259,12 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 ### Fase 3 — Primer despliegue
 - Render (Docker) + Neon (PostgreSQL) + Cloudinary (media) + Brevo (email); el script de arranque migra, ejecuta el seed si la base está vacía y crea el superusuario.
 - Despliegue automático en cada push a `main`; UptimeRobot para evitar que el servicio se duerma.
+- [x] Preparado y probado en local con la imagen de producción sobre una base vacía: migra, crea el admin, carga el
+  seed una sola vez (un reinicio conserva las ediciones), sirve estáticos con hash y bloquea comandos destructivos.
+- [x] Protección de datos (D38): CI frena migraciones que pueden perder datos; `flush` bloqueado en producción.
 - [ ] El home funciona en la URL pública con HTTPS, en ES y EN.
 - [ ] `/health/` responde 200.
+- [ ] Un correo de confirmación llega a una bandeja real y una foto subida desde el admin sobrevive a un redeploy.
 
 ### Fase 4 — Búsqueda
 - `PropertyQuerySet.search()`: país, ciudad, distrito, huéspedes y disponibilidad (`available()` excluye propiedades

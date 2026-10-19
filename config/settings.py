@@ -30,6 +30,13 @@ if not SECRET_KEY:
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 
+# Render sets the public host name of the service (e.g. wh-booking.onrender.com): it is trusted
+# automatically, so the deploy needs no host configuration.
+RENDER_EXTERNAL_HOSTNAME = env("RENDER_EXTERNAL_HOSTNAME", default="")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+
 
 # Applications
 
@@ -54,6 +61,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # First: the provider's health probe is answered before host checks and HTTPS redirects.
+    "apps.core.middleware.HealthCheckMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -154,8 +163,19 @@ MEDIA_ROOT = BASE_DIR / "media"
 # them with their <link rel="preload" type="font/otf">.
 WHITENOISE_MIMETYPES = {".otf": "font/otf", ".woff2": "font/woff2"}
 
+# Uploaded images: local disk by default; Cloudinary when CLOUDINARY_URL is set (D39), because
+# the hosting disk is wiped on every deploy. The SDK reads CLOUDINARY_URL by itself.
+CLOUDINARY_URL = env("CLOUDINARY_URL", default="")
+CLOUDINARY_FOLDER = env("CLOUDINARY_FOLDER", default="wh-booking")
+
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "default": {
+        "BACKEND": (
+            "apps.core.storage.CloudinaryMediaStorage"
+            if CLOUDINARY_URL
+            else "django.core.files.storage.FileSystemStorage"
+        )
+    },
     "staticfiles": {
         "BACKEND": (
             "django.contrib.staticfiles.storage.StaticFilesStorage"
@@ -178,7 +198,14 @@ if BREVO_API_KEY:
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Wynwood House <reservas@example.com>")
 
 # Public address of the site, for links and images inside e-mails (there is no request there).
-SITE_URL = env("SITE_URL", default="http://localhost:8000").rstrip("/")
+SITE_URL = env(
+    "SITE_URL",
+    default=(
+        f"https://{RENDER_EXTERNAL_HOSTNAME}"
+        if RENDER_EXTERNAL_HOSTNAME
+        else "http://localhost:8000"
+    ),
+).rstrip("/")
 
 
 # Security. Production hardening is on whenever DEBUG is false.

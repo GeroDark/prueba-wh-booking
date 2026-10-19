@@ -615,3 +615,42 @@ Apple Pay/Google Pay (requieren una pasarela real).
 
 **Mejora futura.** El envío ocurre dentro de la petición, después del pago (unos cientos de milisegundos con la
 API). Con más volumen iría a una cola (Celery o RQ) para que el huésped no espere al proveedor de correo.
+
+---
+
+## D38 · Protección de los datos de producción
+
+**Contexto.** Antes del despliegue se acordó cómo trabajar sin poner en riesgo la base de producción, también cuando
+el desarrollo lo hace un asistente de IA.
+
+**Decisión (capas).**
+1. **Sin acceso directo:** la URL de la base solo existe en las variables de entorno de Render; ni en el repositorio,
+   ni en `.env` locales, ni en conversaciones. El desarrollo usa la base local de Docker.
+2. **Un solo camino a producción:** rama → pull request → CI → revisión → merge → despliegue automático.
+3. **Migraciones revisadas:** un test falla si una migración incluye `RemoveField`, `DeleteModel`, `RunSQL` o
+   `RunPython` sin declarar `reviewed_data_safety` con el motivo. La justificación queda visible en el pull request.
+4. **Comandos destructivos bloqueados** en producción (`flush`, `seed_data --flush`) salvo con una bandera explícita.
+5. **Respaldos:** restauración de Neon a un momento reciente, ramas de Neon para probar migraciones y `pg_dump` manual
+   antes de cambios delicados. Nunca en GitHub (repositorio público, datos personales).
+
+**Correcciones de datos en producción:** una migración de datos o un comando, revisado en un pull request, que ejecuta
+una persona después de un respaldo.
+
+---
+
+## D39 · Despliegue en Render (Blueprint)
+
+**Decisión.**
+- **`render.yaml`:** el servicio se describe en el repositorio (Docker, plan gratuito, Virginia, `/health/`); los
+  secretos van con `sync: false` y Render los pide en un formulario. Es la misma imagen de desarrollo y CI.
+- **Arranque idempotente:** migraciones → `ensure_superuser` (crea el admin desde variables de entorno si no existe;
+  el plan gratuito no tiene consola) → `seed_data --if-empty` (solo si no hay propiedades, para que un reinicio no pise
+  las ediciones del admin) → gunicorn.
+- **Fotos en Cloudinary** (`CloudinaryMediaStorage`, un adaptador corto sobre el SDK oficial): el disco de Render se
+  borra en cada despliegue y reinicio. `django-cloudinary-storage` se descartó por no actualizarse desde 2020.
+- **Host automático:** `RENDER_EXTERNAL_HOSTNAME` alimenta `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS` y `SITE_URL`.
+- **Sonda de salud primero:** `HealthCheckMiddleware` responde `/health/` antes de validar el host y de redirigir a
+  HTTPS, porque la sonda del proveedor puede llegar con un host interno (`localhost:10000`) y por HTTP. Sigue
+  comprobando la base de datos.
+- **Límites aceptados del plan gratuito:** el servicio se duerme tras 15 minutos sin visitas (UptimeRobot lo evita) y
+  no hay tareas programadas (las retenciones vencidas ya no bloquean fechas por sí solas, D08).
