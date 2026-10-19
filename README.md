@@ -172,6 +172,49 @@ la restricción de exclusión de fechas es exclusiva de PostgreSQL (ver D02 y D0
 
 Toda la configuración se lee de variables de entorno. [.env.example](.env.example) lista cada una con su propósito.
 
+## Despliegue (Render + Neon + Cloudinary + Brevo)
+
+Todo en planes gratuitos. [render.yaml](render.yaml) describe el servicio, así que el despliegue es:
+
+1. Crear la base en **Neon** (AWS us-east-1) y copiar la conexión **directa** (`postgresql://…sslmode=require`).
+2. En **Render**: *New → Blueprint* → este repositorio. Render pide los secretos marcados `sync: false`:
+
+   | Variable | Valor |
+   |---|---|
+   | `DATABASE_URL` | La conexión de Neon |
+   | `CLOUDINARY_URL` | `cloudinary://API_KEY:API_SECRET@CLOUD_NAME` (fotos subidas desde el admin) |
+   | `BREVO_API_KEY` | Clave de la API de Brevo |
+   | `DEFAULT_FROM_EMAIL` | `Wynwood House <remitente-verificado-en-brevo@…>` |
+   | `DJANGO_SUPERUSER_EMAIL` / `DJANGO_SUPERUSER_PASSWORD` | Cuenta del admin, creada al arrancar |
+
+3. Cada arranque: migraciones → admin (si no existe) → datos de demo (solo si la base está vacía) → gunicorn.
+   `SECRET_KEY` la genera Render; el dominio `*.onrender.com` se agrega solo a `ALLOWED_HOSTS`,
+   `CSRF_TRUSTED_ORIGINS` y `SITE_URL`.
+4. Cada merge a `main` se despliega solo (después de pasar CI en el pull request).
+
+El plan gratuito de Render apaga el servicio tras 15 minutos sin visitas: la primera carga después tarda cerca de un
+minuto. Un monitor externo (por ejemplo UptimeRobot cada 5 minutos a `/health/`) lo mantiene despierto.
+
+## Datos en producción: protección y respaldos
+
+- **Nadie trabaja contra la base de producción desde su máquina.** Su URL solo existe en las variables de entorno de
+  Render. Los cambios llegan por pull request → CI → revisión → merge.
+- **Migraciones que pueden perder datos** (`RemoveField`, `DeleteModel`, `RunSQL`, `RunPython`) hacen fallar CI salvo que
+  declaren `reviewed_data_safety = "<por qué es seguro>"`; la frase queda visible en el pull request.
+- **Comandos destructivos** (`flush`, `seed_data --flush`) se niegan a correr en producción sin
+  `--i-understand-this-deletes-production-data`.
+- **Respaldo antes de un cambio delicado** (desde tu máquina, con la conexión de Neon en una variable temporal, nunca
+  guardada en el proyecto):
+
+  ```bash
+  pg_dump "$NEON_URL" --format=custom --file=wh-backup-$(date +%Y%m%d).dump   # respaldo
+  pg_restore --clean --no-owner --dbname "$NEON_URL" wh-backup-AAAAMMDD.dump   # restaurar
+  ```
+
+- **Restauración de Neon:** el panel permite volver la base a un momento reciente (*Restore*; la ventana depende del
+  plan) o crear una **rama** (copia instantánea) para probar una migración antes de aplicarla.
+- Los respaldos tienen datos personales de huéspedes: no se suben a GitHub (el repositorio es público).
+
 ## Estructura
 
 ```
