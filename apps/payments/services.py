@@ -45,10 +45,11 @@ def decline_message(payment):
     return DECLINE_MESSAGES.get(payment.decline_code, DECLINE_MESSAGES["card_declined"])
 
 
-def pay_booking(*, booking, card, idempotency_key, gateway=None, now=None):
+def pay_booking(*, booking, card, idempotency_key, language=None, gateway=None, now=None):
     """Charge the booking's total and confirm it. Returns the Payment (succeeded or failed).
 
-    The amount always comes from the booking, never from the form.
+    The amount always comes from the booking, never from the form. `language` is the one the
+    guest is using when they pay; the booking keeps it.
     """
     gateway = gateway or get_gateway()
     now = now or timezone.now()
@@ -90,7 +91,10 @@ def pay_booking(*, booking, card, idempotency_key, gateway=None, now=None):
             payment.gateway_reference = result.reference
             locked.status = Booking.Status.CONFIRMED
             locked.confirmed_at = now
-            locked.save(update_fields=["status", "confirmed_at", "updated_at"])
+            # The language the guest finished in (they may have switched after holding the
+            # dates): the confirmation e-mail and later messages use it.
+            locked.language = language or locked.language
+            locked.save(update_fields=["status", "confirmed_at", "language", "updated_at"])
             send_confirmation_on_commit(locked)
         else:
             payment.status = Payment.Status.FAILED

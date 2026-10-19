@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 17:34-0500\n"
+"POT-Creation-Date: 2026-10-18 22:25-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -422,7 +422,8 @@ msgstr[1] "Esta propiedad admite hasta %(count)d huéspedes."
 msgid ""
 "These dates overlap booking %(reference)s (%(check_in)s – %(check_out)s)."
 msgstr ""
-"Estas fechas se superponen con la reserva %(reference)s (%(check_in)s – %(check_out)s)."
+"Estas fechas se superponen con la reserva %(reference)s (%(check_in)s – "
+"%(check_out)s)."
 
 #: apps/bookings/models.py:159
 msgid "Nights"
@@ -511,13 +512,17 @@ msgstr[1] ""
 msgid "At least one guest is required."
 msgstr "Debe haber al menos un huésped."
 
-#: apps/bookings/views.py:125
+#: apps/bookings/views.py:128
 msgid ""
 "Your time to complete the booking ran out and the dates were released. Check "
 "if they are still available and try again."
 msgstr ""
 "Se acabó el tiempo para completar la reserva y las fechas se liberaron. "
 "Revisa si siguen disponibles e inténtalo de nuevo."
+
+#: apps/bookings/views.py:201
+msgid "Sign in with the account you booked with to see your booking."
+msgstr "Inicia sesión con la cuenta con la que reservaste para ver tu reserva."
 
 #: apps/core/admin.py:25
 msgid "Wynwood House administration"
@@ -1281,6 +1286,30 @@ msgstr "Inglés"
 #: config/settings.py:127
 msgid "Spanish"
 msgstr "Español"
+
+#: templates/404.html:4
+msgid "Page not found"
+msgstr "Página no encontrada"
+
+#: templates/404.html:13
+msgid "We could not find this page"
+msgstr "No encontramos esta página"
+
+#: templates/404.html:15
+msgid ""
+"The link may be old or mistyped. If you were looking for a booking, sign in "
+"with the account you booked with."
+msgstr ""
+"Es posible que el enlace sea antiguo o tenga un error. Si buscabas una reserva, "
+"inicia sesión con la cuenta con la que reservaste."
+
+#: templates/404.html:18
+msgid "Search stays"
+msgstr "Buscar alojamientos"
+
+#: templates/404.html:19
+msgid "Back to home"
+msgstr "Volver al inicio"
 
 #: templates/base.html:8
 msgid ""

@@ -598,8 +598,13 @@ Apple Pay/Google Pay (requieren una pasarela real).
   (`confirmation_sent_at IS NULL`); dos llamadas simultáneas no pueden enviar ambas.
 - **Si el proveedor falla:** el pago sigue confirmado, se deshace la marca, se registra el error y el comando
   `send_booking_confirmations` lo reintenta. En el admin hay una acción para reenviarlo a pedido.
-- **Idioma:** el de la reserva (`Booking.language`, el idioma en que se reservó), con `translation.override`;
-  asunto, textos, montos, fechas y enlaces (`/es/` o `/en/`).
+- **Idioma:** el de la reserva (`Booking.language`), con `translation.override`: asunto, textos, montos, fechas y
+  enlaces (`/es/` o `/en/`). Se fija **al pagar**, no al retener las fechas: si el huésped cambia de idioma en el
+  checkout, todo sigue al idioma en que terminó (también su idioma preferido).
+- **El enlace del correo sin sesión** (otro dispositivo) pide iniciar sesión y vuelve a la reserva, en vez de un 404.
+  Se responde igual para cualquier referencia, exista o no, así que no revela nada; otra cuenta sigue recibiendo 404.
+- **Páginas de error propias:** 404 con el diseño del sitio y en el idioma de la URL; 500 independiente y bilingüe
+  (Django la muestra sin contexto, así que no puede depender del header ni de la base de datos).
 - **Diseño:** el frame "Correo confirmación" del Figma, como tabla de 600 px con estilos en línea, fuentes seguras
   y versión de texto plano. Los iconos y el logo van en PNG (Gmail no muestra SVG).
 - **Fotos:** el sitio guarda WebP (requisito 8), pero cerca de un cuarto de los clientes de correo (Outlook para

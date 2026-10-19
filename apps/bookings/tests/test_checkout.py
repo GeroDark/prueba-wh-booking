@@ -7,7 +7,9 @@ from zoneinfo import ZoneInfo
 import pytest
 import time_machine
 from django.contrib.auth import get_user_model
+from django.test import RequestFactory
 from django.utils import timezone
+from django.views.defaults import server_error
 
 from apps.bookings.models import Booking
 from apps.payments.models import Payment
@@ -333,11 +335,67 @@ def test_other_people_get_a_404_on_checkout_and_confirmation(client, prop, djang
     pay(client, booking)
     stranger = django_user_model.objects.create_user("eve@mail.com", PASSWORD)
 
-    client.logout()
-    assert client.get(f"/es/bookings/{booking.reference}/").status_code == 404
     client.force_login(stranger)
     assert client.get(f"/es/bookings/{booking.reference}/").status_code == 404
     assert client.get(checkout_url(booking)).status_code == 404
+
+
+@pytest.mark.parametrize("reference", ["mine", "WH-DOESNTEXIST"])
+def test_the_email_link_without_a_session_asks_to_sign_in_and_comes_back(client, prop, reference):
+    """Opened on another device: sign in, then the booking. The same answer for a reference
+    that does not exist, so nothing is revealed."""
+    client.force_login(complete_guest())
+    booking = hold(client, prop)
+    pay(client, booking)
+    client.logout()
+    url = f"/es/bookings/{booking.reference if reference == 'mine' else reference}/"
+
+    response = client.get(url)
+
+    assert response["Location"] == f"/es/accounts/login/?next={url}"
+    if reference == "mine":
+        signed_in = client.post(
+            response["Location"], {"username": "ana@mail.com", "password": PASSWORD, "next": url}
+        )
+        assert signed_in["Location"] == url
+        assert client.get(url).status_code == 200
+
+
+def test_the_booking_keeps_the_language_it_was_paid_in(
+    client, prop, mailoutbox, django_capture_on_commit_callbacks
+):
+    """Dates held in Spanish, language switched to English before paying: all in English."""
+    client.force_login(complete_guest())
+    booking = hold(client, prop)  # /es/
+    assert booking.language == "es"
+
+    with django_capture_on_commit_callbacks(execute=True):
+        client.post(
+            f"/en/checkout/{booking.reference}/",
+            {
+                "card_number": VISA_OK,
+                "expiry": "12/30",
+                "cvc": "123",
+                "idempotency_key": "9b2f6f5e-3c1a-4c55-9d7e-1f2a3b4c5d6e",
+            },
+        )
+
+    booking.refresh_from_db()
+    assert booking.language == "en"
+    assert booking.guest.preferred_language == "en"
+    assert mailoutbox[0].subject == f"Your booking {booking.reference} is confirmed"
+
+
+def test_error_pages_follow_the_site_design(client, settings):
+    settings.DEBUG = False
+    not_found = client.get("/es/this-page-does-not-exist/")
+    assert not_found.status_code == 404
+    assert "No encontramos esta página" in not_found.text
+
+    failure = server_error(RequestFactory().get("/"))
+    assert failure.status_code == 500
+    assert "Algo salió mal" in failure.content.decode()
+    assert "Something went wrong" in failure.content.decode()
 
 
 def test_an_idempotency_key_of_another_booking_is_refused(client, prop):

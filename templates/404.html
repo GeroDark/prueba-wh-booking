@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% translate "Page not found" %} | Wynwood House{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/pages/error.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="error-page container-wh" aria-labelledby="error-title">
+    <p class="error-page__code" aria-hidden="true">404</p>
+    <h1 class="error-page__title" id="error-title">{% translate "We could not find this page" %}</h1>
+    <p class="error-page__text">
+      {% translate "The link may be old or mistyped. If you were looking for a booking, sign in with the account you booked with." %}
+    </p>
+    <div class="error-page__actions">
+      <a class="btn btn-wh" href="{% url 'properties:search' %}">{% translate "Search stays" %}</a>
+      <a class="btn btn-wh btn-wh--outline" href="{% url 'core:home' %}">{% translate "Back to home" %}</a>
+    </div>
+  </section>
+{% endblock %}

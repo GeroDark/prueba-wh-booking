@@ -1,0 +1,34 @@
+/* Error pages (404). */
+
+.error-page {
+  max-width: 40rem;
+  padding-block: clamp(3rem, 10vw, 7rem);
+  text-align: center;
+}
+
+.error-page__code {
+  margin: 0;
+  font-family: var(--wh-font-display);
+  font-size: clamp(5rem, 16vw, 9rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.error-page__title {
+  margin: 1.5rem 0 0.75rem;
+  font-family: var(--wh-font-body);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.error-page__text {
+  color: var(--wh-gray);
+}
+
+.error-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
