@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load static i18n content %}
 <header class="site-header">
   <div class="container-wh site-header__inner">
     <div class="site-header__start">
@@ -14,7 +14,7 @@
     <nav class="site-header__nav d-none d-lg-flex" aria-label="{% translate 'Main menu' %}">
       {% for group in header_menu %}
         {% for link in group.links.all %}
-          <a class="site-header__link" href="{{ link.url }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
+          <a class="site-header__link" href="{{ link.url|safe_link }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
         {% endfor %}
       {% endfor %}
     </nav>
@@ -35,7 +35,7 @@
       <nav aria-label="{% translate 'Main menu' %}">
         {% for group in header_menu %}
           {% for link in group.links.all %}
-            <a class="site-menu__link" href="{{ link.url }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
+            <a class="site-menu__link" href="{{ link.url|safe_link }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
           {% endfor %}
         {% endfor %}
       </nav>

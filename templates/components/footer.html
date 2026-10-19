@@ -14,7 +14,7 @@
           <h2 class="site-footer__title" id="footer-menu-{{ group.pk }}">{{ group.title }}</h2>
           <ul class="site-footer__list">
             {% for link in group.links.all %}
-              <li><a href="{{ link.url }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a></li>
+              <li><a href="{{ link.url|safe_link }}"{% if link.opens_in_new_tab %} target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a></li>
             {% endfor %}
           </ul>
         </section>

@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .constants import FLAG_CHOICES, flag_path, icon_path
 from .fields import OptimizedImageField
+from .links import validate_safe_link
 
 
 class TimeStampedModel(models.Model):
@@ -121,7 +122,11 @@ class Banner(models.Model):
         _("button action"), max_length=20, choices=CtaTarget, default=CtaTarget.LINK
     )
     cta_url = models.CharField(
-        _("button URL"), max_length=300, blank=True, help_text=_("Only for the 'Link' action.")
+        _("button URL"),
+        max_length=300,
+        blank=True,
+        validators=[validate_safe_link],
+        help_text=_("Only for the 'Link' action."),
     )
     cta_message = models.CharField(
         _("WhatsApp message"),
@@ -209,7 +214,7 @@ class MenuLink(models.Model):
         MenuGroup, on_delete=models.CASCADE, related_name="links", verbose_name=_("menu")
     )
     label = models.CharField(_("label"), max_length=80)
-    url = models.CharField(_("URL"), max_length=300)
+    url = models.CharField(_("URL"), max_length=300, validators=[validate_safe_link])
     opens_in_new_tab = models.BooleanField(_("open in a new tab"), default=False)
     order = models.PositiveSmallIntegerField(_("order"), default=0)
 

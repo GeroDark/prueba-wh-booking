@@ -1,15 +1,25 @@
 """Booking confirmation e-mail (requirement 7 of the PDF, D37).
 
-Sent once, after the payment is committed, in the language the guest booked in. If sending fails
-the payment is not affected: the booking stays marked as "not sent" and the
-`send_booking_confirmations` command (or the admin action) retries it.
+Sent after the payment is committed, in the language the guest booked in. Each booking goes
+through three states:
+
+- pending:  confirmation_claimed_at and confirmation_sent_at empty
+- sending:  confirmation_claimed_at set; one process owns the delivery
+- sent:     confirmation_sent_at set, only after the provider accepted the message
+
+If sending fails, the claim is released and the booking is pending again. If the process dies
+while sending, the claim goes stale and `send_booking_confirmations` takes it over. Delivery is
+therefore "at least once": a crash right after the provider accepted the message can cause a
+second copy, which is better than a guest with no confirmation. The payment is never affected.
 """
 
 import logging
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.templatetags.static import static
 from django.urls import reverse
@@ -88,32 +98,61 @@ def build_confirmation_email(booking):
     return message
 
 
-def send_booking_confirmation(booking_id):
-    """Send the confirmation once. Returns True if it was sent now.
+# A claim older than this belongs to a process that died while sending.
+STALE_CLAIM = timedelta(minutes=10)
 
-    The booking is claimed first with a conditional UPDATE, so two calls at the same time cannot
-    both send it; if sending fails, the claim is undone and the error logged.
-    """
-    claimed = Booking.objects.filter(
-        pk=booking_id,
+
+def pending_confirmations(now=None):
+    """Confirmed bookings whose e-mail is pending, or stuck in "sending" (stale claim)."""
+    now = now or timezone.now()
+    return Booking.objects.filter(
         status=Booking.Status.CONFIRMED,
         guest__isnull=False,
         confirmation_sent_at__isnull=True,
-    ).update(confirmation_sent_at=timezone.now())
-    if not claimed:
-        return False
+    ).filter(
+        Q(confirmation_claimed_at__isnull=True) | Q(confirmation_claimed_at__lt=now - STALE_CLAIM)
+    )
 
-    booking = (
+
+def load_booking(booking_id):
+    return (
         Booking.objects.select_related("guest", "property__district__city__country")
         .prefetch_related("lines", "property__images")
         .get(pk=booking_id)
     )
+
+
+def send_booking_confirmation(booking_id, now=None):
+    """Send the confirmation of one booking. Returns True if it was sent now.
+
+    The claim is a conditional UPDATE, so two processes cannot both own the delivery. Everything
+    after the claim (reading the booking, rendering, the provider call) is inside the error
+    handling: whatever fails releases the claim, and "sent" is written only after the provider
+    accepted the message.
+    """
+    claimed_at = now or timezone.now()
+    claimed = (
+        pending_confirmations(claimed_at)
+        .filter(pk=booking_id)
+        .update(confirmation_claimed_at=claimed_at)
+    )
+    if not claimed:
+        return False
+
     try:
+        booking = load_booking(booking_id)
         build_confirmation_email(booking).send()
     except Exception:
-        Booking.objects.filter(pk=booking_id).update(confirmation_sent_at=None)
-        logger.exception("Confirmation e-mail of %s could not be sent", booking.reference)
+        # Only our own claim is released (another process may have taken over a stale one).
+        Booking.objects.filter(pk=booking_id, confirmation_claimed_at=claimed_at).update(
+            confirmation_claimed_at=None
+        )
+        logger.exception("Confirmation e-mail of booking %s could not be sent", booking_id)
         return False
+
+    Booking.objects.filter(pk=booking_id).update(
+        confirmation_sent_at=timezone.now(), confirmation_claimed_at=None
+    )
     logger.info("Confirmation e-mail of %s sent", booking.reference)
     return True
 

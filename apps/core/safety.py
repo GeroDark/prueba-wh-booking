@@ -22,7 +22,16 @@ def add_confirmation_argument(parser):
 
 
 def is_test_database(alias="default"):
-    return connections[alias].settings_dict["NAME"].startswith("test_")
+    """The database Django created for the tests: the configured TEST NAME, `test_<name>` on
+    PostgreSQL by default, or an in-memory SQLite database."""
+    connection = connections[alias]
+    name = str(connection.settings_dict["NAME"])
+    test_name = (connection.settings_dict.get("TEST") or {}).get("NAME")
+    if test_name:
+        return name == str(test_name)
+    if connection.vendor == "sqlite":
+        return connection.is_in_memory_db()
+    return name.startswith("test_")
 
 
 def refuse_in_production(options, action, database="default"):

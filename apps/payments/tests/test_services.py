@@ -182,7 +182,7 @@ def test_two_tabs_paying_at_the_same_time_charge_once():
     booking = held_booking()
     gateway = CountingGateway(delay=0.2)
     start = threading.Barrier(2)
-    results = []
+    results, errors = [], []
 
     def pay():
         start.wait()
@@ -191,6 +191,8 @@ def test_two_tabs_paying_at_the_same_time_charge_once():
                 booking=booking, card=APPROVED, idempotency_key=uuid.uuid4(), gateway=gateway
             )
             results.append(payment.pk)
+        except Exception as error:  # a thread's exception would otherwise be lost
+            errors.append(error)
         finally:
             connection.close()
 
@@ -200,6 +202,8 @@ def test_two_tabs_paying_at_the_same_time_charge_once():
     for thread in threads:
         thread.join()
 
+    assert errors == []
+    assert len(results) == 2  # both tabs finished...
+    assert len(set(results)) == 1  # ...and see the same payment
     assert gateway.charges == 1
-    assert len(set(results)) == 1  # both tabs see the same payment
     assert Payment.objects.filter(status=Payment.Status.SUCCEEDED).count() == 1

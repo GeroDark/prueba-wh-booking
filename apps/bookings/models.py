@@ -74,11 +74,24 @@ class Booking(TimeStampedModel):
         _("language"), max_length=7, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE
     )
     confirmed_at = models.DateTimeField(_("confirmed at"), null=True, blank=True)
+    # Confirmation e-mail (D37): pending (both empty) -> sending (claimed) -> sent.
+    confirmation_claimed_at = models.DateTimeField(
+        _("confirmation e-mail being sent since"),
+        null=True,
+        blank=True,
+        help_text=_(
+            "Set while a process sends the e-mail. If it stays set for long, that process died "
+            "and the retry command takes it over."
+        ),
+    )
     confirmation_sent_at = models.DateTimeField(
         _("confirmation e-mail sent at"),
         null=True,
         blank=True,
-        help_text=_("Empty if the e-mail has not been sent yet (it is retried with a command)."),
+        help_text=_(
+            "Set only after the e-mail provider accepted the message. Empty: not sent yet "
+            "(it is retried with a command)."
+        ),
     )
 
     objects = BookingQuerySet.as_manager()

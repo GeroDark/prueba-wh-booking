@@ -44,6 +44,7 @@ class BookingAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "confirmed_at",
+        "confirmation_claimed_at",
         "confirmation_sent_at",
     )
     actions = ["resend_confirmation"]
@@ -61,7 +62,10 @@ class BookingAdmin(admin.ModelAdmin):
         confirmed = queryset.filter(status=Booking.Status.CONFIRMED, guest__isnull=False)
         sent = 0
         for booking in confirmed:
-            Booking.objects.filter(pk=booking.pk).update(confirmation_sent_at=None)
+            # Back to "pending", unless a process is sending it right now.
+            Booking.objects.filter(pk=booking.pk, confirmation_claimed_at__isnull=True).update(
+                confirmation_sent_at=None
+            )
             sent += send_booking_confirmation(booking.pk)
         self.message_user(
             request,
