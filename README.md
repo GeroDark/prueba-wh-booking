@@ -45,7 +45,7 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
 
-Calidad: **451 tests** (pytest), CI en GitHub Actions con PostgreSQL y SQLite, ruff y `check --deploy`; pruebas de
+Calidad: **464 tests** (pytest), CI en GitHub Actions con PostgreSQL y SQLite, ruff y `check --deploy`; pruebas de
 concurrencia con hilos reales; accesibilidad WCAG 2.1 AA verificada con axe-core. Las decisiones técnicas, con
 ejemplos, están en [docs/DECISIONS.md](docs/DECISIONS.md), incluidas las correcciones de una revisión externa y los
 límites reconocidos antes de operar con dinero real (D40). El plan por fases está en
@@ -288,11 +288,26 @@ seed/images/     fotos de origen para los datos de prueba
 docs/            plan maestro y decisiones técnicas
 ```
 
+## Seguridad y límites contra el abuso
+
+| Protección | Detalle |
+|---|---|
+| Intentos de login | 5 fallos de una cuenta desde una misma red → pausa de 15 minutos (`django-axes`, también en el admin). Cuenta + red, no solo cuenta: un atacante no puede bloquear a un huésped en su propia cuenta. El correo cuenta igual en cualquier combinación de mayúsculas |
+| Retenciones de fechas | Como máximo 5 activas por red a la vez: abrir muchas sesiones no permite acaparar disponibilidad. La IP se guarda solo como hash con clave y se borra al pagar |
+| IP real del visitante | Cabecera `CF-Connecting-IP` de Cloudflare (delante de Render), que el cliente no puede falsificar; `X-Forwarded-For` se ignora |
+| Enlaces editables en el admin | Solo `https://`, `http://`, rutas del sitio, anclas, `mailto:` y `tel:` (contra XSS con `javascript:`) |
+| Formularios, sesiones y cabeceras | CSRF, validación en el servidor, cookies seguras, HSTS, `X-Frame-Options`, redirecciones `next` solo al propio sitio |
+
+Límites reconocidos antes de operar con usuarios reales (D40, D41): verificación del correo al registrarse,
+recuperación de contraseña, desafío anti-bots para redes de muchas IPs, MFA para el admin y Content-Security-Policy.
+
 ## Mejoras planificadas (fuera del alcance de la prueba)
 
 | Mejora | Cómo |
 |---|---|
 | Pasarela de pago real (dLocal o Stripe) | Otra clase con la interfaz `PaymentGateway` y campos de tarjeta del proveedor (tokenización: el número nunca pasa por el servidor) |
+| Verificación de correo y recuperación de contraseña | Vistas de Django (`PasswordResetView`) y un enlace firmado de verificación; decidir con WH si se verifica antes o después del primer pago |
+| Anti-bots y MFA para el admin | Cloudflare Turnstile en el login y al reservar; `django-otp` para el personal |
 | Login con Google | `django-allauth`; solo se unen cuentas si Google confirma el correo, y el checkout sigue pidiendo los datos que falten |
 | Correos desde una cola | Celery o RQ, para que el huésped no espere al proveedor de correo |
 | Dominio propio verificado en Brevo (SPF, DKIM) | Mejor entregabilidad: menos correos en Spam |

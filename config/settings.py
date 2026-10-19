@@ -7,6 +7,7 @@ See `.env.example` for the full list.
 """
 
 import tempfile
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party apps
     "django_countries",
+    "axes",
     # Local apps
     "apps.core",
     "apps.accounts",
@@ -73,6 +75,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Last, as django-axes requires: turns a blocked sign-in into the lockout page.
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -138,6 +142,34 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "core:home"
 LOGOUT_REDIRECT_URL = "core:home"
+
+# Failed sign-ins (D41): django-axes blocks a username from an IP address after 5 failures for
+# 15 minutes. Locking by username + IP (not by IP alone) keeps one person's mistakes from
+# locking out everyone behind the same network, and not by username alone, so an attacker
+# cannot lock a guest out of their own account. Applies to the site and the admin.
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = timedelta(minutes=15)
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+# The login form sends the e-mail in a field called "username" (Django's AuthenticationForm).
+# Without this, axes looks for "email" (USERNAME_FIELD), records failures with no account and the
+# right password still gets in during a lockout: a test caught it.
+AXES_USERNAME_FORM_FIELD = "username"
+# Same account in any letter case, as the login itself (otherwise each spelling gets 5 tries).
+AXES_USERNAME_CALLABLE = "apps.accounts.lockout.lockout_username"
+AXES_RESET_ON_SUCCESS = True
+AXES_LOCKOUT_TEMPLATE = "pages/accounts/locked_out.html"
+AXES_CLIENT_IP_CALLABLE = "apps.core.ip.client_ip"
+AXES_VERBOSE = False
+
+# Header with the visitor's real IP set by the proxy in front (D41). On Render it is
+# Cloudflare's CF-Connecting-IP, which the client cannot forge; empty without a proxy.
+CLIENT_IP_HEADER = env(
+    "CLIENT_IP_HEADER", default="HTTP_CF_CONNECTING_IP" if RENDER_EXTERNAL_HOSTNAME else ""
+)
 
 
 # Internationalization
@@ -256,6 +288,9 @@ BOOKING_MAX_NIGHTS = env.int("BOOKING_MAX_NIGHTS", default=30)
 BOOKING_MAX_DAYS_AHEAD = env.int("BOOKING_MAX_DAYS_AHEAD", default=365)
 # The person who books and pays must be an adult (D36).
 BOOKING_MIN_GUEST_AGE = 18
+# Active holds (dates blocked while paying) allowed from one IP address at a time (D41). More
+# than one, because a family, an office or a university can share an address.
+BOOKING_MAX_HOLDS_PER_IP = env.int("BOOKING_MAX_HOLDS_PER_IP", default=5)
 
 # Countries where Wynwood House operates are listed first in the nationality and phone selects.
 COUNTRIES_FIRST = ["PE", "CO", "MX", "PA", "ES"]

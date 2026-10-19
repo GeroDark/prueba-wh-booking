@@ -13,6 +13,7 @@ from apps.bookings.forms import BookingRequestForm
 from apps.bookings.models import Booking
 from apps.bookings.services import hold_dates
 from apps.bookings.session import remember_hold, session_holds
+from apps.core.ip import hashed_client_ip
 from apps.core.templatetags.formatting import money
 
 from .forms import SearchForm
@@ -166,6 +167,7 @@ class PropertyDetailView(FormMixin, DetailView):
                 guests=form.cleaned_data["guests"],
                 guest=request.user if request.user.is_authenticated else None,
                 released_holds=session_holds(request),
+                client_ip_hash=hashed_client_ip(request),
             )
         except ValidationError as error:
             form.add_error(None, error)

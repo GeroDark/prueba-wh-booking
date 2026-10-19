@@ -55,10 +55,14 @@ def test_constraint_validation_reports_duplicate_email(language, message):
         User(email="Ana@Mail.com").validate_constraints()
 
 
-def test_login_with_email_is_case_insensitive():
+def test_login_with_email_is_case_insensitive(rf):
     user = User.objects.create_user("ana@mail.com", PASSWORD)
 
-    assert authenticate(email="ANA@MAIL.COM", password=PASSWORD) == user
+    # With a request, as the login form does: the failed-attempt limit needs it (D41).
+    assert (
+        authenticate(rf.post("/es/accounts/login/"), email="ANA@MAIL.COM", password=PASSWORD)
+        == user
+    )
 
 
 @pytest.mark.parametrize(

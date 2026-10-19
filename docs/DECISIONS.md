@@ -551,8 +551,8 @@ resolverlo requiere un componente de calendario propio.
   sesión) pero conserva sus datos. Una retención hecha antes de registrarse sigue perteneciendo al visitante (test incluido).
 - Login con email sin distinguir mayúsculas y quien ya tiene sesión no ve los formularios de acceso.
 
-**Fuera de alcance (documentado).** Recuperación de contraseña y límite de intentos de login (por ejemplo con
-`django-axes`); se listan como mejoras.
+**Fuera de alcance (documentado).** Recuperación de contraseña. El límite de intentos de login se agregó después
+(D41).
 
 ---
 
@@ -709,10 +709,47 @@ problemas reales. Se comprobó cada uno antes de actuar.
 | **Fallos con SQLite** (3 fallidas y 2 errores) | El bloqueo de `flush` (D38) no reconocía la base de pruebas de SQLite. Además, SQLite no tiene bloqueo de filas: ahora usa transacciones `IMMEDIATE` (serializan las escrituras) y CI corre toda la suite también con SQLite |
 | **Garantías demasiado absolutas** en la documentación ("nunca cobra dos veces") | Redactadas con sus límites; el caso "la pasarela cobra y la respuesta se pierde" está explicado en D11 |
 
+**Atendido después (D41):** límite de intentos de login por cuenta + red y límite de retenciones activas por red.
+
 **Reconocido y pendiente (antes de operar con dinero y usuarios reales):**
-- **Límite de intentos de login** por cuenta e IP, vigilancia de intentos y MFA para el admin (D34).
-- **Acaparamiento de fechas** con muchas sesiones anónimas: el límite es de una retención por sesión. Hacen falta
-  límites por IP en la creación de retenciones y un desafío anti-bots (por ejemplo, Cloudflare Turnstile).
+- **MFA para el admin** y vigilancia de intentos (alertas).
+- **Desafío anti-bots** (por ejemplo, Cloudflare Turnstile): los límites por red frenan a una persona con un script,
+  no a una red de bots con muchas IPs.
 - **Verificación del correo** al registrarse y **recuperación de contraseña**: hoy cualquiera puede registrar un correo
-  ajeno y hacer que reciba la confirmación de una reserva.
+  ajeno y hacer que reciba la confirmación de una reserva. No se agregó a último momento porque exigir verificar el
+  correo en medio del checkout cambiaría el flujo que pide el PDF (y ese correo puede caer en Spam).
 - **Content-Security-Policy** como protección adicional contra XSS.
+- **Pago `PROCESSING` + conciliación** para pasarelas reales (D11).
+
+---
+
+## D41 · Límites contra el abuso: intentos de login y retenciones por red
+
+**Contexto.** La revisión externa (D40) reprodujo 25 intentos fallidos seguidos de un login correcto, y tres sesiones
+independientes reteniendo fechas a la vez.
+
+**Decisión.**
+- **IP real del visitante** (`apps/core/ip.py`): Render está detrás de Cloudflare (se comprobó en las cabeceras de
+  producción: `server: cloudflare`, `cf-ray`). Se usa `CF-Connecting-IP`, que Cloudflare fija y sobrescribe si el
+  cliente la envía. `X-Forwarded-For` se ignora: cualquiera puede mandarla, y Render solo agrega a ella. Sin proxy
+  (local, tests) se usa `REMOTE_ADDR`. Configurable con `CLIENT_IP_HEADER`.
+- **Login** con `django-axes`: 5 fallos de una **cuenta desde una red** → pausa de 15 minutos (página propia, HTTP
+  429, sin revelar si la cuenta existe). La clave es cuenta + red:
+  - si fuera solo la red, una persona bloquearía a toda su oficina;
+  - si fuera solo la cuenta, un atacante podría dejar a un huésped sin acceso a su cuenta.
+
+  Un login correcto reinicia la cuenta de fallos. Aplica también al admin.
+- **Dos huecos que encontraron los tests** al configurarlo:
+  1. `django-axes` buscaba el usuario en el campo `email` (el `USERNAME_FIELD`), pero el formulario lo envía como
+     `username`. Los fallos se guardaban sin cuenta y **la contraseña correcta entraba durante el bloqueo**. Se
+     corrigió con `AXES_USERNAME_FORM_FIELD`.
+  2. `ANA@mail.com` contaba como otra cuenta que `ana@mail.com`: cada forma de escribirlo daba 5 intentos nuevos. Se
+     normaliza igual que el login (`AXES_USERNAME_CALLABLE`).
+- **Retenciones:** como máximo `BOOKING_MAX_HOLDS_PER_IP` (5) activas por red. Más de una, porque una familia, una
+  oficina o una universidad comparten IP.
+  - La IP se guarda como **hash con clave** (HMAC con `SECRET_KEY`), nunca en claro, y se borra al pagar la reserva.
+  - Las retenciones vencidas o pagadas no cuentan.
+
+**Límites.** Frena a una persona con un script, no a una red de bots con muchas IPs: para eso hace falta un desafío
+anti-bots. Dos peticiones simultáneas de la misma red podrían superar el límite por una retención; para limitar abuso
+es aceptable y no justifica otro bloqueo.

@@ -74,6 +74,17 @@ class Booking(TimeStampedModel):
         _("language"), max_length=7, choices=settings.LANGUAGES, default=settings.LANGUAGE_CODE
     )
     confirmed_at = models.DateTimeField(_("confirmed at"), null=True, blank=True)
+    client_ip_hash = models.CharField(
+        _("visitor (hashed IP)"),
+        max_length=32,
+        blank=True,
+        db_index=True,
+        editable=False,
+        help_text=_(
+            "Keyed hash of the IP that held the dates, to limit holds per visitor. The address "
+            "itself is never stored; it is cleared when the booking is paid."
+        ),
+    )
     # Confirmation e-mail (D37): pending (both empty) -> sending (claimed) -> sent.
     confirmation_claimed_at = models.DateTimeField(
         _("confirmation e-mail being sent since"),

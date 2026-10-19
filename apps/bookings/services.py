@@ -93,11 +93,27 @@ def is_available(prop, check_in, check_out, now=None):
     )
 
 
-def hold_dates(*, prop, check_in, check_out, guests, guest=None, released_holds=()):
+def too_many_holds_error():
+    return ValidationError(
+        _(
+            "There are already several bookings in progress from your connection. Complete one "
+            "or wait a few minutes: unpaid ones are released after %(minutes)d minutes."
+        )
+        % {"minutes": settings.BOOKING_HOLD_MINUTES},
+        code="too_many_holds",
+    )
+
+
+def hold_dates(
+    *, prop, check_in, check_out, guests, guest=None, released_holds=(), client_ip_hash=""
+):
     """Create a PENDING booking that blocks the dates for BOOKING_HOLD_MINUTES.
 
     `released_holds` are references of this visitor's previous holds: they are cancelled
     first, so one visitor cannot block several calendars at once (D08).
+    `client_ip_hash` identifies the visitor's network: at most BOOKING_MAX_HOLDS_PER_IP active
+    holds per network, so opening many sessions does not let one person block availability
+    (D41). It is a limit against one person with a script, not against a network of bots.
     Returns the new booking or raises ValidationError.
     """
     validate_stay(prop, check_in, check_out, guests)
@@ -111,6 +127,14 @@ def hold_dates(*, prop, check_in, check_out, guests, guest=None, released_holds=
             Booking.objects.filter(
                 reference__in=released_holds, status=Booking.Status.PENDING
             ).update(status=Booking.Status.CANCELLED)
+            if client_ip_hash:
+                active_from_network = Booking.objects.filter(
+                    client_ip_hash=client_ip_hash,
+                    status=Booking.Status.PENDING,
+                    expires_at__gt=now,
+                ).count()
+                if active_from_network >= settings.BOOKING_MAX_HOLDS_PER_IP:
+                    raise too_many_holds_error()
             # Lazy expiry made explicit before inserting, so the database constraint
             # (which cannot use "now") only sees holds that are really alive.
             Booking.objects.filter(
@@ -132,6 +156,7 @@ def hold_dates(*, prop, check_in, check_out, guests, guest=None, released_holds=
                 total=quote.total,
                 currency=quote.currency,
                 language=get_language() or settings.LANGUAGE_CODE,
+                client_ip_hash=client_ip_hash,
             )
             BookingLine.objects.bulk_create(
                 [
