@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 22:25-0500\n"
+"POT-Creation-Date: 2026-10-19 15:09-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -520,7 +520,7 @@ msgstr ""
 "Se acabó el tiempo para completar la reserva y las fechas se liberaron. "
 "Revisa si siguen disponibles e inténtalo de nuevo."
 
-#: apps/bookings/views.py:201
+#: apps/bookings/views.py:202
 msgid "Sign in with the account you booked with to see your booking."
 msgstr "Inicia sesión con la cuenta con la que reservaste para ver tu reserva."
 
@@ -1279,11 +1279,11 @@ msgid_plural "%(count)d guests"
 msgstr[0] "%(count)d huésped"
 msgstr[1] "%(count)d huéspedes"
 
-#: config/settings.py:126
+#: config/settings.py:137
 msgid "English"
 msgstr "Inglés"
 
-#: config/settings.py:127
+#: config/settings.py:138
 msgid "Spanish"
 msgstr "Español"
 
@@ -1300,8 +1300,8 @@ msgid ""
 "The link may be old or mistyped. If you were looking for a booking, sign in "
 "with the account you booked with."
 msgstr ""
-"Es posible que el enlace sea antiguo o tenga un error. Si buscabas una reserva, "
-"inicia sesión con la cuenta con la que reservaste."
+"Es posible que el enlace sea antiguo o tenga un error. Si buscabas una "
+"reserva, inicia sesión con la cuenta con la que reservaste."
 
 #: templates/404.html:18
 msgid "Search stays"

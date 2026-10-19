@@ -1,11 +1,53 @@
 # WH Booking
 
-Flujo de reserva de propiedades para **Wynwood House**, desarrollado como prueba técnica *Fullstack Developer Python*.
-Incluye home con buscador, resultados, detalle con disponibilidad, registro, checkout con pago simulado,
-confirmación y correo, en español e inglés.
+Flujo de reserva de propiedades para **Wynwood House**, desarrollado como prueba técnica *Fullstack Developer Python*:
+home con buscador, resultados con mapa, detalle con disponibilidad, registro, checkout con pago simulado, confirmación
+y correo, en español e inglés.
 
-> 🚧 En construcción por fases. El plan y el estado de cada fase están en [docs/PLAN_MAESTRO.md](docs/PLAN_MAESTRO.md),
-> y las decisiones técnicas, con sus ejemplos, en [docs/DECISIONS.md](docs/DECISIONS.md).
+**Sitio en vivo: https://wh-booking.onrender.com**
+
+> El plan gratuito de Render apaga el servicio tras un rato sin visitas; si la primera carga tarda cerca de un minuto,
+> es eso. Un monitor externo lo mantiene despierto.
+
+## Revisión en 5 minutos
+
+1. **Buscar:** en el home, elige *Bogotá* y unas fechas. Los resultados muestran la lista y el mapa con precios.
+2. **Detalle:** abre una propiedad. El calendario bloquea días pasados y noches ocupadas, y el precio (noches,
+   limpieza, impuestos del país) se calcula en el servidor al cambiar fechas o huéspedes.
+3. **Reservar:** las fechas quedan retenidas 15 minutos y se abre el checkout.
+4. **Registrarse en el checkout** con un correo real (llega la confirmación) y pagar con la tarjeta de prueba
+   `4242 4242 4242 4242`, vencimiento futuro, CVC `123`.
+5. **Confirmación:** dirección exacta, mapa con el punto y "Abrir en Google Maps". El correo llega en el idioma en que
+   se reservó (revisa Spam: el remitente de la demo es un Gmail).
+6. **Cambiar de idioma** (EN / ES, arriba a la derecha) en cualquier página.
+
+| Cuenta o dato de prueba | Valor |
+|---|---|
+| Huésped con perfil completo (pasa directo al pago) | `demo@wynwoodhouse.test` / `Wynwood-Demo-2026` (su correo no existe: para ver el correo de confirmación, regístrate con uno real) |
+| Tarjetas aprobadas | `4242 4242 4242 4242` (Visa), `5555 5555 5555 4444` (Mastercard), `3782 822463 10005` (Amex) |
+| Tarjeta rechazada / sin fondos | `4000 0000 0000 0002` / `4000 0000 0000 9995` |
+
+No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acepta tarjetas de prueba.
+
+## Requisitos de la prueba y dónde se cumplen
+
+| Requisito | Dónde |
+|---|---|
+| Home con buscador | `apps/core` (`HomeView`), componente `search_bar` (país, ciudad, distrito, fechas, huéspedes) |
+| Login y registro manual (emails únicos, contraseñas seguras) | `apps/accounts`: email único sin distinguir mayúsculas (también en la base), validadores de contraseña con lista en vivo |
+| Resultados de búsqueda | `PropertySearchView` + `PropertyQuerySet.search()` / `available()` |
+| Detalle con formulario de reserva: sin fechas pasadas, entrada antes que salida, sin reservas duplicadas | `apps/bookings/services.py` (`validate_stay`, `hold_dates`), bloqueo de fila y restricción de exclusión en PostgreSQL (D06–D09) |
+| Checkout de usuario nuevo (registro + pago) | `CheckoutView`: registro con datos personales y pago simulado idempotente (`apps/payments`, D11–D12) |
+| Vista de confirmación | `BookingConfirmationView` (solo el huésped; ubicación exacta) |
+| Correo de confirmación (SMTP local o API) | `apps/bookings/emails.py`: Mailpit (SMTP) en local, Brevo (API) en producción (D37) |
+| Imágenes a WebP, máximo 1200 px | `OptimizedImageField` (`apps/core/fields.py`), al subir desde el admin o el seed |
+| Comando de datos de prueba | `python manage.py seed_data` |
+| Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
+| Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
+
+Calidad: **424 tests** (pytest, cobertura ~99 %), CI en GitHub Actions con PostgreSQL, ruff y `check --deploy`;
+accesibilidad WCAG 2.1 AA verificada con axe-core; decisiones técnicas con ejemplos en
+[docs/DECISIONS.md](docs/DECISIONS.md) y el plan por fases en [docs/PLAN_MAESTRO.md](docs/PLAN_MAESTRO.md).
 
 ## Estado
 
@@ -14,12 +56,13 @@ confirmación y correo, en español e inglés.
 | 0 | Docker, PostgreSQL, configuración, usuario con email, ES/EN, CI | ✅ |
 | 1 | Modelos de contenido y catálogo, admin bilingüe, imágenes WebP, `seed_data` | ✅ |
 | 2 | Home: buscador, destinos, destacadas, servicios, "¿Por qué viajar a España?", banners, header y footer | ✅ |
-| 3 | Despliegue | ⏳ |
+| 3 | Despliegue en Render + Neon + Cloudinary + Brevo, protección de datos de producción | ✅ |
 | 4 | Resultados: filtros por ubicación, fechas y huéspedes; mapa con precios y agrupamiento | ✅ |
 | 5 | Detalle de la propiedad: galería, calendario de disponibilidad, precio en vivo y retención de fechas | ✅ |
 | 6 | Registro y login con email, contraseñas seguras con requisitos en vivo, logout seguro | ✅ |
 | 7 | Checkout: registro con datos personales, pago simulado idempotente y confirmación con la ubicación exacta | ✅ |
 | 8 | Correo de confirmación HTML + texto en el idioma de la reserva (Mailpit en local, Brevo en producción) | ✅ |
+| 9 | Cierre: accesibilidad, traducciones, revisión en producción, documentación | ✅ |
 
 ## Stack
 
@@ -237,6 +280,17 @@ static/          css/ (tokens + un archivo por componente y por página), js/ (m
 seed/images/     fotos de origen para los datos de prueba
 docs/            plan maestro y decisiones técnicas
 ```
+
+## Mejoras planificadas (fuera del alcance de la prueba)
+
+| Mejora | Cómo |
+|---|---|
+| Pasarela de pago real (dLocal o Stripe) | Otra clase con la interfaz `PaymentGateway` y campos de tarjeta del proveedor (tokenización: el número nunca pasa por el servidor) |
+| Login con Google | `django-allauth`; solo se unen cuentas si Google confirma el correo, y el checkout sigue pidiendo los datos que falten |
+| Correos desde una cola | Celery o RQ, para que el huésped no espere al proveedor de correo |
+| Dominio propio verificado en Brevo (SPF, DKIM) | Mejor entregabilidad: menos correos en Spam |
+| Tareas programadas | `expire_holds` y `send_booking_confirmations` cada pocos minutos (cron) |
+| Servicios adicionales, facturación, cuotas, Wynwood Points | Pantallas del Figma fuera del PDF; se agregarían como líneas de la reserva |
 
 ## Licencias
 

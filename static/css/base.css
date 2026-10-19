@@ -101,6 +101,17 @@ main:focus {
   transform: translateY(-1px);
 }
 
+/* Keyboard focus: a ring around the pill, so it is clear which button Enter will press. */
+.btn-wh:focus-visible {
+  outline: 2px solid var(--wh-black);
+  outline-offset: 3px;
+  box-shadow: none;
+}
+
+.btn-wh--light:focus-visible {
+  outline-color: var(--wh-white);
+}
+
 .btn-wh--outline {
   --bs-btn-color: var(--wh-black);
   --bs-btn-bg: transparent;

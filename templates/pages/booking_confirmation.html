@@ -76,7 +76,7 @@
                data-hint-scroll="{% translate 'Use Ctrl + scroll to zoom the map' %}"
                data-hint-scroll-mac="{% translate 'Use ⌘ + scroll to zoom the map' %}"
                data-hint-touch="{% translate 'Use two fingers to move the map' %}"
-               role="img" aria-label="{% blocktranslate with address=prop.full_address %}Map with the exact location: {{ address }}{% endblocktranslate %}"></div>
+               role="region" aria-label="{% blocktranslate with address=prop.full_address %}Map with the exact location: {{ address }}{% endblocktranslate %}"></div>
         {% endif %}
         <a class="btn btn-wh btn-wh--outline confirmation__maps-link" href="{{ prop.google_maps_url }}" target="_blank" rel="noopener">
           {% translate "Open in Google Maps" %}
