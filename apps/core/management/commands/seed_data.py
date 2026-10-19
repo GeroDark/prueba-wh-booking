@@ -4,6 +4,7 @@ from django.db import transaction
 from apps.core.safety import add_confirmation_argument, refuse_in_production
 from apps.core.seeding import data
 from apps.core.seeding.loader import FlushError, Seeder, flush_content
+from apps.properties.models import Property
 
 
 class Command(BaseCommand):
@@ -32,11 +33,22 @@ class Command(BaseCommand):
             action="store_true",
             help="Do not attach photos (faster, e.g. for quick checks).",
         )
+        parser.add_argument(
+            "--if-empty",
+            action="store_true",
+            help=(
+                "Do nothing if there are already properties. Used on every start in production, "
+                "so the demo data is loaded once and later edits in the admin are kept."
+            ),
+        )
         add_confirmation_argument(parser)
 
-    def handle(self, *args, flush, properties, skip_images, **options):
+    def handle(self, *args, flush, properties, skip_images, if_empty, **options):
         if properties is not None and not 1 <= properties <= len(data.PROPERTIES):
             raise CommandError(f"--properties must be between 1 and {len(data.PROPERTIES)}.")
+        if if_empty and Property.objects.exists():
+            self.stdout.write("Data already loaded: nothing to do.")
+            return
         if flush:
             refuse_in_production(options, "seed_data --flush")
 

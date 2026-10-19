@@ -1,4 +1,15 @@
 import pytest
+from django.conf import settings as django_settings
+from django.utils import translation
+
+
+@pytest.fixture(autouse=True)
+def _default_language():
+    """Every test starts in the default language. A request to /en/ leaves English active in
+    the thread, and a later test that renders without a request would inherit it."""
+    translation.activate(django_settings.LANGUAGE_CODE)
+    yield
+    translation.deactivate()
 
 
 @pytest.fixture(autouse=True)
