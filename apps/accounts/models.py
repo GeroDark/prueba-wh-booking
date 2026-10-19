@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.functions import Lower
 from django.utils import timezone
@@ -7,7 +8,8 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 
 from .managers import UserManager
-from .validators import validate_full_name
+from .phones import InvalidPhone, parse_phone
+from .validators import validate_birth_date, validate_full_name
 
 
 class User(AbstractUser):
@@ -32,7 +34,9 @@ class User(AbstractUser):
         blank=True,
         help_text=_("National number without the prefix, digits only."),
     )
-    birth_date = models.DateField(_("birth date"), null=True, blank=True)
+    birth_date = models.DateField(
+        _("birth date"), null=True, blank=True, validators=[validate_birth_date]
+    )
     preferred_language = models.CharField(
         _("preferred language"),
         max_length=7,
@@ -72,6 +76,17 @@ class User(AbstractUser):
 
     def get_full_name(self):
         return self.full_name or self.email
+
+    def clean(self):
+        """The same phone rules as the checkout, also for edits made in the admin."""
+        super().clean()
+        if self.phone_prefix or self.phone_number:
+            try:
+                phone = parse_phone(f"{self.phone_prefix} {self.phone_number}", "")
+            except InvalidPhone as error:
+                raise ValidationError({"phone_number": error.message}) from None
+            # Stored normalized: "+51" and "987654321", whatever spacing was typed in the admin.
+            self.phone_prefix, self.phone_number = phone.prefix, phone.number
 
     def set_marketing_consent(self, accepted, now=None):
         """Record the newsletter choice; the moment of a new consent is kept as proof."""

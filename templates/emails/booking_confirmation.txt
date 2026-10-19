@@ -1,0 +1,23 @@
+{% load i18n formatting %}{% autoescape off %}{% blocktranslate with name=guest.get_short_name %}Hi, {{ name }}!{% endblocktranslate %}
+
+{% translate "Thank you for choosing Wynwood House for your next stay" %}
+
+{% translate "You're all set to start your Wynwood Experience!" %}
+{% translate "Your booking is confirmed and we look forward to welcoming you. Before your arrival you will receive all the check-in information by email." %}
+
+{% translate "Your booking summary" %}
+{% blocktranslate with reference=booking.reference %}Reference {{ reference }}{% endblocktranslate %}
+
+{{ prop.title }}
+{{ prop.full_address }}
+{{ booking.check_in|date:"j F Y" }} – {{ booking.check_out|date:"j F Y" }} · {% blocktranslate count counter=booking.guests %}{{ counter }} guest{% plural %}{{ counter }} guests{% endblocktranslate %}
+{% for line in booking.lines.all %}
+{{ line.label }}: {{ line.amount|money:booking.currency }}{% endfor %}
+{% translate "Total" %}: {{ booking.total|money:booking.currency }}
+
+{% translate "See my booking and the map" %}: {{ booking_url }}
+{% if chat_url %}{% translate "Chat with us 24/7" %}: {{ chat_url }}{% endif %}
+{% if site_settings.cancellation_policy_url %}{% translate "Cancellation policy" %}: {{ site_settings.cancellation_policy_url }}{% endif %}
+
+Wynwood House · {% translate "Home experience, hotel quality" %}
+{% endautoescape %}

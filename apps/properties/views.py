@@ -57,6 +57,13 @@ class PropertySearchView(ListView):
     def get_queryset(self):
         return Property.objects.active().search(**self.filters).with_card_data()
 
+    def paginate_queryset(self, queryset, page_size):
+        """`?page=abc` opens the first page and `?page=999` the last one, instead of a 404
+        (shared or old links keep working when there are fewer results)."""
+        paginator = self.get_paginator(queryset, page_size)
+        page = paginator.get_page(self.request.GET.get(self.page_kwarg))
+        return paginator, page, page.object_list, page.has_other_pages()
+
     def get_summary(self):
         """Readable active filters, e.g. ["Lima", "10 nov – 14 nov 2026", "2 huéspedes"]."""
         filters = self.filters

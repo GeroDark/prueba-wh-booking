@@ -1,0 +1,202 @@
+{% load i18n formatting %}<!doctype html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light only">
+  <title>{% blocktranslate with reference=booking.reference %}Booking {{ reference }} confirmed{% endblocktranslate %}</title>
+</head>
+{% comment %}
+  Figma "Correo confirmación". E-mail clients ignore external CSS and most layout features, so
+  this is a 600 px table with inline styles, web-safe fonts and PNG images (D37).
+{% endcomment %}
+<body style="margin:0;padding:0;background:#f2f2f2;">
+  {# Inbox preview line, hidden in the message itself. #}
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+    {% blocktranslate with reference=booking.reference title=prop.title %}Booking {{ reference }} confirmed: {{ title }}.{% endblocktranslate %}
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f2f2f2;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#232324;">
+
+          <tr>
+            <td align="center" style="padding:32px 24px 8px;">
+              <img src="{{ logo_url }}" width="140" alt="Wynwood House" style="display:block;width:140px;height:auto;border:0;">
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:16px 24px 0;font-size:32px;line-height:40px;">
+              {% blocktranslate with name=guest.get_short_name %}Hi, {{ name }}!{% endblocktranslate %}
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:12px 40px 28px;font-size:12px;line-height:20px;letter-spacing:4px;text-transform:uppercase;color:#666666;">
+              {% translate "Thank you for choosing Wynwood House for your next stay" %}
+            </td>
+          </tr>
+
+          {% if cover_url %}
+            <tr>
+              <td>
+                <img src="{{ cover_url }}" width="600" alt="{{ prop.title }}" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+              </td>
+            </tr>
+          {% endif %}
+
+          <tr>
+            <td align="center" style="padding:32px 40px 8px;font-size:15px;line-height:24px;">
+              <p style="margin:0 0 16px;font-weight:bold;">{% translate "You're all set to start your Wynwood Experience!" %}</p>
+              <p style="margin:0 0 16px;">{% translate "Your booking is confirmed and we look forward to welcoming you. Before your arrival you will receive all the check-in information by email." %}</p>
+              <p style="margin:0;">{% translate "If you have any questions, do not hesitate to contact us." %}</p>
+            </td>
+          </tr>
+          {% if chat_url %}
+            <tr>
+              <td align="center" style="padding:24px 40px 8px;">
+                <a href="{{ chat_url }}" style="display:inline-block;padding:12px 28px;border-radius:24px;background:#232324;color:#ffffff;font-size:13px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;">{% translate "Chat with us 24/7" %}</a>
+              </td>
+            </tr>
+          {% endif %}
+
+          {# Booking summary #}
+          <tr>
+            <td style="padding:32px 40px 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #d9d9d9;">
+                <tr>
+                  <td style="padding:28px 0 4px;font-size:18px;line-height:26px;">{% translate "Your booking summary" %}</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 16px;font-size:13px;line-height:20px;color:#666666;">
+                    {% blocktranslate with reference=booking.reference %}Reference {{ reference }}{% endblocktranslate %}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-size:16px;line-height:24px;">{{ prop.title }}</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 0 0;font-size:13px;line-height:20px;color:#666666;">{{ prop.full_address }}</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 0 20px;font-size:13px;line-height:20px;color:#666666;">
+                    {{ booking.check_in|date:"j F Y" }} – {{ booking.check_out|date:"j F Y" }} ·
+                    {% blocktranslate count counter=booking.guests %}{{ counter }} guest{% plural %}{{ counter }} guests{% endblocktranslate %}
+                  </td>
+                </tr>
+                {% for line in booking.lines.all %}
+                  <tr>
+                    <td>
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="padding:3px 0;font-size:14px;line-height:20px;">{{ line.label }}</td>
+                          <td align="right" style="padding:3px 0;font-size:14px;line-height:20px;white-space:nowrap;">{{ line.amount|money:booking.currency }}</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                {% endfor %}
+                <tr>
+                  <td style="padding-top:12px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #d9d9d9;">
+                      <tr>
+                        <td style="padding:12px 0 0;font-size:20px;line-height:28px;">{% translate "Total" %}</td>
+                        <td align="right" style="padding:12px 0 0;font-size:20px;line-height:28px;white-space:nowrap;">{{ booking.total|money:booking.currency }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding:28px 0 0;">
+                    <a href="{{ booking_url }}" style="display:inline-block;padding:11px 26px;border:1px solid #232324;border-radius:24px;color:#232324;font-size:13px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;">{% translate "See my booking and the map" %}</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          {# Other destinations (countries with a photo, from the admin) #}
+          {% if destinations %}
+            <tr>
+              <td style="padding:40px 36px 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #d9d9d9;">
+                  <tr>
+                    <td colspan="{{ destinations|length }}" style="padding:28px 4px 16px;font-size:18px;line-height:26px;">{% translate "Other destinations" %}</td>
+                  </tr>
+                  <tr>
+                    {% for destination in destinations %}
+                      <td valign="top" width="{% widthratio 1 destinations|length 100 %}%" style="padding:0 4px;">
+                        <a href="{{ destination.url }}" style="color:#232324;text-decoration:none;">
+                          <img src="{{ destination.image_url }}" width="122" alt="" style="display:block;width:100%;height:auto;border:0;">
+                          <span style="display:block;padding-top:8px;font-size:13px;line-height:18px;">{{ destination.name }}</span>
+                        </a>
+                      </td>
+                    {% endfor %}
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          {% endif %}
+
+          {# Yellow block #}
+          <tr>
+            <td style="padding:40px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FEAC00;">
+                <tr>
+                  <td style="padding:36px 40px 8px;font-size:34px;line-height:34px;">*</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 40px 12px;font-size:18px;line-height:26px;">{% translate "Explore your destination with confidence with our city guides." %}</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 40px 24px;font-size:13px;line-height:20px;">{% translate "Don't settle for the basics: personalise your stay with additional services and enjoy the new way to travel." %}</td>
+                </tr>
+                {% if site_settings.app_store_url or site_settings.play_store_url %}
+                  <tr>
+                    <td style="padding:0 40px 24px;">
+                      {% if site_settings.app_store_url %}<a href="{{ site_settings.app_store_url }}" style="display:inline-block;margin:0 8px 8px 0;padding:9px 18px;border-radius:8px;background:#000000;color:#ffffff;font-size:13px;text-decoration:none;">App Store</a>{% endif %}
+                      {% if site_settings.play_store_url %}<a href="{{ site_settings.play_store_url }}" style="display:inline-block;margin:0 8px 8px 0;padding:9px 18px;border-radius:8px;background:#000000;color:#ffffff;font-size:13px;text-decoration:none;">Google Play</a>{% endif %}
+                    </td>
+                  </tr>
+                {% endif %}
+                {% if social_links %}
+                  <tr>
+                    <td align="center" style="padding:16px 40px 8px;">
+                      {% for link in social_links %}<a href="{{ link.url }}" style="display:inline-block;margin:0 4px;text-decoration:none;"><img src="{{ link.icon_url }}" width="32" height="32" alt="{{ link.name }}" style="display:block;border:0;"></a>{% endfor %}
+                    </td>
+                  </tr>
+                {% endif %}
+                <tr>
+                  <td align="center" style="padding:16px 40px 8px;font-size:12px;line-height:18px;letter-spacing:4px;text-transform:uppercase;">{% translate "Home experience, hotel quality" %}</td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding:4px 40px 0;font-size:13px;line-height:22px;">
+                    {% if support_url %}<a href="{{ support_url }}" style="color:#232324;">{% translate "24/7 support" %}</a><br>{% endif %}
+                    {% if site_settings.cancellation_policy_url %}<a href="{{ site_settings.cancellation_policy_url }}" style="color:#232324;">{% translate "Cancellation policy" %}</a>{% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding:28px 40px 32px;">
+                    <img src="{{ logo_url }}" width="110" alt="Wynwood House" style="display:block;width:110px;height:auto;border:0;">
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
+          <tr>
+            <td align="center" style="padding:16px 24px;font-family:Helvetica,Arial,sans-serif;font-size:11px;line-height:16px;color:#808080;">
+              {% blocktranslate trimmed with email=guest.email %}
+                You receive this e-mail at {{ email }} because you booked a stay with Wynwood House.
+              {% endblocktranslate %}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

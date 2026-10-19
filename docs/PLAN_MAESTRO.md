@@ -312,8 +312,9 @@ No se empieza la siguiente fase hasta aprobar la anterior.
 
 ### Fase 8 — Correo de confirmación
 - Plantilla HTML + texto según el frame del correo, en el idioma de la reserva, enviada con `on_commit`.
-- [ ] Se ve bien en Mailpit (local) y llega a una bandeja real (producción).
-- [ ] Tests: un solo envío, idioma correcto, contenido de la reserva.
+- [x] Se ve bien en Mailpit (local): 375 y 700 px; el chequeo de Mailpit deja solo 0,46 % sin soporte.
+- [ ] Llega a una bandeja real (producción, con el despliegue de la Fase 3).
+- [x] Tests: un solo envío, idioma correcto, contenido de la reserva, fallo del proveedor y reintento.
 
 ### Fase 9 — Cierre
 - Repaso de traducciones (`makemessages` / `compilemessages`), accesibilidad (etiquetas, foco, contraste, `alt`), diseño adaptable en todos los anchos.

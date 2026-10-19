@@ -166,10 +166,19 @@ STORAGES = {
 }
 
 
-# Email: EMAIL_URL expands into EMAIL_BACKEND, EMAIL_HOST, EMAIL_PORT, etc.
+# Email (D37). Local: EMAIL_URL (smtp://mailpit:1025 in Docker, consolemail:// otherwise) expands
+# into EMAIL_BACKEND, EMAIL_HOST, EMAIL_PORT, etc. Production: with BREVO_API_KEY the e-mails go
+# through Brevo's HTTP API (free hosting plans usually block the SMTP ports).
 
 vars().update(env.email_url("EMAIL_URL", default="consolemail://"))
+BREVO_API_KEY = env("BREVO_API_KEY", default="")
+if BREVO_API_KEY:
+    EMAIL_BACKEND = "anymail.backends.brevo.EmailBackend"
+    ANYMAIL = {"BREVO_API_KEY": BREVO_API_KEY}
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Wynwood House <reservas@example.com>")
+
+# Public address of the site, for links and images inside e-mails (there is no request there).
+SITE_URL = env("SITE_URL", default="http://localhost:8000").rstrip("/")
 
 
 # Security. Production hardening is on whenever DEBUG is false.

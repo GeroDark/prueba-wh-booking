@@ -28,11 +28,12 @@ def unavailable_error():
     )
 
 
-def validate_stay(prop, check_in, check_out, guests):
-    """Rules that do not depend on other bookings. Raises ValidationError with field errors."""
-    errors = {}
-    today = prop.district.city.local_today()  # "past" depends on where the property is (D09)
+def date_errors(check_in, check_out, today):
+    """Date rules shared by the search and the booking: {field: ValidationError}.
 
+    The search applies them too, so it never shows stays that cannot be booked afterwards.
+    """
+    errors = {}
     if check_in < today:
         errors["check_in"] = ValidationError(_("Arrival cannot be in the past."), code="past")
     elif check_in > today + timedelta(days=settings.BOOKING_MAX_DAYS_AHEAD):
@@ -57,6 +58,13 @@ def validate_stay(prop, check_in, check_out, guests):
             % {"count": settings.BOOKING_MAX_NIGHTS},
             code="too_long",
         )
+    return errors
+
+
+def validate_stay(prop, check_in, check_out, guests):
+    """Rules that do not depend on other bookings. Raises ValidationError with field errors."""
+    # "Past" depends on where the property is (D09).
+    errors = date_errors(check_in, check_out, prop.district.city.local_today())
 
     if guests < 1:
         errors["guests"] = ValidationError(_("At least one guest is required."), code="guests")

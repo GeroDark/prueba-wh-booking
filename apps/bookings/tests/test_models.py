@@ -2,6 +2,7 @@ import re
 from datetime import timedelta
 
 import pytest
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
@@ -73,3 +74,34 @@ def test_which_bookings_block_their_dates(status, expires_in_minutes, blocks):
     BookingFactory(status=status, expires_at=expires_at)
 
     assert Booking.objects.blocking().exists() is blocks
+
+
+def test_admin_bookings_cannot_exceed_capacity_or_overlap():
+    """In the admin, a clear message instead of a database error."""
+    first = BookingFactory(check_in=on(10), check_out=on(15))
+    clash = Booking(
+        property=first.property,
+        status=Booking.Status.CONFIRMED,
+        check_in=on(12),
+        check_out=on(14),
+        guests=first.property.max_guests + 1,
+    )
+
+    with pytest.raises(ValidationError) as error:
+        clash.clean()
+
+    assert {"guests", "check_in"} <= error.value.message_dict.keys()
+    assert first.reference in error.value.message_dict["check_in"][0]
+
+
+def test_a_cancelled_booking_may_share_dates_in_the_admin():
+    first = BookingFactory(check_in=on(10), check_out=on(15))
+    cancelled = Booking(
+        property=first.property,
+        status=Booking.Status.CANCELLED,
+        check_in=on(10),
+        check_out=on(15),
+        guests=1,
+    )
+
+    cancelled.clean()  # no error: it does not occupy the dates

@@ -550,6 +550,16 @@ aceptado y mensajes de Django en "usted" ("Introduzca una fecha válida").
 
 **Límite.** No se puede distinguir un nombre real de letras al azar sin verificar un documento.
 
+**Auditoría de todas las entradas (Fase 8).** Se atacaron todos los formularios y parámetros (búsqueda, detalle,
+cotización, reserva, registro, login, checkout, pago, cambio de idioma, `next`) con fechas imposibles, números
+negativos o no numéricos, textos enormes, HTML, caracteres nulos, redirecciones externas y campos extra
+(`is_staff`). Huecos encontrados y cerrados:
+- La búsqueda aplica ahora las mismas reglas de fechas que la reserva (`date_errors`: no pasadas, hasta 365 días,
+  1 a 30 noches): no muestra estadías que luego no se pueden reservar.
+- `?page=abc` o una página inexistente abren la primera o la última página en vez de un 404.
+- El modelo `User` valida teléfono (y lo normaliza) y fecha de nacimiento, también al editar desde el admin.
+- `Booking.clean()` valida capacidad y solapamiento en el admin con un mensaje claro, en vez del error de la base.
+
 ---
 
 ## D36 · Datos personales del checkout
@@ -576,3 +586,32 @@ aceptado y mensajes de Django en "usted" ("Introduzca una fecha válida").
 
 **Fuera de alcance (documentado).** Servicios adicionales, datos de facturación, cuotas, Wynwood Points y
 Apple Pay/Google Pay (requieren una pasarela real).
+
+---
+
+## D37 · Correo de confirmación
+
+**Decisión.**
+- **Cuándo:** con `transaction.on_commit`, solo cuando el pago aprobado ya está guardado. Si algo falla y la
+  transacción se revierte, no sale ningún correo.
+- **Una sola vez:** antes de enviar se "reclama" la reserva con un `UPDATE` condicional
+  (`confirmation_sent_at IS NULL`); dos llamadas simultáneas no pueden enviar ambas.
+- **Si el proveedor falla:** el pago sigue confirmado, se deshace la marca, se registra el error y el comando
+  `send_booking_confirmations` lo reintenta. En el admin hay una acción para reenviarlo a pedido.
+- **Idioma:** el de la reserva (`Booking.language`), con `translation.override`: asunto, textos, montos, fechas y
+  enlaces (`/es/` o `/en/`). Se fija **al pagar**, no al retener las fechas: si el huésped cambia de idioma en el
+  checkout, todo sigue al idioma en que terminó (también su idioma preferido).
+- **El enlace del correo sin sesión** (otro dispositivo) pide iniciar sesión y vuelve a la reserva, en vez de un 404.
+  Se responde igual para cualquier referencia, exista o no, así que no revela nada; otra cuenta sigue recibiendo 404.
+- **Páginas de error propias:** 404 con el diseño del sitio y en el idioma de la URL; 500 independiente y bilingüe
+  (Django la muestra sin contexto, así que no puede depender del header ni de la base de datos).
+- **Diseño:** el frame "Correo confirmación" del Figma, como tabla de 600 px con estilos en línea, fuentes seguras
+  y versión de texto plano. Los iconos y el logo van en PNG (Gmail no muestra SVG).
+- **Fotos:** el sitio guarda WebP (requisito 8), pero cerca de un cuarto de los clientes de correo (Outlook para
+  Windows, entre otros) no lo muestra. Para el correo se genera una copia JPEG la primera vez y se reutiliza.
+- **Envío:** Mailpit por SMTP en local; Brevo por API HTTP en producción (`django-anymail`), porque los planes
+  gratuitos de hosting bloquean los puertos SMTP. El PDF permite "SMTP local o API".
+- **Enlaces absolutos** con `SITE_URL`: un correo no tiene petición de la que sacar el dominio.
+
+**Mejora futura.** El envío ocurre dentro de la petición, después del pago (unos cientos de milisegundos con la
+API). Con más volumen iría a una cola (Celery o RQ) para que el huésped no espere al proveedor de correo.

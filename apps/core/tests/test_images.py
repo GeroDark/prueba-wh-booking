@@ -1,10 +1,11 @@
 from io import BytesIO
 
 import pytest
+from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
-from apps.core.images import optimize_image
+from apps.core.images import email_jpeg, optimize_image
 from apps.properties.tests.factories import PropertyImageFactory, image_upload
 
 
@@ -83,3 +84,16 @@ def test_limits_come_from_settings(settings):
     property_image = PropertyImageFactory(image=image_upload(size=(1000, 800)))
 
     assert stored_image(property_image.image).size == (500, 400)
+
+
+@pytest.mark.django_db
+def test_email_jpeg_makes_a_cropped_copy_once():
+    photo = PropertyImageFactory().image  # stored as WebP
+
+    url = email_jpeg(photo, 300, 400)
+    again = email_jpeg(photo, 300, 400)
+
+    name = url.removeprefix(default_storage.base_url)
+    with default_storage.open(name) as stored, Image.open(stored) as image:
+        assert (image.format, image.size) == ("JPEG", (300, 400))
+    assert again == url  # reused, not generated again

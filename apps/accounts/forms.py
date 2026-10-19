@@ -9,7 +9,7 @@ from apps.core.forms import FriendlyErrorsMixin
 
 from .models import User
 from .phones import InvalidPhone, parse_phone, region_choices, region_for_prefix
-from .validators import MAX_AGE, normalize_name, validate_birth_date, years_ago
+from .validators import MAX_AGE, normalize_name, years_ago
 
 # Browser-side hints only (the server validates again). The browser's own e-mail check accepts
 # "name@gmail" without a dot in the domain; Django's validator does not, so the hint asks for it.
@@ -180,11 +180,6 @@ class GuestDetailsMixin:
                 % {"age": settings.BOOKING_MIN_GUEST_AGE},
             }
         )
-
-    def clean_birth_date(self):
-        birth_date = self.cleaned_data["birth_date"]
-        validate_birth_date(birth_date)
-        return birth_date
 
     def clean(self):
         cleaned = super().clean()
