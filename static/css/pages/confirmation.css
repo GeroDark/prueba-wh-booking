@@ -48,7 +48,7 @@
   padding: 0.4rem 1rem;
   border-radius: var(--wh-radius-pill);
   background: #e3f3ea;
-  color: #1e7d4f;
+  color: #17663f; /* 6:1 on the badge background (WCAG AA) */
   font-weight: 700;
 }
 
