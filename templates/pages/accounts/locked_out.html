@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% comment %}
+  Shown by django-axes after too many failed sign-ins for one account from one network (D41).
+  It does not say whether the account exists.
+{% endcomment %}
+
+{% block title %}{% translate "Too many attempts" %} | Wynwood House{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/pages/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="auth container-wh" aria-labelledby="auth-title">
+    <h1 class="auth__title" id="auth-title">{% translate "Too many attempts" %}</h1>
+    <p class="auth__lead">
+      {% translate "For your security, signing in with this email from your network is paused for 15 minutes after several failed attempts." %}
+    </p>
+    <p>{% translate "Wait a few minutes and try again. If you do not remember your password, write to us and we will help you." %}</p>
+    <p class="auth__switch"><a href="{% url 'core:home' %}">{% translate "Back to home" %}</a></p>
+  </section>
+{% endblock %}

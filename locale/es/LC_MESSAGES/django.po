@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-19 15:52-0500\n"
+"POT-Creation-Date: 2026-10-19 16:24-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -388,23 +388,35 @@ msgstr "idioma"
 msgid "confirmed at"
 msgstr "confirmada el"
 
-#: apps/bookings/models.py:79
+#: apps/bookings/models.py:78
+msgid "visitor (hashed IP)"
+msgstr "visitante (IP cifrada)"
+
+#: apps/bookings/models.py:84
+msgid ""
+"Keyed hash of the IP that held the dates, to limit holds per visitor. The "
+"address itself is never stored; it is cleared when the booking is paid."
+msgstr ""
+"Hash con clave de la IP que retuvo las fechas, para limitar las retenciones "
+"por visitante. La dirección nunca se guarda; se borra al pagar la reserva."
+
+#: apps/bookings/models.py:90
 msgid "confirmation e-mail being sent since"
 msgstr "correo de confirmación enviándose desde"
 
-#: apps/bookings/models.py:83
+#: apps/bookings/models.py:94
 msgid ""
 "Set while a process sends the e-mail. If it stays set for long, that process "
 "died and the retry command takes it over."
 msgstr ""
-"Se completa mientras un proceso envía el correo. Si queda así mucho tiempo, ese "
-"proceso falló y el comando de reintentos lo retoma."
+"Se completa mientras un proceso envía el correo. Si queda así mucho tiempo, "
+"ese proceso falló y el comando de reintentos lo retoma."
 
-#: apps/bookings/models.py:88
+#: apps/bookings/models.py:99
 msgid "confirmation e-mail sent at"
 msgstr "correo de confirmación enviado el"
 
-#: apps/bookings/models.py:92
+#: apps/bookings/models.py:103
 msgid ""
 "Set only after the e-mail provider accepted the message. Empty: not sent yet "
 "(it is retried with a command)."
@@ -412,27 +424,27 @@ msgstr ""
 "Se completa solo después de que el proveedor de correo aceptó el mensaje. "
 "Vacío: aún no se envió (se reintenta con un comando)."
 
-#: apps/bookings/models.py:100 apps/bookings/models.py:177
+#: apps/bookings/models.py:111 apps/bookings/models.py:188
 #: apps/payments/models.py:26
 msgid "booking"
 msgstr "reserva"
 
-#: apps/bookings/models.py:101
+#: apps/bookings/models.py:112
 msgid "bookings"
 msgstr "reservas"
 
-#: apps/bookings/models.py:108
+#: apps/bookings/models.py:119
 msgid "Check-out must be after check-in."
 msgstr "La salida debe ser posterior a la llegada."
 
-#: apps/bookings/models.py:127 apps/bookings/services.py:74
+#: apps/bookings/models.py:138 apps/bookings/services.py:74
 #, python-format
 msgid "This property hosts up to %(count)d guest."
 msgid_plural "This property hosts up to %(count)d guests."
 msgstr[0] "Esta propiedad admite hasta %(count)d huésped."
 msgstr[1] "Esta propiedad admite hasta %(count)d huéspedes."
 
-#: apps/bookings/models.py:144
+#: apps/bookings/models.py:155
 #, python-format
 msgid ""
 "These dates overlap booking %(reference)s (%(check_in)s – %(check_out)s)."
@@ -440,31 +452,31 @@ msgstr ""
 "Estas fechas se superponen con la reserva %(reference)s (%(check_in)s – "
 "%(check_out)s)."
 
-#: apps/bookings/models.py:172
+#: apps/bookings/models.py:183
 msgid "Nights"
 msgstr "Noches"
 
-#: apps/bookings/models.py:173
+#: apps/bookings/models.py:184
 msgid "Cleaning"
 msgstr "Limpieza"
 
-#: apps/bookings/models.py:174
+#: apps/bookings/models.py:185
 msgid "Tax"
 msgstr "Impuesto"
 
-#: apps/bookings/models.py:179 apps/core/models.py:236
+#: apps/bookings/models.py:190 apps/core/models.py:236
 msgid "type"
 msgstr "tipo"
 
-#: apps/bookings/models.py:180 apps/core/models.py:216 apps/core/models.py:237
+#: apps/bookings/models.py:191 apps/core/models.py:216 apps/core/models.py:237
 msgid "label"
 msgstr "etiqueta"
 
-#: apps/bookings/models.py:181 apps/payments/models.py:35
+#: apps/bookings/models.py:192 apps/payments/models.py:35
 msgid "amount"
 msgstr "monto"
 
-#: apps/bookings/models.py:182 apps/core/models.py:140 apps/core/models.py:180
+#: apps/bookings/models.py:193 apps/core/models.py:140 apps/core/models.py:180
 #: apps/core/models.py:200 apps/core/models.py:219 apps/core/models.py:242
 #: apps/core/models.py:277 apps/properties/models.py:29
 #: apps/properties/models.py:111 apps/properties/models.py:241
@@ -472,11 +484,11 @@ msgstr "monto"
 msgid "order"
 msgstr "orden"
 
-#: apps/bookings/models.py:185
+#: apps/bookings/models.py:196
 msgid "price line"
 msgstr "línea de precio"
 
-#: apps/bookings/models.py:186
+#: apps/bookings/models.py:197
 msgid "price lines"
 msgstr "líneas de precio"
 
@@ -526,6 +538,16 @@ msgstr[1] ""
 #: apps/bookings/services.py:70
 msgid "At least one guest is required."
 msgstr "Debe haber al menos un huésped."
+
+#: apps/bookings/services.py:99
+#, python-format
+msgid ""
+"There are already several bookings in progress from your connection. "
+"Complete one or wait a few minutes: unpaid ones are released after "
+"%(minutes)d minutes."
+msgstr ""
+"Ya hay varias reservas en curso desde tu conexión. Completa una o espera unos "
+"minutos: las que no se pagan se liberan a los %(minutes)d minutos."
 
 #: apps/bookings/views.py:128
 msgid ""
@@ -661,8 +683,8 @@ msgid ""
 "Use a full link (https://…), a page of this site (/es/…), an anchor (#…), "
 "mailto: or tel:."
 msgstr ""
-"Usa un enlace completo (https://…), una página de este sitio (/es/…), un ancla "
-"(#…), mailto: o tel:."
+"Usa un enlace completo (https://…), una página de este sitio (/es/…), un "
+"ancla (#…), mailto: o tel:."
 
 #: apps/core/models.py:13
 msgid "created at"
@@ -1295,18 +1317,18 @@ msgstr "impuesto"
 msgid "taxes"
 msgstr "impuestos"
 
-#: apps/properties/views.py:83
+#: apps/properties/views.py:84
 #, python-format
 msgid "%(count)d guest"
 msgid_plural "%(count)d guests"
 msgstr[0] "%(count)d huésped"
 msgstr[1] "%(count)d huéspedes"
 
-#: config/settings.py:148
+#: config/settings.py:174
 msgid "English"
 msgstr "Inglés"
 
-#: config/settings.py:149
+#: config/settings.py:175
 msgid "Spanish"
 msgstr "Español"
 
@@ -1330,7 +1352,7 @@ msgstr ""
 msgid "Search stays"
 msgstr "Buscar alojamientos"
 
-#: templates/404.html:19
+#: templates/404.html:19 templates/pages/accounts/locked_out.html:21
 msgid "Back to home"
 msgstr "Volver al inicio"
 
@@ -1713,6 +1735,27 @@ msgid ""
 msgstr ""
 "Recibes este correo en %(email)s porque reservaste una estadía con Wynwood "
 "House."
+
+#: templates/pages/accounts/locked_out.html:8
+#: templates/pages/accounts/locked_out.html:16
+msgid "Too many attempts"
+msgstr "Demasiados intentos"
+
+#: templates/pages/accounts/locked_out.html:18
+msgid ""
+"For your security, signing in with this email from your network is paused "
+"for 15 minutes after several failed attempts."
+msgstr ""
+"Por tu seguridad, el inicio de sesión con este correo desde tu red queda en "
+"pausa 15 minutos después de varios intentos fallidos."
+
+#: templates/pages/accounts/locked_out.html:20
+msgid ""
+"Wait a few minutes and try again. If you do not remember your password, "
+"write to us and we will help you."
+msgstr ""
+"Espera unos minutos e inténtalo de nuevo. Si no recuerdas tu contraseña, "
+"escríbenos y te ayudamos."
 
 #: templates/pages/accounts/login.html:14
 msgid "Welcome back. Sign in to continue with your booking."

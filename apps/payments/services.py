@@ -94,7 +94,10 @@ def pay_booking(*, booking, card, idempotency_key, language=None, gateway=None, 
             # The language the guest finished in (they may have switched after holding the
             # dates): the confirmation e-mail and later messages use it.
             locked.language = language or locked.language
-            locked.save(update_fields=["status", "confirmed_at", "language", "updated_at"])
+            locked.client_ip_hash = ""  # only needed while it is a hold (D41)
+            locked.save(
+                update_fields=["status", "confirmed_at", "language", "client_ip_hash", "updated_at"]
+            )
             send_confirmation_on_commit(locked)
         else:
             payment.status = Payment.Status.FAILED
