@@ -6,6 +6,7 @@ so the same code runs in Docker, without Docker (SQLite) and in production.
 See `.env.example` for the full list.
 """
 
+import tempfile
 from pathlib import Path
 
 import environ
@@ -102,6 +103,16 @@ DATABASES = {"default": env.db("DATABASE_URL", default="postgres://wh:wh@localho
 # can scale to zero between visits instead of being held awake by idle connections (D39).
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60 if DEBUG else 0)
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
+    # SQLite has no row locks (select_for_update is ignored). IMMEDIATE transactions take the
+    # write lock when they start, so two bookings of the same dates run one after the other and
+    # the second one sees the first (D02, D07); "timeout" is how long the second one waits.
+    DATABASES["default"].setdefault("OPTIONS", {}).update(
+        {"transaction_mode": "IMMEDIATE", "timeout": 20}
+    )
+    # Tests use a file, like real use: Django's default in-memory test database locks whole
+    # tables and ignores the timeout, so concurrency tests could not run on it.
+    DATABASES["default"]["TEST"] = {"NAME": str(Path(tempfile.gettempdir()) / "wh_test.sqlite3")}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

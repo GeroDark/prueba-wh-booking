@@ -201,7 +201,7 @@ def test_cancelled_and_expired_bookings_do_not_occupy_dates_in_the_database(prop
 def test_only_one_of_two_simultaneous_holds_wins():
     prop = PropertyFactory(max_guests=4)
     start = threading.Barrier(2)
-    results = []
+    results, errors = [], []
 
     def book():
         start.wait()  # release both threads at the same time
@@ -210,6 +210,8 @@ def test_only_one_of_two_simultaneous_holds_wins():
             results.append(booking.reference)
         except ValidationError:
             results.append("refused")
+        except Exception as error:  # anything else is a bug, not a refusal
+            errors.append(error)
         finally:
             connection.close()  # each thread has its own database connection
 
@@ -219,5 +221,7 @@ def test_only_one_of_two_simultaneous_holds_wins():
     for thread in threads:
         thread.join()
 
+    assert errors == []
+    assert len(results) == 2
     assert results.count("refused") == 1
     assert Booking.objects.filter(property=prop, status=Booking.Status.PENDING).count() == 1
