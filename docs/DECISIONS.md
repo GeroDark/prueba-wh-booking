@@ -810,3 +810,13 @@ JavaScript.
 - **CI y `DEBUG`:** las pruebas de navegador pasaban en local (`DEBUG=true`) y fallaban en la CI (`DEBUG=false`), que
   redirigía a HTTPS. `SecurityMiddleware` lee el ajuste una vez, al arrancar el servidor de prueba, así que se
   desactiva para toda la sesión antes de arrancarlo.
+
+**Verificado en producción** (noche del 19-oct en Lima, cuando en Madrid ya era el 20), solo con lecturas:
+- **Búsqueda:** llegada el 19 rechazada en Madrid y aceptada en Lima; sin ciudad, los resultados no incluyen Madrid
+  ni Barcelona.
+- **Calendario del buscador** (Chromium con zona horaria UTC+14, donde ya era el 20):
+  - en Lima ofrece el 19;
+  - al cambiar a Madrid bloquea el 19, deja el 20 y borra la llegada elegida;
+  - sin ciudad vuelve a ofrecer el 19.
+- **Calendario de la propiedad:** con otra reserva que empieza el 29, llegando el 27 se puede salir el 29; el 30 sigue
+  bloqueado.

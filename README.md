@@ -53,6 +53,13 @@ ejecutando el JavaScript real. Las pruebas de navegador cubren:
 - salida el día que empieza otra reserva;
 - el calendario del buscador ofrece las fechas según el destino, aunque el dispositivo esté en otro día.
 
+**Fechas locales verificadas en producción** (noche del 19 de octubre de 2026 en Lima, cuando en Madrid ya era el 20;
+solo lecturas, sin reservar):
+- la búsqueda con llegada el 19 se rechaza en Madrid, se acepta en Lima, y sin ciudad no lista Madrid ni Barcelona;
+- con el navegador en UTC+14 (ya el 20), el calendario del buscador ofrece el 19 en Lima, lo bloquea en Madrid y borra
+  esa llegada al cambiar a Madrid;
+- en una propiedad con otra reserva que empieza el 29, al llegar el 27 se puede elegir salir el 29.
+
 La CI en GitHub Actions corre con PostgreSQL y SQLite, más ruff y `check --deploy`. Hay pruebas de concurrencia con
 hilos reales, y la accesibilidad WCAG 2.1 AA está verificada con axe-core. Las decisiones técnicas, con
 ejemplos, están en [docs/DECISIONS.md](docs/DECISIONS.md), incluidas las correcciones de una revisión externa y los
