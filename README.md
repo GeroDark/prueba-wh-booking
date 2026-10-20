@@ -45,13 +45,14 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
 
-Calidad: **468 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
+Calidad: **491 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
 ejecutando el JavaScript real. Las pruebas de navegador cubren:
 - buscar, elegir fechas en el calendario, registrarse, pago rechazado y reintento, confirmación y correo;
 - inglés en móvil;
 - retención vencida;
 - salida el día que empieza otra reserva;
-- el calendario del buscador ofrece las fechas según el destino, aunque el dispositivo esté en otro día.
+- el calendario del buscador ofrece las fechas según el destino, aunque el dispositivo esté en otro día;
+- recuperar la contraseña: desde el login hasta volver a entrar con la nueva, con el correo incluido.
 
 **Fechas locales verificadas en producción** (noche del 19 de octubre de 2026 en Lima, cuando en Madrid ya era el 20;
 solo lecturas, sin reservar):
@@ -80,6 +81,7 @@ límites reconocidos antes de operar con dinero real (D40). El plan por fases es
 | 7 | Checkout: registro con datos personales, pago simulado idempotente y confirmación con la ubicación exacta | ✅ |
 | 8 | Correo de confirmación HTML + texto en el idioma de la reserva (Mailpit en local, Brevo en producción) | ✅ |
 | 9 | Cierre: accesibilidad, traducciones, revisión en producción, documentación | ✅ |
+| 10 | Extras: recuperar contraseña (D43) | ✅ |
 
 ## Stack
 
@@ -187,6 +189,9 @@ falla, el pago no se ve afectado y el correo queda pendiente:
 murió, y en el admin la acción "Reenviar el correo de confirmación" lo vuelve a mandar a pedido del huésped. La
 entrega es "al menos una vez": si el proceso muere justo después de que el proveedor aceptó el correo, puede llegar
 una copia repetida, lo que es preferible a que el huésped no reciba la confirmación (D37).
+
+El correo para **recuperar la contraseña** ("¿Olvidaste tu contraseña?" en el login) sale por el mismo canal, en el
+idioma de la página desde la que se pidió (D43).
 
 Reglas que valida el servidor: llegada no pasada (según la zona horaria de la ciudad), salida posterior a la llegada,
 capacidad de la propiedad, hasta 30 noches en línea y sin solapamiento con otra reserva o retención vigente,
@@ -313,6 +318,7 @@ docs/            plan maestro y decisiones técnicas
 | Protección | Detalle |
 |---|---|
 | Intentos de login | 5 fallos de una cuenta desde una misma red → pausa de 15 minutos (`django-axes`, también en el admin). Cuenta + red, no solo cuenta: un atacante no puede bloquear a un huésped en su propia cuenta. El correo cuenta igual en cualquier combinación de mayúsculas |
+| Recuperar la contraseña | Enlace de un solo uso válido por 1 hora; la página responde igual exista o no la cuenta; como máximo un correo por cuenta cada 5 minutos; el enlace se arma con `SITE_URL`, no con la cabecera `Host`; al cambiarla se cierran las demás sesiones y se levanta la pausa de intentos fallidos |
 | Retenciones de fechas | Como máximo 5 activas por red a la vez: abrir muchas sesiones no permite acaparar disponibilidad. La IP se guarda solo como hash con clave y se borra al pagar |
 | IP real del visitante | Cabecera `CF-Connecting-IP` de Cloudflare (delante de Render), que el cliente no puede falsificar; `X-Forwarded-For` se ignora |
 | Enlaces editables en el admin | Solo `https://`, `http://`, rutas del sitio, anclas, `mailto:` y `tel:` (contra XSS con `javascript:`) |
@@ -324,15 +330,15 @@ docs/            plan maestro y decisiones técnicas
   - `X-Forwarded-For`, `True-Client-IP` y `X-Real-IP` → la pausa se mantiene;
   - `CF-Connecting-IP` → Cloudflare rechaza la petición antes de que llegue a la aplicación (403).
 
-Límites reconocidos antes de operar con usuarios reales (D40, D41): verificación del correo al registrarse,
-recuperación de contraseña, desafío anti-bots para redes de muchas IPs, MFA para el admin y Content-Security-Policy.
+Límites reconocidos antes de operar con usuarios reales (D40, D41, D43): verificación del correo al registrarse,
+desafío anti-bots para redes de muchas IPs, MFA para el admin y Content-Security-Policy.
 
 ## Mejoras planificadas (fuera del alcance de la prueba)
 
 | Mejora | Cómo |
 |---|---|
 | Pasarela de pago real (dLocal o Stripe) | Otra clase con la interfaz `PaymentGateway` y campos de tarjeta del proveedor (tokenización: el número nunca pasa por el servidor) |
-| Verificación de correo y recuperación de contraseña | Vistas de Django (`PasswordResetView`) y un enlace firmado de verificación; decidir con WH si se verifica antes o después del primer pago |
+| Verificación de correo | Un enlace firmado, como el de recuperar la contraseña (D43); decidir con WH si se verifica antes o después del primer pago |
 | Anti-bots y MFA para el admin | Cloudflare Turnstile en el login y al reservar; `django-otp` para el personal |
 | Login con Google | `django-allauth`; solo se unen cuentas si Google confirma el correo, y el checkout sigue pidiendo los datos que falten |
 | Correos desde una cola | Celery o RQ, para que el huésped no espere al proveedor de correo |

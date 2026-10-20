@@ -1,14 +1,18 @@
+from axes.utils import reset as axes_reset
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect, resolve_url
+from django.templatetags.static import static
+from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
-from .forms import EmailAuthenticationForm, SignUpForm
+from .forms import EmailAuthenticationForm, NewPasswordForm, PasswordResetRequestForm, SignUpForm
+from .lockout import lockout_username
 
 
 class SafeNextMixin:
@@ -59,3 +63,47 @@ class LoginView(auth_views.LoginView):
 
 class LogoutView(auth_views.LogoutView):
     """POST only (Django 5): a link or an image tag cannot log anyone out."""
+
+
+class PasswordResetView(auth_views.PasswordResetView):
+    """Ask for a reset link (D43). The e-mail goes out in the language of the page, and its link
+    is built from SITE_URL, not from the request's Host header, which an attacker could set to
+    their own domain ("password reset poisoning")."""
+
+    form_class = PasswordResetRequestForm
+    template_name = "pages/accounts/password_reset.html"
+    subject_template_name = "emails/password_reset_subject.txt"
+    email_template_name = "emails/password_reset.txt"
+    html_email_template_name = "emails/password_reset.html"
+    success_url = reverse_lazy("accounts:password_reset_done")
+
+    def form_valid(self, form):
+        self.extra_email_context = {
+            "site_url": settings.SITE_URL,
+            "logo_url": f"{settings.SITE_URL}{static('img/email/logo.png')}",
+            "valid_minutes": settings.PASSWORD_RESET_TIMEOUT // 60,
+        }
+        return super().form_valid(form)
+
+
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = "pages/accounts/password_reset_done.html"
+
+
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    """New password from the link. The link works once: the token depends on the password, so
+    changing it invalidates the link, and the guest's other sessions are closed too."""
+
+    form_class = NewPasswordForm
+    template_name = "pages/accounts/password_reset_confirm.html"
+    post_reset_login = True
+    post_reset_login_backend = "django.contrib.auth.backends.ModelBackend"
+    success_url = reverse_lazy("core:home")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Whoever opened the link controls the e-mail: the failed sign-in limit (D41) no longer
+        # applies to them, on any network. Signing in only clears this network's failures.
+        axes_reset(username=lockout_username(self.request, {"username": form.user.email}))
+        messages.success(self.request, _("Your password has been updated. You are signed in."))
+        return response

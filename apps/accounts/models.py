@@ -50,6 +50,13 @@ class User(AbstractUser):
         blank=True,
         help_text=_("When the guest ticked the newsletter box (proof of consent)."),
     )
+    password_reset_requested_at = models.DateTimeField(
+        _("last password reset e-mail"),
+        null=True,
+        blank=True,
+        editable=False,
+        help_text=_("Limits the reset e-mails to one every few minutes per account."),
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

@@ -143,6 +143,11 @@ LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "core:home"
 LOGOUT_REDIRECT_URL = "core:home"
 
+# Password reset (D43): the link works once and for one hour (Django's default is 3 days), and
+# each account gets at most one e-mail every few minutes, so nobody can flood a guest's inbox.
+PASSWORD_RESET_TIMEOUT = 60 * 60
+PASSWORD_RESET_COOLDOWN = timedelta(minutes=5)
+
 # Failed sign-ins (D41): django-axes blocks a username from an IP address after 5 failures for
 # 15 minutes. Locking by username + IP (not by IP alone) keeps one person's mistakes from
 # locking out everyone behind the same network, and not by username alone, so an attacker

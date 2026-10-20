@@ -21,6 +21,7 @@
       {% endif %}
       {% include "components/form_field.html" with field=form.username %}
       {% include "components/form_field.html" with field=form.password %}
+      <p class="auth__forgot"><a href="{% url 'accounts:password_reset' %}">{% translate "Forgot your password?" %}</a></p>
       <button type="submit" class="btn btn-wh auth__submit" data-submit-once>{% translate "Sign in" %}</button>
     </form>
 

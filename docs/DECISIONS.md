@@ -563,8 +563,7 @@ está eligiendo:
   sesión) pero conserva sus datos. Una retención hecha antes de registrarse sigue perteneciendo al visitante (test incluido).
 - Login con email sin distinguir mayúsculas y quien ya tiene sesión no ve los formularios de acceso.
 
-**Fuera de alcance (documentado).** Recuperación de contraseña. El límite de intentos de login se agregó después
-(D41).
+**Agregado después.** El límite de intentos de login (D41) y la recuperación de contraseña (D43).
 
 ---
 
@@ -727,7 +726,7 @@ problemas reales. Se comprobó cada uno antes de actuar.
 - **MFA para el admin** y vigilancia de intentos (alertas).
 - **Desafío anti-bots** (por ejemplo, Cloudflare Turnstile): los límites por red frenan a una persona con un script,
   no a una red de bots con muchas IPs.
-- **Verificación del correo** al registrarse y **recuperación de contraseña**: hoy cualquiera puede registrar un correo
+- **Verificación del correo** al registrarse (la **recuperación de contraseña** se agregó después, D43): hoy cualquiera puede registrar un correo
   ajeno y hacer que reciba la confirmación de una reserva. No se agregó a último momento porque exigir verificar el
   correo en medio del checkout cambiaría el flujo que pide el PDF (y ese correo puede caer en Spam).
 - **Content-Security-Policy** como protección adicional contra XSS.
@@ -820,3 +819,41 @@ JavaScript.
   - sin ciudad vuelve a ofrecer el 19.
 - **Calendario de la propiedad:** con otra reserva que empieza el 29, llegando el 27 se puede salir el 29; el 30 sigue
   bloqueado.
+
+---
+
+## D43 · Recuperar la contraseña
+
+**Contexto.** Quien olvidaba la contraseña perdía el acceso a sus reservas (D34 la había dejado fuera). Es una
+función esperable en cualquier sitio con cuentas, y Django ya trae las piezas seguras: se usan sus vistas y se
+cierran los huecos que dejan por defecto.
+
+**Decisión.** Vistas de Django (`PasswordResetView`, `PasswordResetConfirmView`) con formularios y plantillas propios:
+
+| Riesgo | Protección |
+|---|---|
+| **Saber quién tiene cuenta** (enumeración) | La página responde lo mismo exista o no la cuenta: "si hay una cuenta con ese correo, le enviamos un enlace". Django además atrapa los errores del proveedor de correo, así que un fallo de envío no se convierte en un 500 que delate la cuenta |
+| **Inundar el correo de alguien** | Como máximo un correo por cuenta cada 5 minutos (`password_reset_requested_at`). El turno se toma con un `UPDATE` condicional, como el correo de confirmación (D37): dos peticiones simultáneas no envían dos |
+| **Envenenar el enlace** (*password reset poisoning*) | El enlace se arma con `SITE_URL`, no con la cabecera `Host`. Si se usara `Host`, un atacante podría pedir el reset de una víctima con `Host: evil.example` y recibir su token cuando ella hiciera clic |
+| **Enlace robado o viejo** | Válido 1 hora (`PASSWORD_RESET_TIMEOUT`; Django usa 3 días) y de un solo uso: el token depende del hash de la contraseña, así que cambiarla lo invalida. Django cambia el token de la URL por uno en la sesión antes de mostrar el formulario, para que no se filtre por la cabecera `Referer` |
+| **Sesión robada en otro dispositivo** | Al cambiar la contraseña, las demás sesiones dejan de valer (Django guarda el hash de la contraseña en la sesión) |
+| **Bloqueado por intentos fallidos** (D41) | Quien abre el enlace demuestra controlar el correo: se borran sus intentos fallidos en **todas** las redes. Iniciar sesión solo borraba los de la red actual (la laptop bloqueada seguía bloqueada si el cambio se hacía desde el celular) |
+
+- **Contraseña nueva:** el mismo campo del registro, con mostrar/ocultar y la lista de requisitos en vivo. El
+  formulario incluye el correo de la cuenta (`autocomplete="username"`) para que los gestores de contraseñas la
+  guarden bajo la cuenta correcta, y para la regla "no contiene tu nombre ni tu correo".
+- **Después:** inicia sesión directamente y vuelve al inicio con un mensaje.
+- **Correo:** HTML y texto con el marco del de confirmación, en el idioma de la página desde la que se pidió.
+
+**Pruebas.** 22 tests más una prueba de navegador (desde el login hasta volver a entrar, con el correo). Dos se
+comprobaron rompiendo el código a propósito:
+- sin el límite de 5 minutos, el test del límite falla;
+- sin el desbloqueo explícito, el test del bloqueo fallaba solo si el cambio se hacía desde otra red. La primera
+  versión del test usaba la misma red y pasaba igual, porque iniciar sesión ya borra los intentos de esa red. Se
+  reescribió con dos redes (laptop y celular).
+
+**Límites.**
+- **Tiempo de respuesta:** el envío es sincrónico, así que la respuesta tarda un poco más cuando la cuenta existe. Una
+  cola de correos lo eliminaría (mejora planificada).
+- **Cuentas distintas:** el límite es por cuenta; alguien que conozca muchos correos registrados podría pedir un
+  enlace para cada uno. Lo frenaría el desafío anti-bots pendiente (D40).
