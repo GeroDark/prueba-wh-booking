@@ -217,10 +217,14 @@ class BookingConfirmationView(OwnedBookingMixin, DetailView):
         return context
 
 
+@method_decorator(never_cache, name="dispatch")
 class MyBookingsView(LoginRequiredMixin, TemplateView):
     """The signed-in guest's bookings (D44): holds still waiting for payment, upcoming stays (one
     in progress included) and past ones. "Past" is decided with the city's local date, as
-    everywhere else (D09). Expired and cancelled holds are left out."""
+    everywhere else (D09). Expired and cancelled holds are left out.
+
+    Never cached, like the confirmation: on a shared computer, the browser's Back button after
+    signing out must not show someone else's bookings."""
 
     template_name = "pages/my_bookings.html"
 
