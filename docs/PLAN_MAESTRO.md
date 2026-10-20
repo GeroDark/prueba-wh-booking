@@ -4,7 +4,7 @@ Plan de trabajo de la prueba técnica *Fullstack Developer Python* de Wynwood Ho
 alcance, arquitectura, fases con criterios de aceptación y forma de trabajo.
 Las decisiones técnicas y su justificación están en [DECISIONS.md](DECISIONS.md).
 
-- **Entrega:** martes 20 de octubre de 2026, 10:00 (hora de Perú).
+- **Entrega:** miércoles 21 de octubre de 2026, 09:00 (hora de Perú).
 - **Repositorio:** https://github.com/GeroDark/prueba-wh-booking
 - **Fuentes de verdad:** el PDF del enunciado define el **alcance obligatorio**; el Figma define la **guía visual**.
   Si se contradicen, manda el PDF y la diferencia se documenta en `DECISIONS.md`.
@@ -346,7 +346,8 @@ Lista 🟨 en orden. Cada extra se cierra con la misma revisión visual y su pro
 | Domingo 18 | 2, 3, 4 y 5 |
 | Lunes 19 | 6, 7, 8 y 9 |
 | Lunes 19, noche | Margen de seguridad y QA en producción |
-| Martes 20, antes de las 09:00 | Solo correcciones y entrega |
+| Martes 20 | Revisiones externas, sus correcciones y verificación en producción |
+| Miércoles 21, antes de las 09:00 | Solo correcciones y entrega |
 
 **Regla de recorte:** si el domingo por la noche las fases 0 a 5 no están cerradas, se recortan extras, nunca requisitos del núcleo.
 
