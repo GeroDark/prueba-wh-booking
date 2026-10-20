@@ -144,6 +144,11 @@ la fecha local de la propiedad.
 **Ejemplo.** Son las 23:00 del 19 en Lima, que son las 06:00 del 20 en Madrid. Un check-in el 19 se acepta en Bogotá
 y se rechaza en Madrid.
 
+**La búsqueda aplica la misma regla (corregido después, D42).** Con una ciudad elegida usa la fecha de esa ciudad; sin
+ciudad, la más temprana entre las ciudades, y los resultados excluyen las ciudades donde la llegada ya pasó. Antes
+usaba la fecha del servidor (Lima): de noche aceptaba una llegada en Madrid que la reserva rechazaba, y pasada la
+medianoche rechazaba una en Ciudad de México que la reserva aceptaba.
+
 ---
 
 ## D10 · El precio lo calcula el servidor y queda guardado en la reserva
@@ -531,9 +536,12 @@ tarifa negociada), como sugiere el diseño, y evita retener un calendario durant
   una estadía queda libre para la siguiente llegada. flatpickr deshabilita días sueltos pero permite marcar un rango
   por encima de ellos, así que el JS rechaza los rangos que cruzan una noche ocupada; el servidor valida igual.
 
-**Limitación conocida.** Como el calendario deshabilita las noches ocupadas, no permite elegir como salida el día
-en que empieza otra reserva, aunque el servidor lo acepta (intervalo semiabierto). Para la demo es aceptable;
-resolverlo requiere un componente de calendario propio.
+**Salida el día en que empieza otra reserva (resuelto después, D42).** Al principio el calendario deshabilitaba los
+días de las noches ocupadas tanto para la llegada como para la salida, así que no dejaba irse el día en que llega otro
+huésped, aunque el servidor lo acepta (intervalo semiabierto). Ahora qué días están deshabilitados depende de qué se
+está eligiendo:
+- **llegada:** las noches ocupadas;
+- **salida:** los días cuya estadía cruzaría una noche ocupada; el día en que empieza otra reserva queda libre.
 
 ---
 
@@ -759,3 +767,26 @@ independientes reteniendo fechas a la vez.
 **Límites.** Frena a una persona con un script, no a una red de bots con muchas IPs: para eso hace falta un desafío
 anti-bots. Dos peticiones simultáneas de la misma red podrían superar el límite por una retención; para limitar abuso
 es aceptable y no justifica otro bloqueo.
+
+---
+
+## D42 · Segunda revisión: coherencia del flujo y pruebas en navegador
+
+**Contexto.** Una segunda revisión externa, hecha esta vez con el PDF de la prueba, recomendó priorizar el flujo de
+reserva sobre funciones nuevas. Encontró dos incoherencias dentro del alcance y la falta de pruebas que ejecuten el
+JavaScript.
+
+**Decisión.**
+- **Fechas de la búsqueda = fechas de la reserva** (D09): la búsqueda ya no usa la fecha del servidor sino la de la
+  ciudad. Tests con `time_machine` reproducen el caso de Madrid y el inverso de Ciudad de México.
+- **Salida el día en que empieza otra reserva** (D33): el calendario calcula los días deshabilitados según se esté
+  eligiendo la llegada o la salida.
+- **Pruebas de navegador** (`e2e/`, Playwright + Chromium contra el `live_server` de Django, job propio en la CI):
+  - el flujo completo: buscar, calendario, registro, pago rechazado y reintento, confirmación y correo;
+  - inglés en móvil, sin desbordes;
+  - retención vencida y vuelta a la propiedad con las mismas fechas;
+  - salida el día en que empieza otra reserva.
+- **Las pruebas se validan a sí mismas:** con el JavaScript anterior del calendario, la prueba correspondiente falla.
+  Una prueba que nunca falla no protege nada.
+- **Pago:** el PDF pide "completar el pago" sin indicar una pasarela. El pago simulado con tarjetas de prueba se
+  propone como respuesta a ese punto, y se deja planteado a Wynwood House si prefiere una integración real (D11).
