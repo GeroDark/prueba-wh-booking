@@ -69,6 +69,10 @@ después es muy costoso.
   de confirmación) y una lista de requisitos que se marca mientras se escribe.
 - La lista del navegador es solo una guía: el servidor siempre valida, y además rechaza las contraseñas comunes, que
   el JS no puede conocer.
+  - **Se avisa de antemano (agregado después):** al probar la recuperación en producción, la lista marcó todo en verde
+    y el servidor rechazó la contraseña por ser una palabra común con números, sin que el usuario supiera por qué. La
+    lista ahora incluye una línea fija, sin ✓: "Tampoco se aceptan palabras comunes con números, como
+    “Contraseña2026!”". Un test comprueba que el ejemplo de cada idioma es uno que el servidor rechaza de verdad.
 - Tras un error, la contraseña no se vuelve a escribir en la página (Django no re-renderiza `PasswordInput`).
 
 ---
@@ -857,6 +861,10 @@ comprobaron rompiendo el código a propósito:
   cola de correos lo eliminaría (mejora planificada).
 - **Cuentas distintas:** el límite es por cuenta; alguien que conozca muchos correos registrados podría pedir un
   enlace para cada uno. Lo frenaría el desafío anti-bots pendiente (D40).
+- **Entrega:** verificado en producción, Gmail entregó el correo unos 7 minutos después de que Brevo lo enviara
+  (estado "Enviado" sin "Entregado" mientras tanto). Sale del dominio compartido de Brevo y es un correo de
+  "restablecer contraseña" con un enlace a `onrender.com`: justo lo que los filtros contra el phishing miran más. Un
+  dominio propio verificado (SPF, DKIM) lo mejoraría (mejora planificada).
 
 ---
 

@@ -68,6 +68,20 @@ def test_common_word_accepts_passwords_that_are_not_a_single_common_word(passwor
     CommonWordValidator().validate(password)
 
 
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("language", "example"), [("es", "Contraseña2026!"), ("en", "Password2026!")]
+)
+def test_the_checklist_warns_with_examples_the_server_really_rejects(client, language, example):
+    """The browser cannot check common words, so the checklist says it up front. The example
+    shown must be one the server rejects, or the hint would teach the wrong thing."""
+    response = client.get(f"/{language}/accounts/signup/")
+
+    assert f"“{example}”" in response.text
+    with pytest.raises(ValidationError):
+        CommonWordValidator().validate(example)
+
+
 # Full name
 
 
