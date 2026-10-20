@@ -28,7 +28,9 @@ select = [
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings"
 python_files = ["test_*.py"]
-addopts = "-ra --strict-markers"
+# Browser tests (e2e/) need Chromium installed: they run in their own CI job with `-m e2e`.
+addopts = "-ra --strict-markers -m 'not e2e'"
+markers = ["e2e: end-to-end tests in a real browser (Playwright), run with `pytest -m e2e`"]
 filterwarnings = [
     # WhiteNoise looks for collected static files, which only exist in built images.
     "ignore:No directory at:UserWarning",
