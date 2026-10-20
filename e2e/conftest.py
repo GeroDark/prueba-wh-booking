@@ -9,6 +9,7 @@ import os
 from decimal import Decimal
 
 import pytest
+from django.test import override_settings
 
 from apps.properties.tests.factories import (
     CityFactory,
@@ -20,6 +21,20 @@ from apps.properties.tests.factories import (
 # Playwright's sync API runs an event loop in the test thread; the ORM calls made by the test
 # itself (fixtures, assertions) are still plain synchronous code.
 os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _plain_http_live_server():
+    """The live server speaks plain HTTP. With DEBUG=false (as in CI) the production hardening
+    would redirect the browser to https://localhost. The root conftest turns the redirect off
+    per test, but the live server builds its middleware once, when it starts, and
+    SecurityMiddleware reads the setting then: it has to be off before the server starts."""
+    with override_settings(
+        SECURE_SSL_REDIRECT=False,
+        SESSION_COOKIE_SECURE=False,
+        CSRF_COOKIE_SECURE=False,
+    ):
+        yield
 
 
 @pytest.fixture
