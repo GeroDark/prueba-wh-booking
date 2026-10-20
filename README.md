@@ -45,9 +45,10 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
 
-Calidad: **491 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
+Calidad: **499 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
 ejecutando el JavaScript real. Las pruebas de navegador cubren:
-- buscar, elegir fechas en el calendario, registrarse, pago rechazado y reintento, confirmación y correo;
+- buscar, elegir fechas en el calendario, registrarse, pago rechazado y reintento, confirmación, correo y la reserva
+  en "Mis reservas";
 - inglés en móvil;
 - retención vencida;
 - salida el día que empieza otra reserva;
@@ -81,7 +82,7 @@ límites reconocidos antes de operar con dinero real (D40). El plan por fases es
 | 7 | Checkout: registro con datos personales, pago simulado idempotente y confirmación con la ubicación exacta | ✅ |
 | 8 | Correo de confirmación HTML + texto en el idioma de la reserva (Mailpit en local, Brevo en producción) | ✅ |
 | 9 | Cierre: accesibilidad, traducciones, revisión en producción, documentación | ✅ |
-| 10 | Extras: recuperar contraseña (D43) | ✅ |
+| 10 | Extras: recuperar contraseña (D43) y "Mis reservas" con menú de cuenta (D44) | ✅ |
 
 ## Stack
 
@@ -174,6 +175,8 @@ conocido, que es qué pasa si una pasarela real cobra y su respuesta se pierde, 
 7. **Correo de confirmación:** se envía al confirmarse el pago, en el idioma en que se reservó.
    En local llega a Mailpit (http://localhost:8025), que también muestra la versión de texto y un chequeo de
    compatibilidad con clientes de correo.
+8. **Mis reservas** (`/es/bookings/`, en el menú de cuenta del encabezado): las reservas de la cuenta en tres grupos,
+   pendientes de pago (con su tiempo restante y "Continuar con el pago"), próximas y pasadas (D44).
 
 ## Correo
 

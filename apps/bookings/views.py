@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -13,7 +14,7 @@ from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import DetailView, FormView
+from django.views.generic import DetailView, FormView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 
 from apps.accounts.forms import CheckoutSignUpForm, GuestDetailsForm
@@ -213,6 +214,35 @@ class BookingConfirmationView(OwnedBookingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["payment"] = self.object.payments.filter(status=Payment.Status.SUCCEEDED).first()
+        return context
+
+
+class MyBookingsView(LoginRequiredMixin, TemplateView):
+    """The signed-in guest's bookings (D44): holds still waiting for payment, upcoming stays (one
+    in progress included) and past ones. "Past" is decided with the city's local date, as
+    everywhere else (D09). Expired and cancelled holds are left out."""
+
+    template_name = "pages/my_bookings.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        bookings = (
+            Booking.objects.blocking()  # confirmed + holds that have not expired
+            .filter(guest=self.request.user)
+            .select_related("property__district__city__country")
+            .prefetch_related("property__images")
+            .order_by("check_in", "created_at")
+        )
+        pending, upcoming, past = [], [], []
+        for booking in bookings:
+            if booking.status == Booking.Status.PENDING:
+                pending.append(booking)
+            elif booking.check_out > booking.property.city.local_today():
+                upcoming.append(booking)
+            else:
+                past.append(booking)
+        past.reverse()  # most recent first
+        context.update(pending=pending, upcoming=upcoming, past=past)
         return context
 
 

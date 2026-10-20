@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 13:39-0500\n"
+"POT-Creation-Date: 2026-10-20 14:19-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -207,7 +207,8 @@ msgstr "último correo para restablecer la contraseña"
 
 #: apps/accounts/models.py:58
 msgid "Limits the reset e-mails to one every few minutes per account."
-msgstr "Limita los correos de restablecimiento a uno cada pocos minutos por cuenta."
+msgstr ""
+"Limita los correos de restablecimiento a uno cada pocos minutos por cuenta."
 
 #: apps/accounts/models.py:67
 msgid "user"
@@ -567,7 +568,7 @@ msgstr ""
 "Ya hay varias reservas en curso desde tu conexión. Completa una o espera "
 "unos minutos: las que no se pagan se liberan a los %(minutes)d minutos."
 
-#: apps/bookings/views.py:128
+#: apps/bookings/views.py:129
 msgid ""
 "Your time to complete the booking ran out and the dates were released. Check "
 "if they are still available and try again."
@@ -575,7 +576,7 @@ msgstr ""
 "Se acabó el tiempo para completar la reserva y las fechas se liberaron. "
 "Revisa si siguen disponibles e inténtalo de nuevo."
 
-#: apps/bookings/views.py:202
+#: apps/bookings/views.py:203
 msgid "Sign in with the account you booked with to see your booking."
 msgstr "Inicia sesión con la cuenta con la que reservaste para ver tu reserva."
 
@@ -1391,11 +1392,16 @@ msgstr "Saltar al contenido"
 msgid "Hi, %(name)s"
 msgstr "Hola, %(name)s"
 
-#: templates/components/account_links.html:12
+#: templates/components/account_links.html:11
+#: templates/pages/my_bookings.html:4 templates/pages/my_bookings.html:12
+msgid "My bookings"
+msgstr "Mis reservas"
+
+#: templates/components/account_links.html:14
 msgid "Sign out"
 msgstr "Cerrar sesión"
 
-#: templates/components/account_links.html:16
+#: templates/components/account_links.html:18
 #: templates/pages/accounts/login.html:4 templates/pages/accounts/login.html:13
 #: templates/pages/accounts/login.html:25
 #: templates/pages/accounts/password_reset.html:24
@@ -1440,6 +1446,7 @@ msgstr[1] "Hasta %(counter)s huéspedes"
 
 #: templates/components/booking_card.html:61
 #: templates/components/booking_card.html:67
+#: templates/components/booking_list_item.html:20
 #: templates/components/booking_summary.html:50
 #: templates/emails/booking_confirmation.html:104
 #: templates/emails/booking_confirmation.txt:16
@@ -1491,6 +1498,45 @@ msgstr "Hola, me interesa una estadía mensual en %(title)s."
 msgid "Contact us"
 msgstr "Contáctanos"
 
+#: templates/components/booking_list_item.html:12
+#: templates/emails/booking_confirmation.html:73
+#: templates/emails/booking_confirmation.txt:9
+#, python-format
+msgid "Reference %(reference)s"
+msgstr "Referencia %(reference)s"
+
+#: templates/components/booking_list_item.html:17
+#, python-format
+msgid "%(counter)s night"
+msgid_plural "%(counter)s nights"
+msgstr[0] "%(counter)s noche"
+msgstr[1] "%(counter)s noches"
+
+#: templates/components/booking_list_item.html:18
+#: templates/components/booking_summary.html:35
+#: templates/emails/booking_confirmation.html:85
+#: templates/emails/booking_confirmation.txt:13
+#: templates/pages/booking_confirmation.html:52
+#: templates/pages/property_detail.html:41
+#, python-format
+msgid "%(counter)s guest"
+msgid_plural "%(counter)s guests"
+msgstr[0] "%(counter)s huésped"
+msgstr[1] "%(counter)s huéspedes"
+
+#: templates/components/booking_list_item.html:23
+#, python-format
+msgid "We hold these dates for you for %(time_left)s more."
+msgstr "Te guardamos estas fechas durante %(time_left)s más."
+
+#: templates/components/booking_list_item.html:25
+msgid "Continue to payment"
+msgstr "Continuar con el pago"
+
+#: templates/components/booking_list_item.html:27
+msgid "See booking"
+msgstr "Ver reserva"
+
 #: templates/components/booking_summary.html:10
 msgid "Booking summary"
 msgstr "Resumen de la reserva"
@@ -1503,17 +1549,6 @@ msgstr "Fechas"
 #: templates/pages/checkout.html:155
 msgid "Change dates"
 msgstr "Cambiar fechas"
-
-#: templates/components/booking_summary.html:35
-#: templates/emails/booking_confirmation.html:85
-#: templates/emails/booking_confirmation.txt:13
-#: templates/pages/booking_confirmation.html:52
-#: templates/pages/property_detail.html:41
-#, python-format
-msgid "%(counter)s guest"
-msgid_plural "%(counter)s guests"
-msgstr[0] "%(counter)s huésped"
-msgstr[1] "%(counter)s huéspedes"
 
 #: templates/components/booking_summary.html:39
 msgid "Change guests"
@@ -1711,12 +1746,6 @@ msgstr "Conversa con nosotros 24/7"
 msgid "Your booking summary"
 msgstr "Resumen de tu reserva"
 
-#: templates/emails/booking_confirmation.html:73
-#: templates/emails/booking_confirmation.txt:9
-#, python-format
-msgid "Reference %(reference)s"
-msgstr "Referencia %(reference)s"
-
 #: templates/emails/booking_confirmation.html:112
 #: templates/emails/booking_confirmation.txt:18
 msgid "See my booking and the map"
@@ -1770,7 +1799,9 @@ msgstr "Crea una nueva contraseña para Wynwood House"
 #: templates/emails/password_reset.txt:7
 #, python-format
 msgid "The link is valid for %(valid_minutes)s minutes and can be used once."
-msgstr "El enlace es válido durante %(valid_minutes)s minutos y se puede usar una sola vez."
+msgstr ""
+"El enlace es válido durante %(valid_minutes)s minutos y se puede usar una "
+"sola vez."
 
 #: templates/emails/password_reset.html:35
 #: templates/emails/password_reset.txt:3
@@ -1793,8 +1824,7 @@ msgstr "Crea una nueva contraseña"
 msgid ""
 "If you did not ask for it, you can ignore this e-mail: your password does "
 "not change."
-msgstr ""
-"Si no lo pediste, puedes ignorar este correo: tu contraseña no cambia."
+msgstr "Si no lo pediste, puedes ignorar este correo: tu contraseña no cambia."
 
 #: templates/emails/password_reset.html:51
 msgid "If the button does not work, copy this address into your browser:"
@@ -1818,8 +1848,8 @@ msgid ""
 "Wait a few minutes and try again, or create a new password now: the link we "
 "send you also lifts this pause."
 msgstr ""
-"Espera unos minutos y vuelve a intentarlo, o crea una nueva contraseña ahora: "
-"el enlace que te enviamos también levanta esta pausa."
+"Espera unos minutos y vuelve a intentarlo, o crea una nueva contraseña "
+"ahora: el enlace que te enviamos también levanta esta pausa."
 
 #: templates/pages/accounts/locked_out.html:22
 #: templates/pages/accounts/login.html:24
@@ -1848,8 +1878,8 @@ msgid ""
 "Enter the email of your account and we will send you a link to create a new "
 "password."
 msgstr ""
-"Escribe el correo de tu cuenta y te enviaremos un enlace para crear una nueva "
-"contraseña."
+"Escribe el correo de tu cuenta y te enviaremos un enlace para crear una "
+"nueva contraseña."
 
 #: templates/pages/accounts/password_reset.html:19
 msgid "Send link"
@@ -1896,7 +1926,8 @@ msgid ""
 "new password. The link is valid for one hour and can be used once."
 msgstr ""
 "Si hay una cuenta con ese correo, le enviamos un enlace para crear una nueva "
-"contraseña. El enlace es válido durante una hora y se puede usar una sola vez."
+"contraseña. El enlace es válido durante una hora y se puede usar una sola "
+"vez."
 
 #: templates/pages/accounts/password_reset_done.html:21
 msgid ""
@@ -2072,6 +2103,26 @@ msgstr "¿Necesitas ayuda para completar tu reserva?"
 #: templates/pages/home.html:31
 msgid "Discover our destinations"
 msgstr "Descubre nuestros destinos"
+
+#: templates/pages/my_bookings.html:16
+msgid "You have no bookings yet."
+msgstr "Aún no tienes reservas."
+
+#: templates/pages/my_bookings.html:17
+msgid "Find your next stay"
+msgstr "Encuentra tu próxima estadía"
+
+#: templates/pages/my_bookings.html:23
+msgid "Waiting for payment"
+msgstr "Pendientes de pago"
+
+#: templates/pages/my_bookings.html:30
+msgid "Upcoming stays"
+msgstr "Próximas estadías"
+
+#: templates/pages/my_bookings.html:37
+msgid "Past stays"
+msgstr "Estadías pasadas"
 
 #: templates/pages/property_detail.html:42
 #, python-format

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% translate "My bookings" %} | Wynwood House{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/pages/my-bookings.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="my-bookings container-wh" aria-labelledby="my-bookings-title">
+    <h1 class="my-bookings__title" id="my-bookings-title">{% translate "My bookings" %}</h1>
+
+    {% if not pending and not upcoming and not past %}
+      <div class="my-bookings__empty">
+        <p>{% translate "You have no bookings yet." %}</p>
+        <a class="btn btn-wh" href="{% url 'properties:search' %}">{% translate "Find your next stay" %}</a>
+      </div>
+    {% endif %}
+
+    {% if pending %}
+      <section class="my-bookings__group" aria-labelledby="pending-title">
+        <h2 class="my-bookings__heading" id="pending-title">{% translate "Waiting for payment" %}</h2>
+        {% for booking in pending %}{% include "components/booking_list_item.html" %}{% endfor %}
+      </section>
+    {% endif %}
+
+    {% if upcoming %}
+      <section class="my-bookings__group" aria-labelledby="upcoming-title">
+        <h2 class="my-bookings__heading" id="upcoming-title">{% translate "Upcoming stays" %}</h2>
+        {% for booking in upcoming %}{% include "components/booking_list_item.html" %}{% endfor %}
+      </section>
+    {% endif %}
+
+    {% if past %}
+      <section class="my-bookings__group" aria-labelledby="past-title">
+        <h2 class="my-bookings__heading" id="past-title">{% translate "Past stays" %}</h2>
+        {% for booking in past %}{% include "components/booking_list_item.html" %}{% endfor %}
+      </section>
+    {% endif %}
+  </section>
+{% endblock %}

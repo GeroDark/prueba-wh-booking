@@ -857,3 +857,41 @@ comprobaron rompiendo el código a propósito:
   cola de correos lo eliminaría (mejora planificada).
 - **Cuentas distintas:** el límite es por cuenta; alguien que conozca muchos correos registrados podría pedir un
   enlace para cada uno. Lo frenaría el desafío anti-bots pendiente (D40).
+
+---
+
+## D44 · "Mis reservas" y menú de cuenta
+
+**Contexto.** Una vez pagada, a una reserva solo se llegaba por el enlace del correo. Un huésped con sesión iniciada
+no tenía dónde ver sus estadías, ni cómo volver a una retención que dejó a medias.
+
+**Decisión.** Una página `/bookings/` (`MyBookingsView`), solo con sesión iniciada; sin sesión lleva al login y
+vuelve.
+
+| Grupo | Qué incluye | Acción |
+|---|---|---|
+| Pendientes de pago | Retenciones vigentes de la cuenta, con el tiempo que queda | "Continuar con el pago" (checkout) |
+| Próximas estadías | Confirmadas que aún no terminan, **incluida una en curso**; la más cercana primero | "Ver reserva" (dirección exacta) |
+| Estadías pasadas | Confirmadas que ya terminaron; la más reciente primero | "Ver reserva" |
+
+- **"Pasada" con la fecha de la ciudad** (D09): una estadía que termina el 10 ya es pasada en Madrid cuando en Lima
+  todavía es el 9.
+- **Fuera:** retenciones vencidas (aunque su estado todavía no se haya actualizado, D08), canceladas y las de otras
+  cuentas. Se reutiliza `Booking.objects.blocking()`: las mismas reglas que deciden qué ocupa fechas.
+- **Sin N+1:** propiedad, distrito, ciudad y país con `select_related` y fotos con `prefetch_related`. Un test
+  compara las consultas con 1 y con 8 reservas: deben ser las mismas.
+
+**Menú de cuenta (y un bug previo).** Al agregar "Mis reservas" al encabezado, la revisión visual con sesión iniciada
+mostró que el encabezado **ya se desbordaba** entre 992 y 1100 px (105 px a 992) solo con el saludo y "Cerrar sesión";
+las revisiones anteriores del encabezado se habían hecho sin sesión. Con el enlace nuevo el desborde llegaba hasta
+1200 px.
+- **Arreglo:** un menú desplegable de Bootstrap ("Hola, Walter ▾" → "Mis reservas", "Cerrar sesión"). Entre 992 y
+  1199 px muestra solo el ícono; el saludo sigue disponible para lectores de pantalla.
+- **Verificado:** sin desborde en 10 anchos (375 a 1920 px), también con un nombre largo. El menú del móvil mantiene
+  la lista.
+
+**Pruebas.**
+- 8 tests; dos comprobados rompiendo el código: sin `prefetch_related` y con la fecha del servidor en vez de la de la
+  ciudad, sus tests fallan.
+- La prueba de navegador del flujo completo termina abriendo "Mis reservas" desde el menú de cuenta.
+- axe-core: 0 violaciones en "Mis reservas", el menú abierto y las páginas de D43.

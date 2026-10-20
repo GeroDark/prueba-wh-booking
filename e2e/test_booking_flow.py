@@ -106,6 +106,12 @@ def test_search_book_sign_up_decline_and_pay(page, live_server, prop, mailoutbox
     assert len(mailoutbox) == 1
     assert mailoutbox[0].subject == f"Tu reserva {booking.reference} está confirmada"
 
+    # And it is listed in "My bookings", in the header's account menu (D44).
+    page.click(".account-menu__toggle")
+    page.click(".account-menu >> text=Mis reservas")
+    expect(page.locator("#upcoming-title")).to_have_text("Próximas estadías")
+    expect(page.locator(".booking-item")).to_contain_text(booking.reference)
+
 
 def test_english_on_a_phone(page, live_server, prop, mailoutbox):
     page.set_viewport_size({"width": 375, "height": 812})

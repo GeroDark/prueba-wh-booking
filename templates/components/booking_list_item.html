@@ -1,0 +1,31 @@
+{% load i18n formatting %}
+{% comment %}
+  One booking in "My bookings" (D44). A hold waiting for payment links to the checkout; a
+  confirmed booking links to its page with the exact address.
+{% endcomment %}
+{% with prop=booking.property cover=booking.property.cover_image %}
+<article class="booking-item">
+  <div class="booking-item__media">
+    {% if cover %}<img src="{{ cover.image.url }}" alt="" width="360" height="240" loading="lazy">{% endif %}
+  </div>
+  <div class="booking-item__body">
+    <p class="booking-item__reference">{% blocktranslate with reference=booking.reference %}Reference {{ reference }}{% endblocktranslate %}</p>
+    <h3 class="booking-item__title">{{ prop.title }}</h3>
+    <p class="booking-item__location">{{ prop.district.name }}, {{ prop.city.name }}, {{ prop.city.country.name }}</p>
+    <p class="booking-item__dates">
+      {{ booking.check_in|date:"j M Y" }} – {{ booking.check_out|date:"j M Y" }}
+      · {% blocktranslate count counter=booking.nights %}{{ counter }} night{% plural %}{{ counter }} nights{% endblocktranslate %}
+      · {% blocktranslate count counter=booking.guests %}{{ counter }} guest{% plural %}{{ counter }} guests{% endblocktranslate %}
+    </p>
+    <p class="booking-item__total">{% translate "Total" %}: <strong>{{ booking.total|money:booking.currency }}</strong></p>
+    {% if booking.status == "pending" %}
+      <p class="booking-item__hold">
+        {% blocktranslate with time_left=booking.expires_at|timeuntil %}We hold these dates for you for {{ time_left }} more.{% endblocktranslate %}
+      </p>
+      <a class="btn btn-wh booking-item__action" href="{% url 'bookings:checkout' booking.reference %}">{% translate "Continue to payment" %}</a>
+    {% else %}
+      <a class="btn btn-wh btn-wh--outline booking-item__action" href="{% url 'bookings:confirmation' booking.reference %}">{% translate "See booking" %}</a>
+    {% endif %}
+  </div>
+</article>
+{% endwith %}
