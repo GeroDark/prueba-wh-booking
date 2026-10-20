@@ -1,16 +1,39 @@
-{% load i18n %}
+{% load static i18n %}
 {% comment %}
-  "Sign in" for visitors, greeting and "Sign out" for signed-in guests.
+  "Sign in" for visitors. For signed-in guests: in the header, an account menu (greeting ▾ →
+  "My bookings", "Sign out"), which keeps the header within the screen at 992–1199 px, where it
+  shows only an icon; in the mobile menu, the same links as a list (D44).
   After signing in the visitor comes back to the page they were on (?next=).
   Sign out is a POST form: a link or an image could not log anyone out (CSRF).
 {% endcomment %}
+{% url 'bookings:list' as bookings_url %}
 <div class="account-links account-links--{{ variant|default:'header' }}">
   {% if user.is_authenticated %}
-    <span class="account-links__greeting">{% blocktranslate with name=user.get_short_name %}Hi, {{ name }}{% endblocktranslate %}</span>
-    <form method="post" action="{% url 'accounts:logout' %}" class="account-links__logout">
-      {% csrf_token %}
-      <button type="submit" class="account-links__link">{% translate "Sign out" %}</button>
-    </form>
+    {% blocktranslate with name=user.get_short_name asvar greeting %}Hi, {{ name }}{% endblocktranslate %}
+    {% if variant == "menu" %}
+      <span class="account-links__greeting">{{ greeting }}</span>
+      <a class="account-links__link" href="{{ bookings_url }}"{% if request.path == bookings_url %} aria-current="page"{% endif %}>{% translate "My bookings" %}</a>
+      <form method="post" action="{% url 'accounts:logout' %}" class="account-links__logout">
+        {% csrf_token %}
+        <button type="submit" class="account-links__link">{% translate "Sign out" %}</button>
+      </form>
+    {% else %}
+      <div class="dropdown account-menu">
+        <button class="account-menu__toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="{% static 'vendor/bootstrap-icons-1.13.2/icons/person-circle.svg' %}" alt="" width="20" height="20">
+          <span class="account-menu__name">{{ greeting }}</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="{{ bookings_url }}"{% if request.path == bookings_url %} aria-current="page"{% endif %}>{% translate "My bookings" %}</a></li>
+          <li>
+            <form method="post" action="{% url 'accounts:logout' %}" class="account-links__logout">
+              {% csrf_token %}
+              <button type="submit" class="dropdown-item">{% translate "Sign out" %}</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    {% endif %}
   {% else %}
     {% url 'accounts:login' as login_url %}
     <a class="account-links__link" href="{{ login_url }}{% if request.path != login_url %}?next={{ request.get_full_path|urlencode }}{% endif %}">{% translate "Sign in" %}</a>

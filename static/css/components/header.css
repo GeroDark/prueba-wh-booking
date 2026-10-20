@@ -103,6 +103,50 @@
   align-items: flex-start;
 }
 
+/* Account menu of signed-in guests (D44). Below 1200px only the icon is shown: with the greeting
+   and two links the header overflowed the screen between 992 and 1199px. */
+.account-menu__toggle {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: var(--wh-black);
+  font: inherit;
+  white-space: nowrap;
+}
+
+.account-menu__name {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1199.98px) {
+  .account-menu__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+.account-menu .dropdown-menu {
+  --bs-dropdown-font-size: 0.914rem;
+  --bs-dropdown-border-radius: 0.75rem;
+  --bs-dropdown-link-active-bg: var(--wh-black);
+  --bs-dropdown-link-active-color: var(--wh-white);
+  margin-top: 0.5rem;
+  box-shadow: var(--wh-shadow);
+}
+
+.account-menu .dropdown-item[aria-current="page"] {
+  font-weight: 700;
+}
+
 .site-menu__link {
   display: block;
   padding-block: 0.85rem;
