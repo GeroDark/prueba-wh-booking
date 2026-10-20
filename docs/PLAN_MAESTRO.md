@@ -346,7 +346,7 @@ Lista 🟨 en orden. Cada extra se cierra con la misma revisión visual y su pro
 | Domingo 18 | 2, 3, 4 y 5 |
 | Lunes 19 | 6, 7, 8 y 9 |
 | Lunes 19, noche | Margen de seguridad y QA en producción |
-| Martes 20 | Revisiones externas, sus correcciones y verificación en producción |
+| Martes 20 | Revisiones externas y sus correcciones; revisión de vulnerabilidades (pruebas adversariales, también en producción); evaluar extras 🟨 que sumen funcionalidad y calidad (Fase 10) |
 | Miércoles 21, antes de las 09:00 | Solo correcciones y entrega |
 
 **Regla de recorte:** si el domingo por la noche las fases 0 a 5 no están cerradas, se recortan extras, nunca requisitos del núcleo.
