@@ -52,5 +52,11 @@ class PropertyQuerySet(models.QuerySet):
         if guests:
             queryset = queryset.for_guests(guests)
         if check_in and check_out:
-            queryset = queryset.available(check_in, check_out)
+            from .models import cities_where_arrival_is_open
+
+            # Only where the arrival is not already past in the city's own date (D09), exactly
+            # as the booking will check it.
+            queryset = queryset.filter(
+                district__city__in=cities_where_arrival_is_open(check_in)
+            ).available(check_in, check_out)
         return queryset
