@@ -79,3 +79,18 @@ def test_mexico_city_is_still_on_the_9th_after_midnight_in_lima(client, places):
         prop=places["mexico"], check_in=date(2026, 10, 9), check_out=date(2026, 10, 11), guests=1
     )
     assert booking.check_in == date(2026, 10, 9)
+
+
+@time_machine.travel(JUST_AFTER_MIDNIGHT_IN_LIMA)
+def test_every_page_tells_the_search_calendar_each_citys_first_arrival(client, places):
+    """The calendar in the search bars offers the dates the server accepts (second review:
+    it used the device's date, so in Lima after midnight it hid the 9th in Mexico City)."""
+    response = client.get("/es/")
+
+    assert '<script id="arrival-min-by-city" type="application/json">' in response.text
+    assert response.context["footer_search_form"].arrival_min_by_city == {
+        "lima": "2026-10-10",
+        "madrid": "2026-10-10",
+        "mexico": "2026-10-09",
+        "": "2026-10-09",  # no city: the earliest
+    }

@@ -34,6 +34,7 @@
   {% include "components/footer.html" %}
 
   {{ footer_search_form.districts_by_city|json_script:"districts-by-city" }}
+  {{ footer_search_form.arrival_min_by_city|json_script:"arrival-min-by-city" }}
   <script src="{% static 'vendor/bootstrap-5.3.8/js/bootstrap.bundle.min.js' %}" defer></script>
   <script src="{% static 'vendor/flatpickr-4.6.13/flatpickr.min.js' %}" defer></script>
   <script src="{% static 'vendor/flatpickr-4.6.13/l10n/es.js' %}" defer></script>

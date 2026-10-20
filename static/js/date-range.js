@@ -9,6 +9,8 @@
  *   data-max-nights                 longest stay that can be selected
  *   data-disabled-source            id of a json_script with taken nights [{from, to}]
  *   data-span-error                 message when a range crosses a taken night
+ * In a search bar (a form with [data-city-select]) the first possible arrival follows the chosen
+ * destination, from the json_script #arrival-min-by-city (D09).
  * After a valid change the container fires a bubbling "daterange:change" event.
  */
 (function () {
@@ -25,9 +27,35 @@
     return flatpickr.formatDate(date, "Y-m-d");
   }
 
+  function readJson(id) {
+    var source = id && document.getElementById(id);
+    return source ? JSON.parse(source.textContent) : null;
+  }
+
   function readDisabled(container) {
-    var source = container.dataset.disabledSource && document.getElementById(container.dataset.disabledSource);
-    return source ? JSON.parse(source.textContent) : [];
+    return readJson(container.dataset.disabledSource) || [];
+  }
+
+  // Search bars: "today" is the date where the destination is, which can differ from the
+  // device's date (D09). The server sends it per city ("" = no city: the earliest one).
+  var arrivalMinByCity = readJson("arrival-min-by-city");
+  var districtsByCity = readJson("districts-by-city") || {};
+
+  function cityOfDistrict(districtId) {
+    return (
+      Object.keys(districtsByCity).filter(function (slug) {
+        return districtsByCity[slug].some(function (item) {
+          return String(item.id) === districtId;
+        });
+      })[0] || ""
+    );
+  }
+
+  function destinationMinDate(form) {
+    var city = form.querySelector("[data-city-select]");
+    var district = form.querySelector("[data-district-select]");
+    var slug = city.value || (district ? cityOfDistrict(district.value) : "");
+    return arrivalMinByCity[slug] || arrivalMinByCity[""];
   }
 
   function crossesTakenNight(start, end, disabled) {
@@ -64,6 +92,8 @@
     var disabled = readDisabled(container);
     var maxNights = Number(container.dataset.maxNights) || 0;
     var errorBox = container.querySelector("[data-range-error]");
+    var form = container.closest("form");
+    var followsDestination = Boolean(arrivalMinByCity && form && form.querySelector("[data-city-select]"));
 
     var display = document.createElement("input");
     display.type = "text";
@@ -103,7 +133,7 @@
     picker = flatpickr(display, {
       mode: "range",
       locale: locale,
-      minDate: container.dataset.minDate || "today",
+      minDate: followsDestination ? destinationMinDate(form) : container.dataset.minDate || "today",
       maxDate: container.dataset.maxDate || null,
       disable: disabled.length ? [dayDisabled] : [],
       dateFormat: "Y-m-d",
@@ -135,5 +165,21 @@
         }
       },
     });
+
+    if (followsDestination) {
+      // Another destination, another "today": an arrival that is already past there is cleared
+      // (the server would reject it anyway). Checked before set(): flatpickr silently drops the
+      // selected dates below the new minimum without onChange, which would leave the departure
+      // alone and the hidden inputs stale.
+      var updateMinDate = function () {
+        var minDate = destinationMinDate(form);
+        var arrivalIsPast = checkIn.value && checkIn.value < minDate;
+        picker.set("minDate", minDate);
+        if (arrivalIsPast) picker.clear();
+      };
+      form.querySelectorAll("[data-city-select], [data-district-select]").forEach(function (select) {
+        select.addEventListener("change", updateMinDate);
+      });
+    }
   });
 })();

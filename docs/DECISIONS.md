@@ -149,6 +149,10 @@ ciudad, la más temprana entre las ciudades, y los resultados excluyen las ciuda
 usaba la fecha del servidor (Lima): de noche aceptaba una llegada en Madrid que la reserva rechazaba, y pasada la
 medianoche rechazaba una en Ciudad de México que la reserva aceptaba.
 
+**Y el calendario del buscador también (D42).** Cada página envía la primera llegada posible de cada ciudad
+(`#arrival-min-by-city`), y el calendario la usa y la actualiza al cambiar de ciudad o de distrito, en vez de tomar
+"hoy" del dispositivo. Si la llegada elegida ya pasó en el nuevo destino, se borran las fechas.
+
 ---
 
 ## D10 · El precio lo calcula el servidor y queda guardado en la reserva
@@ -790,3 +794,19 @@ JavaScript.
   Una prueba que nunca falla no protege nada.
 - **Pago:** el PDF pide "completar el pago" sin indicar una pasarela. El pago simulado con tarjetas de prueba se
   propone como respuesta a ese punto, y se deja planteado a Wynwood House si prefiere una integración real (D11).
+
+**Segunda pasada de la misma revisión.**
+- **Calendario del buscador:** el servidor ya validaba con la fecha del destino, pero el calendario seguía tomando
+  "hoy" del dispositivo. Pasada la medianoche en Lima, ocultaba una llegada que en Ciudad de México todavía era
+  válida. Ahora sigue al destino (D09).
+  - La prueba de navegador usa dos ciudades en UTC−12 y UTC+14, que nunca comparten fecha, y un navegador en UTC+14,
+    así que reproduce el caso a cualquier hora en que corra la CI.
+  - Con el JavaScript anterior, la prueba falla.
+  - Detalle encontrado al escribirla: al cambiar el mínimo, flatpickr descarta en silencio las fechas que quedan
+    fuera, sin avisar con `onChange`; por eso la llegada se revisa antes de cambiarlo.
+- **Instalación de Chromium en Docker:** Playwright guarda los navegadores en la caché de cada usuario. Instalarlo como
+  `root` y correr las pruebas como `app` no lo encontraba. El README instala las dependencias del sistema como `root`
+  y Chromium como `app`.
+- **CI y `DEBUG`:** las pruebas de navegador pasaban en local (`DEBUG=true`) y fallaban en la CI (`DEBUG=false`), que
+  redirigía a HTTPS. `SecurityMiddleware` lee el ajuste una vez, al arrancar el servidor de prueba, así que se
+  desactiva para toda la sesión antes de arrancarlo.
