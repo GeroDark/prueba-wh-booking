@@ -1,7 +1,8 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth import password_validation
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -239,3 +240,65 @@ class EmailAuthenticationForm(FriendlyErrorsMixin, AuthenticationForm):
         **AuthenticationForm.error_messages,
         "invalid_login": _("The email or password is incorrect."),
     }
+
+
+class PasswordResetRequestForm(FriendlyErrorsMixin, PasswordResetForm):
+    """Ask for a reset link (D43). The page that follows says the same whether or not the
+    e-mail has an account, so the form cannot be used to find out who is registered."""
+
+    email = forms.EmailField(
+        label=_("Email"),
+        max_length=254,
+        error_messages={"required": _("Enter your email address.")},
+        widget=email_widget(autofocus=True, placeholder=_("name@example.com")),
+    )
+
+    def get_users(self, email):
+        """Django's lookup (active account, same e-mail in any letter case) plus a cooldown: one
+        e-mail per account every few minutes. The slot is taken with a conditional UPDATE, so two
+        requests at the same time cannot both send."""
+        now = timezone.now()
+        for user in super().get_users(email):
+            claimed = (
+                User.objects.filter(pk=user.pk)
+                .filter(
+                    Q(password_reset_requested_at__isnull=True)
+                    | Q(password_reset_requested_at__lte=now - settings.PASSWORD_RESET_COOLDOWN)
+                )
+                .update(password_reset_requested_at=now)
+            )
+            if claimed:
+                yield user
+
+
+class NewPasswordForm(FriendlyErrorsMixin, forms.Form):
+    """The new password from a reset link: one field with the sign-up checklist (D34, D43).
+    PasswordResetConfirmView expects Django's SetPasswordForm interface: user, save()."""
+
+    password = forms.CharField(
+        label=_("New password"),
+        strip=False,
+        error_messages={"required": _("Create a password.")},
+        widget=forms.PasswordInput(
+            attrs={
+                "autocomplete": "new-password",
+                "placeholder": _("Enter a new password"),
+                "aria-describedby": "password-rules",
+            }
+        ),
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        password_validation.validate_password(password, self.user)
+        return password
+
+    def save(self, commit=True):
+        self.user.set_password(self.cleaned_data["password"])
+        if commit:
+            self.user.save()
+        return self.user

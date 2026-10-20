@@ -17,7 +17,10 @@
     <p class="auth__lead">
       {% translate "For your security, signing in with this email from your network is paused for 15 minutes after several failed attempts." %}
     </p>
-    <p>{% translate "Wait a few minutes and try again. If you do not remember your password, write to us and we will help you." %}</p>
-    <p class="auth__switch"><a href="{% url 'core:home' %}">{% translate "Back to home" %}</a></p>
+    <p>{% translate "Wait a few minutes and try again, or create a new password now: the link we send you also lifts this pause." %}</p>
+    <p class="auth__switch">
+      <a href="{% url 'accounts:password_reset' %}">{% translate "Forgot your password?" %}</a>
+      · <a href="{% url 'core:home' %}">{% translate "Back to home" %}</a>
+    </p>
   </section>
 {% endblock %}

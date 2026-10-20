@@ -27,3 +27,9 @@
 .auth__switch {
   margin-top: 1.5rem;
 }
+
+.auth__forgot {
+  margin: -0.25rem 0 1rem;
+  font-size: 0.875rem;
+  text-align: end;
+}
