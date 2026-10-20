@@ -1,13 +1,12 @@
 from itertools import groupby
 
 from django import forms
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.bookings.services import date_errors
 from apps.core.forms import FriendlyErrorsMixin
 
-from .models import City, Country, District
+from .models import City, Country, District, earliest_local_today
 
 MAX_SEARCH_GUESTS = 16
 
@@ -108,8 +107,12 @@ class SearchForm(FriendlyErrorsMixin, forms.Form):
             )
         elif check_in and check_out:
             # Same rules as booking (past, 365 days ahead, 1 to 30 nights), so the results never
-            # list stays that cannot be booked afterwards.
-            for field, error in date_errors(check_in, check_out, timezone.localdate()).items():
+            # list stays that cannot be booked afterwards. "Today" is the date where the property
+            # is (D09): the chosen city's, or without a city the earliest one among the cities
+            # (the results then leave out the cities where that arrival is already past).
+            place = cleaned.get("city")
+            today = place.local_today() if place else earliest_local_today()
+            for field, error in date_errors(check_in, check_out, today).items():
                 self.add_error(field, error)
         return cleaned
 

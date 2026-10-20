@@ -69,6 +69,20 @@ class City(models.Model):
         return timezone.localdate(timezone=zoneinfo.ZoneInfo(self.timezone))
 
 
+def cities_where_arrival_is_open(check_in):
+    """Ids of the cities where `check_in` is today or later (local date, D09)."""
+    return [city.pk for city in City.objects.all() if city.local_today() <= check_in]
+
+
+def earliest_local_today():
+    """The earliest "today" among the cities: an arrival on this date is valid somewhere.
+
+    Late at night in Lima it is already tomorrow in Madrid but still today in Mexico City.
+    """
+    dates = [city.local_today() for city in City.objects.filter(is_active=True)]
+    return min(dates) if dates else timezone.localdate()
+
+
 class District(models.Model):
     city = models.ForeignKey(
         City, on_delete=models.PROTECT, related_name="districts", verbose_name=_("city")

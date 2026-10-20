@@ -39,6 +39,23 @@
     });
   }
 
+  function isTakenNight(day, disabled) {
+    var night = iso(day);
+    return disabled.some(function (range) {
+      return range.from <= night && range.to >= night;
+    });
+  }
+
+  // Which days cannot be clicked depends on what is being chosen (D33):
+  // - arrival: the taken nights;
+  // - departure (arrival already picked): days whose stay would include a taken night. The
+  //   departure day itself may be the first night of another booking: leaving the morning
+  //   someone else arrives is valid (half-open stays, D06).
+  function isDayDisabled(day, disabled, arrival) {
+    if (arrival && day > arrival) return crossesTakenNight(arrival, day, disabled);
+    return isTakenNight(day, disabled);
+  }
+
   document.querySelectorAll("[data-date-range]").forEach(function (container) {
     var inputs = container.querySelectorAll('input[type="date"]');
     if (inputs.length !== 2) return;
@@ -69,13 +86,26 @@
     }
 
     var initial = [checkIn.value, checkOut.value].filter(Boolean);
+    var initialDates = initial.map(function (value) {
+      return flatpickr.parseDate(value, "Y-m-d");
+    });
+    var picker;
 
-    var picker = flatpickr(display, {
+    function dayDisabled(day) {
+      // While flatpickr starts, the dates come from the page (e.g. a search with dates).
+      var selected = picker ? picker.selectedDates : initialDates;
+      if (selected.length === 1) return isDayDisabled(day, disabled, selected[0]);
+      // A chosen departure that is another booking's first night stays selectable.
+      if (selected.length === 2 && iso(day) === iso(selected[1])) return false;
+      return isTakenNight(day, disabled);
+    }
+
+    picker = flatpickr(display, {
       mode: "range",
       locale: locale,
       minDate: container.dataset.minDate || "today",
       maxDate: container.dataset.maxDate || null,
-      disable: disabled,
+      disable: disabled.length ? [dayDisabled] : [],
       dateFormat: "Y-m-d",
       showMonths: window.matchMedia("(min-width: 768px)").matches ? 2 : 1,
       defaultDate: initial.length === 2 ? initial : null,
@@ -84,6 +114,8 @@
       },
       onChange: function (dates) {
         showError("");
+        // The arrival was picked: recompute which departures are possible.
+        if (disabled.length && dates.length < 2) picker.redraw();
         if (dates.length === 2 && crossesTakenNight(dates[0], dates[1], disabled)) {
           showError(container.dataset.spanError);
           picker.clear();
