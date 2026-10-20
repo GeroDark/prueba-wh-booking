@@ -10,6 +10,12 @@ from playwright.sync_api import expect
 from apps.bookings.models import Booking
 from apps.bookings.tests.factories import BookingFactory
 from apps.payments.models import Payment
+from apps.properties.tests.factories import (
+    CityFactory,
+    CountryFactory,
+    DistrictFactory,
+    PropertyFactory,
+)
 
 pytestmark = [pytest.mark.e2e, pytest.mark.django_db(transaction=True)]
 
@@ -146,3 +152,53 @@ def test_departure_on_the_day_another_booking_starts(page, live_server, prop):
     page.locator("#booking button[type=submit]").click()
     expect(page).to_have_url(re.compile(r"/checkout/"))
     assert Booking.objects.filter(status=Booking.Status.PENDING, check_out=day(10)).exists()
+
+
+# The search calendar's first arrival, read from the flatpickr instance (open or not).
+DAY_IS_DISABLED = """([selector, iso]) => {
+  const picker = document.querySelector(selector)._flatpickr;
+  picker.jumpToDate(iso);
+  const p = n => String(n).padStart(2, '0');
+  const isoOf = date => `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}`;
+  const cell = [...picker.daysContainer.querySelectorAll('.flatpickr-day')]
+    .filter(d => !d.classList.contains('prevMonthDay') && !d.classList.contains('nextMonthDay'))
+    .find(d => isoOf(d.dateObj) === iso);
+  return cell.classList.contains('flatpickr-disabled');
+}"""
+
+
+@pytest.fixture
+def far_apart_cities(transactional_db):
+    """Baker Island (UTC-12) and Kiritimati (UTC+14) are 26 hours apart: never on the same date."""
+
+    def make(slug, tz, code):
+        country = CountryFactory(code=code, name_es=slug, name_en=slug, slug=slug)
+        city = CityFactory(country=country, slug=slug, name_es=slug, name_en=slug, timezone=tz)
+        PropertyFactory(district=DistrictFactory(city=city))
+        return city
+
+    return make("baker", "Etc/GMT+12", "um"), make("kiritimati", "Pacific/Kiritimati", "ki")
+
+
+def test_the_search_calendar_follows_the_destinations_date(
+    new_context, live_server, far_apart_cities
+):
+    """Second review: the search calendar took "today" from the device. A guest whose device
+    is already on the next day must still be offered today's arrival where the destination is."""
+    baker, kiritimati = far_apart_cities
+    baker_today = baker.local_today()
+    assert kiritimati.local_today() > baker_today
+
+    page = new_context(timezone_id="Pacific/Kiritimati").new_page()  # device ahead
+    page.goto(f"{live_server.url}/es/")
+    page.select_option("#id_city", "baker")
+    page.locator("#id_check_in").click()
+
+    assert not page.evaluate(DAY_IS_DISABLED, ["#id_check_in", baker_today.isoformat()])
+    click_day(page, baker_today)
+    assert page.locator("input[name=check_in]").first.input_value() == baker_today.isoformat()
+
+    # There it is already the next day: that arrival is past and is cleared.
+    page.select_option("#id_city", "kiritimati")
+    assert page.evaluate(DAY_IS_DISABLED, ["#id_check_in", baker_today.isoformat()])
+    assert page.locator("input[name=check_in]").first.input_value() == ""

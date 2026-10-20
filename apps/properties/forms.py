@@ -117,6 +117,15 @@ class SearchForm(FriendlyErrorsMixin, forms.Form):
         return cleaned
 
     @property
+    def arrival_min_by_city(self):
+        """{city_slug: first possible arrival (ISO)} for the search calendar (JS), so it offers
+        the same dates the server accepts: today where the city is (D09), not on the device.
+        The "" key is for a search without a city: the earliest date among the cities."""
+        dates = {city.slug: city.local_today().isoformat() for city in self.fields["city"].queryset}
+        dates[""] = earliest_local_today().isoformat()
+        return dates
+
+    @property
     def districts_by_city(self):
         """{city_slug: [{"id": .., "name": ..}]} for the dependent district select (JS)."""
         return {

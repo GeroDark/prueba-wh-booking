@@ -45,12 +45,13 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
 
-Calidad: **467 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
+Calidad: **468 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
 ejecutando el JavaScript real. Las pruebas de navegador cubren:
 - buscar, elegir fechas en el calendario, registrarse, pago rechazado y reintento, confirmación y correo;
 - inglés en móvil;
 - retención vencida;
-- salida el día que empieza otra reserva.
+- salida el día que empieza otra reserva;
+- el calendario del buscador ofrece las fechas según el destino, aunque el dispositivo esté en otro día.
 
 La CI en GitHub Actions corre con PostgreSQL y SQLite, más ruff y `check --deploy`. Hay pruebas de concurrencia con
 hilos reales, y la accesibilidad WCAG 2.1 AA está verificada con axe-core. Las decisiones técnicas, con
@@ -188,8 +189,10 @@ también ante dos reservas simultáneas (ver D06 a D09 en [docs/DECISIONS.md](do
 
 ```bash
 docker compose exec web pytest                       # tests
-# pruebas de navegador (una vez: instalar Chromium; en CI corren solas)
-docker compose exec -u root web python -m playwright install --with-deps chromium
+# pruebas de navegador (una vez: dependencias del sistema como root y Chromium como el usuario
+# que corre las pruebas, porque Playwright lo guarda en la caché de cada usuario; en CI corren solas)
+docker compose exec -u root web python -m playwright install-deps chromium
+docker compose exec web python -m playwright install chromium
 docker compose exec web pytest -m e2e
 docker compose exec web python manage.py expire_holds # marca como vencidas las retenciones caducadas (opcional, p. ej. con cron)
 docker compose exec web python manage.py send_booking_confirmations # envía los correos de confirmación pendientes
