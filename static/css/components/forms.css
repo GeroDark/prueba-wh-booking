@@ -146,6 +146,11 @@
   content: "●" !important;
 }
 
+/* A rule only the server can check (common words): always shown, never ticked. */
+.password-rules li.password-rules__note::before {
+  content: "–";
+}
+
 /* Checkbox with its label on the right */
 
 .form-check-wh {

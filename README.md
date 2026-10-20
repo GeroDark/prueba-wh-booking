@@ -45,7 +45,7 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
 
-Calidad: **499 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
+Calidad: **501 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
 ejecutando el JavaScript real. Las pruebas de navegador cubren:
 - buscar, elegir fechas en el calendario, registrarse, pago rechazado y reintento, confirmación, correo y la reserva
   en "Mis reservas";
@@ -194,7 +194,10 @@ entrega es "al menos una vez": si el proceso muere justo después de que el prov
 una copia repetida, lo que es preferible a que el huésped no reciba la confirmación (D37).
 
 El correo para **recuperar la contraseña** ("¿Olvidaste tu contraseña?" en el login) sale por el mismo canal, en el
-idioma de la página desde la que se pidió (D43).
+idioma de la página desde la que se pidió (D43). **Verificado en producción** (20 de octubre de 2026): llegó a la
+bandeja de entrada de Gmail unos 7 minutos después de que Brevo lo enviara. Sin un dominio propio verificado, los
+correos salen del dominio compartido de Brevo y Gmail puede retenerlos unos minutos, sobre todo los de "restablecer
+contraseña"; la página ya avisa que puede tardar.
 
 Reglas que valida el servidor: llegada no pasada (según la zona horaria de la ciudad), salida posterior a la llegada,
 capacidad de la propiedad, hasta 30 noches en línea y sin solapamiento con otra reserva o retención vigente,

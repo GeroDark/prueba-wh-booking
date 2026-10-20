@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wh-booking\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-20 14:19-0500\n"
+"POT-Creation-Date: 2026-10-20 15:46-0500\n"
 "PO-Revision-Date: 2026-10-18 02:00-0500\n"
 "Last-Translator: WH Booking\n"
 "Language-Team: Spanish\n"
@@ -1387,21 +1387,23 @@ msgstr ""
 msgid "Skip to content"
 msgstr "Saltar al contenido"
 
-#: templates/components/account_links.html:9
+#: templates/components/account_links.html:12
 #, python-format
 msgid "Hi, %(name)s"
 msgstr "Hola, %(name)s"
 
-#: templates/components/account_links.html:11
+#: templates/components/account_links.html:15
+#: templates/components/account_links.html:27
 #: templates/pages/my_bookings.html:4 templates/pages/my_bookings.html:12
 msgid "My bookings"
 msgstr "Mis reservas"
 
-#: templates/components/account_links.html:14
+#: templates/components/account_links.html:18
+#: templates/components/account_links.html:31
 msgid "Sign out"
 msgstr "Cerrar sesión"
 
-#: templates/components/account_links.html:18
+#: templates/components/account_links.html:39
 #: templates/pages/accounts/login.html:4 templates/pages/accounts/login.html:13
 #: templates/pages/accounts/login.html:25
 #: templates/pages/accounts/password_reset.html:24
@@ -1641,6 +1643,12 @@ msgstr "Al menos 8 caracteres"
 #: templates/components/password_field.html:30
 msgid "Contains a number or symbol"
 msgstr "Contiene un número o un símbolo"
+
+#: templates/components/password_field.html:32
+msgid ""
+"Common words with numbers are not accepted either, e.g. “Password2026!”."
+msgstr ""
+"Tampoco se aceptan palabras comunes con números, como “Contraseña2026!”."
 
 #: templates/components/property_card.html:20
 #: templates/components/property_card.html:38
