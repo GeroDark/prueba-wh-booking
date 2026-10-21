@@ -4,13 +4,13 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect, resolve_url
-from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
+from .emails import email_frame_context, send_password_changed_notice
 from .forms import EmailAuthenticationForm, NewPasswordForm, PasswordResetRequestForm, SignUpForm
 from .lockout import lockout_username
 
@@ -79,8 +79,7 @@ class PasswordResetView(auth_views.PasswordResetView):
 
     def form_valid(self, form):
         self.extra_email_context = {
-            "site_url": settings.SITE_URL,
-            "logo_url": f"{settings.SITE_URL}{static('img/email/logo.png')}",
+            **email_frame_context(),
             "valid_minutes": settings.PASSWORD_RESET_TIMEOUT // 60,
         }
         return super().form_valid(form)
@@ -105,5 +104,6 @@ class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
         # Whoever opened the link controls the e-mail: the failed sign-in limit (D41) no longer
         # applies to them, on any network. Signing in only clears this network's failures.
         axes_reset(username=lockout_username(self.request, {"username": form.user.email}))
+        send_password_changed_notice(form.user)
         messages.success(self.request, _("Your password has been updated. You are signed in."))
         return response

@@ -863,10 +863,21 @@ comprobaron rompiendo el código a propósito:
   los dos, con una cola de correos y verificación del correo al registrarse (mejoras planificadas).
 - **Cuentas distintas:** el límite es por cuenta; alguien que conozca muchos correos registrados podría pedir un
   enlace para cada uno. Lo frenaría el desafío anti-bots pendiente (D40).
+- **Paginación de "Mis reservas"** (D44): hoy se cargan todas las reservas de la cuenta, sin N+1. Con un historial
+  largo convendría paginar las pasadas (mejora planificada).
 - **Entrega:** verificado en producción, Gmail entregó el correo unos 7 minutos después de que Brevo lo enviara
   (estado "Enviado" sin "Entregado" mientras tanto). Sale del dominio compartido de Brevo y es un correo de
   "restablecer contraseña" con un enlace a `onrender.com`: justo lo que los filtros contra el phishing miran más. Un
   dominio propio verificado (SPF, DKIM) lo mejoraría (mejora planificada).
+
+**Tercera revisión externa (sobre el commit 9d58c3d).** Cuatro observaciones, todas comprobadas antes de tocar nada:
+
+| Observación | Comprobación | Arreglo |
+|---|---|---|
+| La CI de `main` fallaba en las pruebas de navegador | Los campos de tarjeta estaban vacíos: la prueba pulsó la tarjeta de prueba antes de que `checkout.js` (diferido) estuviera listo. Reproducido retrasando ese script 2 s | La prueba espera `DOMContentLoaded`, que ocurre después de los scripts diferidos, y comprueba que el número aparezca antes de pagar. Con el script retrasado, pasa |
+| Si el proveedor falla, se gastan igual los 5 minutos | Reproducido con un test: proveedor caído, luego de vuelta, segundo pedido → 0 correos. `get_users()` toma el turno antes de enviar y Django atrapa el error | `send_mail` propio: si el envío falla, registra el error y **devuelve el turno** (solo si sigue siendo el suyo, `UPDATE` condicional). La página responde igual |
+| "El formulario no permite saber quién tiene cuenta" era demasiado amplio | Cierto: el tiempo de respuesta sí puede revelarlo | Comentarios y documentación dicen ahora "la página no lo dice; el tiempo puede", como riesgo aceptado (ver Límites) |
+| No se avisa del cambio de contraseña | Cierto | Correo aparte "Se cambió la contraseña de tu cuenta" (recomendación de OWASP), sin contraseña ni token: solo "Recuperar mi cuenta" (la página para pedir un enlace) y el contacto. Si falla, se registra y nunca deshace el cambio. Con tests |
 
 ---
 

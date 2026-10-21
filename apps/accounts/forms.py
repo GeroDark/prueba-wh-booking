@@ -1,8 +1,12 @@
+import logging
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -11,6 +15,8 @@ from apps.core.forms import FriendlyErrorsMixin
 from .models import User
 from .phones import InvalidPhone, parse_phone, region_choices, region_for_prefix
 from .validators import MAX_AGE, normalize_name, years_ago
+
+logger = logging.getLogger(__name__)
 
 # Browser-side hints only (the server validates again). The browser's own e-mail check accepts
 # "name@gmail" without a dot in the domain; Django's validator does not, so the hint asks for it.
@@ -244,7 +250,8 @@ class EmailAuthenticationForm(FriendlyErrorsMixin, AuthenticationForm):
 
 class PasswordResetRequestForm(FriendlyErrorsMixin, PasswordResetForm):
     """Ask for a reset link (D43). The page that follows says the same whether or not the
-    e-mail has an account, so the form cannot be used to find out who is registered."""
+    e-mail has an account. The response time can still differ, because the e-mail is sent
+    during the request: an accepted risk, since sign-up already says when an account exists."""
 
     email = forms.EmailField(
         label=_("Email"),
@@ -268,7 +275,36 @@ class PasswordResetRequestForm(FriendlyErrorsMixin, PasswordResetForm):
                 .update(password_reset_requested_at=now)
             )
             if claimed:
+                user.reset_claimed_at = now  # send_mail gives the turn back if sending fails
                 yield user
+
+    def send_mail(
+        self,
+        subject_template_name,
+        email_template_name,
+        context,
+        from_email,
+        to_email,
+        html_email_template_name=None,
+    ):
+        """Django's version, except that a failed send gives the turn back: the guest can ask
+        again as soon as the provider works, instead of waiting out the limit for an e-mail that
+        never left. Only this request's turn is released (the same conditional UPDATE)."""
+        subject = "".join(render_to_string(subject_template_name, context).splitlines())
+        body = render_to_string(email_template_name, context)
+        message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+        if html_email_template_name:
+            html = render_to_string(html_email_template_name, context)
+            message.attach_alternative(html, "text/html")
+        user = context["user"]
+        try:
+            message.send()
+        except Exception:
+            # The page answers the same either way (D43): the failure is only logged.
+            logger.exception("Password reset e-mail for user %s could not be sent", user.pk)
+            User.objects.filter(
+                pk=user.pk, password_reset_requested_at=user.reset_claimed_at
+            ).update(password_reset_requested_at=None)
 
 
 class NewPasswordForm(FriendlyErrorsMixin, forms.Form):
