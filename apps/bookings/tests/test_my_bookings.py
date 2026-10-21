@@ -110,6 +110,14 @@ def test_past_is_decided_with_the_citys_date(client, ana):
     assert groups(response)["upcoming"] == [in_lima.reference]
 
 
+def test_the_page_is_never_cached(client, ana):
+    """Shared computer: after signing out, Back must not show the previous guest's bookings."""
+    response = client.get(MY_BOOKINGS)
+
+    assert "no-store" in response["Cache-Control"]
+    assert "private" in response["Cache-Control"]
+
+
 def test_without_bookings_it_invites_to_search(client, ana):
     response = client.get(MY_BOOKINGS)
 

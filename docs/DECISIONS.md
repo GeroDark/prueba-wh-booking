@@ -857,8 +857,10 @@ comprobaron rompiendo el código a propósito:
   reescribió con dos redes (laptop y celular).
 
 **Límites.**
-- **Tiempo de respuesta:** el envío es sincrónico, así que la respuesta tarda un poco más cuando la cuenta existe. Una
-  cola de correos lo eliminaría (mejora planificada).
+- **Tiempo de respuesta:** el envío es sincrónico, así que la respuesta tarda más cuando la cuenta existe (medido en
+  local: 275 ms contra 53 ms, solo en el primer pedido; con el límite de 5 minutos activo, 49 contra 48 ms). No revela
+  nada nuevo: el registro ya dice "ya existe una cuenta con este correo" (D34). Cerrar la enumeración exigiría cambiar
+  los dos, con una cola de correos y verificación del correo al registrarse (mejoras planificadas).
 - **Cuentas distintas:** el límite es por cuenta; alguien que conozca muchos correos registrados podría pedir un
   enlace para cada uno. Lo frenaría el desafío anti-bots pendiente (D40).
 - **Entrega:** verificado en producción, Gmail entregó el correo unos 7 minutos después de que Brevo lo enviara
@@ -903,3 +905,27 @@ las revisiones anteriores del encabezado se habían hecho sin sesión. Con el en
   ciudad, sus tests fallan.
 - La prueba de navegador del flujo completo termina abriendo "Mis reservas" desde el menú de cuenta.
 - axe-core: 0 violaciones en "Mis reservas", el menú abierto y las páginas de D43.
+
+**Revisión de seguridad de D43 y D44** (ataques reales, en local con Mailpit y en producción sin tocar datos):
+
+| Ataque | Resultado |
+|---|---|
+| Saber si un correo tiene cuenta | Misma respuesta (302 a "Revisa tu correo"); la diferencia de tiempo no agrega nada que el registro no diga ya (D43) |
+| 20 pedidos seguidos, con mayúsculas variadas | 1 correo |
+| Sin token CSRF (pedir enlace, cerrar sesión) | 403 |
+| `Host: evil.example` | 400 en local; en producción no llega a la aplicación (403) |
+| `X-Forwarded-Host`, `Forwarded`, `X-Original-Host` | El enlace sigue saliendo de `SITE_URL` |
+| Variantes Unicode del correo (`mıke@`, `MİKE@`, `exampIe`, carácter invisible), la clase de CVE-2019-19844 | Ningún correo |
+| Correo de 10.000 caracteres, inyección de `Bcc`, SQL, `<script>`, byte nulo | Error de formulario o 400, nunca 500; Cloudflare bloquea el intento de SQL (403) |
+| Token de otra cuenta, alterado, truncado, uid basura | "Este enlace ya no es válido" |
+| La URL `set-password` en otro navegador | Inválida: el token vive en la sesión de quien abrió el enlace |
+| Reusar el enlace (también el que se usó en producción) | Inválido |
+| Reservas o checkout de otra cuenta por referencia | 404 |
+| Sesión inventada en "Mis reservas" | Al login |
+
+- **Hallazgo arreglado:** "Mis reservas" no enviaba `Cache-Control`. En una computadora compartida, el botón
+  "atrás" después de cerrar sesión podía mostrar las reservas de otra persona. Ahora usa `never_cache`
+  (`no-store, private`), como la confirmación, con su test.
+- **Nota sobre Brevo:** si la cuenta tiene activado el conteo de clics, los enlaces del correo pasan por un redirect de
+  Brevo. No agrega exposición, porque Brevo ya ve el correo completo para enviarlo, y anymail no permite desactivarlo
+  por mensaje.

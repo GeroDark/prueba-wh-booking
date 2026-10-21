@@ -45,7 +45,7 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
 
-Calidad: **501 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
+Calidad: **502 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
 ejecutando el JavaScript real. Las pruebas de navegador cubren:
 - buscar, elegir fechas en el calendario, registrarse, pago rechazado y reintento, confirmación, correo y la reserva
   en "Mis reservas";
@@ -325,6 +325,7 @@ docs/            plan maestro y decisiones técnicas
 |---|---|
 | Intentos de login | 5 fallos de una cuenta desde una misma red → pausa de 15 minutos (`django-axes`, también en el admin). Cuenta + red, no solo cuenta: un atacante no puede bloquear a un huésped en su propia cuenta. El correo cuenta igual en cualquier combinación de mayúsculas |
 | Recuperar la contraseña | Enlace de un solo uso válido por 1 hora; la página responde igual exista o no la cuenta; como máximo un correo por cuenta cada 5 minutos; el enlace se arma con `SITE_URL`, no con la cabecera `Host`; al cambiarla se cierran las demás sesiones y se levanta la pausa de intentos fallidos |
+| Páginas con datos personales | Confirmación, checkout y "Mis reservas" con `Cache-Control: no-store, private`: el botón "atrás" tras cerrar sesión no muestra datos de otra persona |
 | Retenciones de fechas | Como máximo 5 activas por red a la vez: abrir muchas sesiones no permite acaparar disponibilidad. La IP se guarda solo como hash con clave y se borra al pagar |
 | IP real del visitante | Cabecera `CF-Connecting-IP` de Cloudflare (delante de Render), que el cliente no puede falsificar; `X-Forwarded-For` se ignora |
 | Enlaces editables en el admin | Solo `https://`, `http://`, rutas del sitio, anclas, `mailto:` y `tel:` (contra XSS con `javascript:`) |
@@ -335,6 +336,11 @@ docs/            plan maestro y decisiones técnicas
 - Intentos de saltarla falsificando la IP:
   - `X-Forwarded-For`, `True-Client-IP` y `X-Real-IP` → la pausa se mantiene;
   - `CF-Connecting-IP` → Cloudflare rechaza la petición antes de que llegue a la aplicación (403).
+
+**Revisión de seguridad de los extras** (20 de octubre de 2026; en local y en producción sin tocar datos; detalle en
+D44): sin token CSRF → 403; `Host` falso → no llega a la aplicación; `X-Forwarded-Host` no cambia el enlace del correo;
+variantes Unicode del correo, tokens alterados, de otra cuenta o ya usados → inválidos; entradas basura → nunca un 500;
+reservas de otra cuenta → 404. Hallazgo arreglado: "Mis reservas" ahora no se guarda en caché.
 
 Límites reconocidos antes de operar con usuarios reales (D40, D41, D43): verificación del correo al registrarse,
 desafío anti-bots para redes de muchas IPs, MFA para el admin y Content-Security-Policy.
