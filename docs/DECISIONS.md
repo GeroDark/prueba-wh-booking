@@ -917,6 +917,10 @@ las revisiones anteriores del encabezado se habían hecho sin sesión. Con el en
 - 8 tests; dos comprobados rompiendo el código: sin `prefetch_related` y con la fecha del servidor en vez de la de la
   ciudad, sus tests fallan.
 - La prueba de navegador del flujo completo termina abriendo "Mis reservas" desde el menú de cuenta.
+  - **Carrera en la CI (corregida):** una vez falló porque pulsó el menú antes de que cargara el script de Bootstrap
+    (diferido), la misma familia de fallo que la tarjeta de prueba (D43). Se reprodujo retrasando ese script y ahora
+    la prueba espera `DOMContentLoaded` y comprueba que el menú se abrió. Prueba de estrés: las 6 pruebas de navegador
+    pasan con **todos** los scripts retrasados 1,5 s.
 - axe-core: 0 violaciones en "Mis reservas", el menú abierto y las páginas de D43.
 
 **Revisión de seguridad de D43 y D44** (ataques reales, en local con Mailpit y en producción sin tocar datos):

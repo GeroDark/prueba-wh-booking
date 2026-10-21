@@ -80,6 +80,15 @@ def pay_with(page, card):
     page.click(".checkout__submit")
 
 
+def open_bookings_menu(page):
+    # Bootstrap's dropdown is a deferred script, like checkout.js (see pay_with): right after a
+    # redirect the button can be clicked before it runs, and the menu never opens.
+    page.wait_for_load_state("domcontentloaded")
+    page.click(".account-menu__toggle")
+    expect(page.locator(".account-menu__toggle")).to_have_attribute("aria-expanded", "true")
+    page.click(".account-menu >> text=Mis reservas")
+
+
 def test_search_book_sign_up_decline_and_pay(page, live_server, prop, mailoutbox):
     """Search -> property -> calendar -> sign up -> declined card -> retry -> confirmation."""
     page.goto(f"{live_server.url}/es/")
@@ -113,8 +122,7 @@ def test_search_book_sign_up_decline_and_pay(page, live_server, prop, mailoutbox
     assert mailoutbox[0].subject == f"Tu reserva {booking.reference} está confirmada"
 
     # And it is listed in "My bookings", in the header's account menu (D44).
-    page.click(".account-menu__toggle")
-    page.click(".account-menu >> text=Mis reservas")
+    open_bookings_menu(page)
     expect(page.locator("#upcoming-title")).to_have_text("Próximas estadías")
     expect(page.locator(".booking-item")).to_contain_text(booking.reference)
 
