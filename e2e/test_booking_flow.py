@@ -70,7 +70,13 @@ def sign_up_in_checkout(page, email):
 
 
 def pay_with(page, card):
+    # The test-card button fills the form through checkout.js, a deferred script. On a slow
+    # machine (CI) the button can be clicked before the script runs, and nothing is filled.
+    # Deferred scripts run before DOMContentLoaded, so wait for it on the payment page.
+    page.locator(f"[data-test-card='{card}']").wait_for()
+    page.wait_for_load_state("domcontentloaded")
     page.click(f"[data-test-card='{card}']")
+    expect(page.locator("#id_card_number")).not_to_have_value("")  # as a person would see it
     page.click(".checkout__submit")
 
 

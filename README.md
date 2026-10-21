@@ -45,7 +45,7 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
 
-Calidad: **502 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
+Calidad: **505 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
 ejecutando el JavaScript real. Las pruebas de navegador cubren:
 - buscar, elegir fechas en el calendario, registrarse, pago rechazado y reintento, confirmación, correo y la reserva
   en "Mis reservas";
@@ -324,7 +324,7 @@ docs/            plan maestro y decisiones técnicas
 | Protección | Detalle |
 |---|---|
 | Intentos de login | 5 fallos de una cuenta desde una misma red → pausa de 15 minutos (`django-axes`, también en el admin). Cuenta + red, no solo cuenta: un atacante no puede bloquear a un huésped en su propia cuenta. El correo cuenta igual en cualquier combinación de mayúsculas |
-| Recuperar la contraseña | Enlace de un solo uso válido por 1 hora; la página responde igual exista o no la cuenta; como máximo un correo por cuenta cada 5 minutos; el enlace se arma con `SITE_URL`, no con la cabecera `Host`; al cambiarla se cierran las demás sesiones y se levanta la pausa de intentos fallidos |
+| Recuperar la contraseña | Enlace de un solo uso válido por 1 hora; la página responde igual exista o no la cuenta (el tiempo de respuesta puede diferir: riesgo aceptado, D43); como máximo un correo por cuenta cada 5 minutos, y si el envío falla se puede pedir de nuevo enseguida; el enlace se arma con `SITE_URL`, no con la cabecera `Host`; al cambiarla se cierran las demás sesiones, se levanta la pausa de intentos fallidos y llega un aviso "Se cambió la contraseña" sin token |
 | Páginas con datos personales | Confirmación, checkout y "Mis reservas" con `Cache-Control: no-store, private`: el botón "atrás" tras cerrar sesión no muestra datos de otra persona |
 | Retenciones de fechas | Como máximo 5 activas por red a la vez: abrir muchas sesiones no permite acaparar disponibilidad. La IP se guarda solo como hash con clave y se borra al pagar |
 | IP real del visitante | Cabecera `CF-Connecting-IP` de Cloudflare (delante de Render), que el cliente no puede falsificar; `X-Forwarded-For` se ignora |
@@ -353,7 +353,8 @@ desafío anti-bots para redes de muchas IPs, MFA para el admin y Content-Securit
 | Verificación de correo | Un enlace firmado, como el de recuperar la contraseña (D43); decidir con WH si se verifica antes o después del primer pago |
 | Anti-bots y MFA para el admin | Cloudflare Turnstile en el login y al reservar; `django-otp` para el personal |
 | Login con Google | `django-allauth`; solo se unen cuentas si Google confirma el correo, y el checkout sigue pidiendo los datos que falten |
-| Correos desde una cola | Celery o RQ, para que el huésped no espere al proveedor de correo |
+| Correos desde una cola | Celery o RQ, para que el huésped no espere al proveedor de correo y la recuperación de contraseña responda igual de rápido exista o no la cuenta |
+| Paginar "Mis reservas" | Paginar las estadías pasadas cuando el historial de una cuenta crezca |
 | Dominio propio verificado en Brevo (SPF, DKIM) | Mejor entregabilidad: menos correos en Spam |
 | Tareas programadas | `expire_holds` y `send_booking_confirmations` cada pocos minutos (cron) |
 | Servicios adicionales, facturación, cuotas, Wynwood Points | Pantallas del Figma fuera del PDF; se agregarían como líneas de la reserva |

@@ -108,6 +108,27 @@ def test_one_email_per_account_every_five_minutes(client, ana, mailoutbox):
     assert len(mailoutbox) == 2
 
 
+def test_a_failed_send_gives_the_turn_back(client, ana, mailoutbox, monkeypatch, caplog):
+    """Provider down: the guest sees the usual page and nothing arrives. Asking again once it is
+    back must work right away, not after the 5-minute limit (third external review)."""
+    from django.core.mail import EmailMultiAlternatives
+
+    working_send = EmailMultiAlternatives.send
+
+    def provider_down(self, *args, **kwargs):
+        raise ConnectionError("Brevo is down")
+
+    monkeypatch.setattr(EmailMultiAlternatives, "send", provider_down)
+    assert ask(client)["Location"] == SENT  # same page: a failure must not reveal the account
+    assert mailoutbox == []
+    assert any(record.levelname == "ERROR" for record in caplog.records)  # logged, not hidden
+
+    monkeypatch.setattr(EmailMultiAlternatives, "send", working_send)
+    ask(client)
+
+    assert len(mailoutbox) == 1
+
+
 def test_the_link_ignores_a_forged_host_header(client, ana, mailoutbox, settings):
     """Password reset poisoning: with a link built from the Host header, an attacker asking for
     a reset with "Host: evil.example" would receive the victim's token when they click."""
@@ -147,6 +168,40 @@ def test_the_link_sets_the_new_password_and_signs_in(client, ana, mailoutbox):
     assert not ana.check_password(OLD)
     assert client.session["_auth_user_id"] == str(ana.pk)
     assert "Tu contraseña se actualizó" in client.get("/es/").text
+
+
+def test_the_owner_is_told_that_the_password_changed(client, ana, mailoutbox):
+    """OWASP: a separate notice, so a reset the owner did not ask for does not go unnoticed. It
+    carries no password and no token, only the way to get the account back."""
+    ask(client)
+    client.post(open_link(client, link_in(mailoutbox[0])), {"password": NEW})
+
+    assert len(mailoutbox) == 2
+    notice = mailoutbox[1]
+    assert notice.to == ["ana@mail.com"]
+    assert notice.subject == "Se cambió la contraseña de tu cuenta de Wynwood House"
+    assert "Si no fuiste tú" in notice.body
+    assert "https://wh.example/es/accounts/password/reset/" in notice.body
+    everything = notice.body + notice.alternatives[0][0]
+    assert NEW not in everything
+    assert "set-password" not in everything
+    assert not re.search(r"/password/reset/[^/\s]+/[^/\s]+/", everything)  # no uid/token link
+
+
+def test_a_failed_notice_never_undoes_the_change(client, ana, mailoutbox, monkeypatch):
+    ask(client)
+    form_url = open_link(client, link_in(mailoutbox[0]))
+    from django.core.mail import EmailMultiAlternatives
+
+    def provider_down(self, *args, **kwargs):
+        raise ConnectionError("Brevo is down")
+
+    monkeypatch.setattr(EmailMultiAlternatives, "send", provider_down)
+    response = client.post(form_url, {"password": NEW})
+
+    assert response.status_code == 302
+    ana.refresh_from_db()
+    assert ana.check_password(NEW)
 
 
 def test_the_link_works_once(client, ana, mailoutbox):
