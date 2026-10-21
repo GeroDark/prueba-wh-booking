@@ -1,6 +1,6 @@
 # WH Booking
 
-Flujo de reserva de propiedades para **Wynwood House**, desarrollado como prueba técnica *Fullstack Developer Python*:
+Flujo de reserva de propiedades para **Wynwood House**, desarrollado como prueba técnica *Full Stack Developer*:
 home con buscador, resultados con mapa, detalle con disponibilidad, registro, checkout con pago simulado, confirmación
 y correo, en español e inglés.
 
@@ -18,8 +18,10 @@ y correo, en español e inglés.
 4. **Registrarse en el checkout** con un correo real (llega la confirmación) y pagar con la tarjeta de prueba
    `4242 4242 4242 4242`, vencimiento futuro, CVC `123`.
 5. **Confirmación:** dirección exacta, mapa con el punto y "Abrir en Google Maps". El correo llega en el idioma en que
-   se reservó (revisa Spam: el remitente de la demo es un Gmail).
+   se reservó. Sale del dominio compartido de Brevo (sin dominio propio), así que puede tardar unos minutos o caer
+   en Spam.
 6. **Cambiar de idioma** (EN / ES, arriba a la derecha) en cualquier página.
+7. **Extras:** "Mis reservas" en el menú de cuenta ("Hola, … ▾") y "¿Olvidaste tu contraseña?" en el login.
 
 | Cuenta o dato de prueba | Valor |
 |---|---|
@@ -44,6 +46,10 @@ No se cobra nada ni se guardan datos de tarjeta: el pago es simulado y solo acep
 | Comando de datos de prueba | `python manage.py seed_data` |
 | Django + PostgreSQL o SQLite, DTL, Bootstrap, JS, CBV, nada hardcodeado | Contenido editable desde el admin (textos, banners, menús, contactos, impuestos, enlaces legales) |
 | Bilingüe ES/EN | `i18n_patterns` (`/es/`, `/en/`) + `django-modeltranslation` para el contenido (D13) |
+| Secciones de la landing | Encabezado con logo y ES/EN, buscador, propiedades destacadas, "¿Por qué viajar a España?", banner de estadías largas con "Contáctanos" y pie con redes y contacto, todo editable desde el admin |
+| Frontend: Bootstrap 3+, componentes reutilizables, responsive, Acumin y Helvetica | Bootstrap 5.3; `templates/components/` (header, footer, search_bar, property_card, banner…); revisado en 375, 768, 1366, 1440 y 1920 px; fuentes en `static/fonts/` |
+| Interacciones y animaciones | Desplazamiento suave, hover en tarjetas y enlaces, aparición al hacer scroll (`reveal.js`), carruseles, calendario de fechas y precio en vivo; todo respeta "reducir movimiento" |
+| Accesibilidad | WCAG 2.1 AA verificada con axe-core (0 violaciones), enlace "Saltar al contenido", etiquetas y errores asociados a cada campo |
 
 Calidad: **505 tests** (pytest) más **pruebas de navegador** (Playwright, en `e2e/`) que recorren el flujo completo
 ejecutando el JavaScript real. Las pruebas de navegador cubren:
@@ -64,8 +70,8 @@ solo lecturas, sin reservar):
 
 La CI en GitHub Actions corre con PostgreSQL y SQLite, más ruff y `check --deploy`. Hay pruebas de concurrencia con
 hilos reales, y la accesibilidad WCAG 2.1 AA está verificada con axe-core. Las decisiones técnicas, con
-ejemplos, están en [docs/DECISIONS.md](docs/DECISIONS.md), incluidas las correcciones de una revisión externa y los
-límites reconocidos antes de operar con dinero real (D40). El plan por fases está en
+ejemplos, están en [docs/DECISIONS.md](docs/DECISIONS.md), incluidas las correcciones de tres revisiones externas
+(D40, D42, D43) y los límites reconocidos antes de operar con dinero real. El plan por fases está en
 [docs/PLAN_MAESTRO.md](docs/PLAN_MAESTRO.md).
 
 ## Estado
@@ -152,8 +158,8 @@ El origen y la licencia de cada imagen están en [seed/images/CREDITS.md](seed/i
 3. "Reservar ahora" retiene las fechas durante `BOOKING_HOLD_MINUTES` minutos (15) y abre el checkout con una
    cuenta regresiva. Mientras tanto, nadie más puede reservarlas. "Cambiar fechas" las libera al instante.
 4. **Paso 1, registro:** correo, contraseña, nombre y apellido, nacionalidad, teléfono (validado para el país) y fecha
-   de nacimiento (mayor de 18). El boletín es opcional y se activa solo si se marca la casilla. Con sesión iniciada y el perfil completo, este paso se salta; "Iniciar sesión" vuelve
-   al mismo checkout.
+   de nacimiento (mayor de 18). El boletín es opcional y se activa solo si se marca la casilla. Con sesión iniciada y
+   el perfil completo, este paso se salta; "Iniciar sesión" vuelve al mismo checkout.
 5. **Paso 2, pago simulado.** No se cobra nada ni se guardan datos de tarjeta (solo marca y últimos 4 dígitos).
    Las tarjetas de prueba aparecen en la página y se completan con un clic:
 
@@ -240,10 +246,17 @@ DATABASE_URL=postgres://usuario:clave@host:5432/base
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements-dev.txt
-cp .env.example .env               # luego edita: DEBUG=true y DATABASE_URL=sqlite:///db.sqlite3
+cp .env.example .env               # Windows: copy .env.example .env
+# edita .env: DEBUG=true y DATABASE_URL=sqlite:///db.sqlite3
 python manage.py migrate
+python manage.py seed_data         # datos de prueba (añade --skip-images para ir más rápido)
+python manage.py createsuperuser   # opcional, para el admin
 python manage.py runserver
 ```
+
+Para comprobar que funciona: http://localhost:8000 abre el home en español y http://localhost:8000/health/ responde
+`{"status": "ok"}`. Los correos se imprimen en la consola. `pytest` corre la suite (las pruebas exclusivas de
+PostgreSQL se omiten). Estos pasos están probados en una copia limpia del repositorio.
 
 SQLite no tiene bloqueo de filas: el proyecto lo configura con transacciones `IMMEDIATE`, que hacen esperar a la
 segunda de dos reservas simultáneas (probado con hilos). La restricción de exclusión de fechas en la base es
@@ -271,7 +284,9 @@ Todo en planes gratuitos. [render.yaml](render.yaml) describe el servicio, así 
 3. Cada arranque: migraciones → admin (si no existe) → datos de demo (solo si la base está vacía) → gunicorn.
    `SECRET_KEY` la genera Render; el dominio `*.onrender.com` se agrega solo a `ALLOWED_HOSTS`,
    `CSRF_TRUSTED_ORIGINS` y `SITE_URL`.
-4. Cada merge a `main` se despliega solo (después de pasar CI en el pull request).
+4. Con el repositorio conectado a Render, cada merge a `main` se despliega solo (`autoDeploy`); la CI corre en cada
+   pull request. Si el repositorio se conecta por su URL pública, como en esta demo, el despliegue se lanza a mano:
+   *Manual Deploy → Deploy latest commit*.
 
 El plan gratuito de Render apaga el servicio tras 15 minutos sin visitas: la primera carga después tarda cerca de un
 minuto. Un monitor externo (por ejemplo UptimeRobot cada 5 minutos a `/health/`) lo mantiene despierto.
