@@ -671,7 +671,9 @@ el desarrollo lo hace un asistente de IA.
 **Decisión (capas).**
 1. **Sin acceso directo:** la URL de la base solo existe en las variables de entorno de Render; ni en el repositorio,
    ni en `.env` locales, ni en conversaciones. El desarrollo usa la base local de Docker.
-2. **Un solo camino a producción:** rama → pull request → CI → revisión → merge → despliegue automático.
+2. **Un solo camino a producción:** rama → pull request → CI → revisión → merge → despliegue. En esta demo cada
+   despliegue fue manual (*Manual Deploy* en Render, después de cada merge), porque el repositorio se conectó por su
+   URL pública; con Render conectado a GitHub sería automático (`autoDeploy` en `render.yaml`).
 3. **Migraciones revisadas:** un test falla si una migración incluye `RemoveField`, `DeleteModel`, `RunSQL` o
    `RunPython` sin declarar `reviewed_data_safety` con el motivo. La justificación queda visible en el pull request.
 4. **Comandos destructivos bloqueados** en producción (`flush`, `seed_data --flush`) salvo con una bandera explícita.

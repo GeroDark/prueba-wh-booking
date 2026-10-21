@@ -8,7 +8,9 @@ services:
     plan: free
     region: virginia # next to the Neon database (AWS us-east-1)
     branch: main
-    autoDeploy: true # every merge to main is deployed (after CI on the pull request)
+    # Every merge to main is deployed when Render is connected to the repository through GitHub.
+    # This demo was connected by the public URL, so each deploy was started by hand (Manual Deploy).
+    autoDeploy: true
     healthCheckPath: /health/
     envVars:
       - key: DEBUG
