@@ -1,6 +1,6 @@
 # Plan maestro — WH Booking
 
-Plan de trabajo de la prueba técnica *Fullstack Developer Python* de Wynwood House (WH):
+Plan de trabajo de la prueba técnica *Full Stack Developer* de Wynwood House (WH):
 alcance, arquitectura, fases con criterios de aceptación y forma de trabajo.
 Las decisiones técnicas y su justificación están en [DECISIONS.md](DECISIONS.md).
 
